@@ -4,14 +4,13 @@ Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
 // Auth::routes(['register' => false]);
 Route::post('userlogin','Auth\\LoginController@authenticate')->name('userlogin');
-// Route::get('/hashunhashed','UserController@hashunhashed');
 Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
 {
     Route::get('/', 'Admin\DashboardController@highlight');
     Route::get('/highlight', 'Admin\DashboardController@highlight');
     Route::get('/dashboard', 'Admin\DashboardController@dashboard');
-    Route::get('/adsperformance', 'Admin\CommercialController@index');
-    Route::post('/adsperformance/indexjson', 'Admin\CommercialController@indexjson');
+    Route::get('/adsperformance', 'Admin\AdsperformanceController@index');
+    Route::post('/adsperformance/indexjson', 'Admin\AdsperformanceController@indexjson');
     Route::get('/tvads', 'Admin\VideoController@tvads');
     Route::get('/tvprogramme', 'Admin\VideoController@tvprogramme');
     Route::get('/mktsummary', 'Admin\MarketingController@mktsummary');
@@ -50,6 +49,9 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/spotpairing', 'Admin\DashboardController@spotpairing');
     Route::get('/videodata', 'Admin\DashboardController@videodata');
     Route::get('/targetaudience', 'Admin\DashboardController@targetaudience');
+    Route::get('/channel/indexjson','Admin\ChannelController@indexjson');
+    Route::get('/channel/searchjson','Admin\ChannelController@searchjson');
+    Route::resource('/channel', 'Admin\ChannelController');
     Route::get('/user/indexjson','Admin\UserController@indexjson');
     Route::get('/user/csvall','Admin\UserController@csvall');
     Route::get('/user/destroymulti','Admin\UserController@destroymulti');

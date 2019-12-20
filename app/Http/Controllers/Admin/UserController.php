@@ -1,23 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
-use Schema;
 use Session;
 use Validator;
 use Hash;
 
 class UserController extends Controller
 {
-    private $cols;
 
     public function __construct()
     {
         //setup cols
-        $dbcols = Schema::getColumnListing('users');//get all columns from DB
+        $dbcols = [];
         foreach($dbcols as $key=>$val){
             // add bread props
             $cols[$val] = ['column'=>$val,'dbcolumn'=>$val,
@@ -26,13 +25,6 @@ class UserController extends Controller
                 'B'=>1,'R'=>1,'E'=>1,'A'=>1,'D'=>1
             ];
             // add joined columns, if any
-            if($val == 'branch_id'){
-                $cols['branch'] = ['column'=>'branch','dbcolumn'=>'branches.branch',
-                'caption'=>'Branch',
-                'type' => 'text',
-                'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
-                ];
-            }
             if($val == 'role_id'){
                 $cols['role'] = ['column'=>'role','dbcolumn'=>'roles.role',
                 'caption'=>'Role',
@@ -55,12 +47,6 @@ class UserController extends Controller
         $cols['password']['type'] = 'password';
         $cols['status']['type'] = 'enum';
         $cols['status']['enum_values'] = ['1'=>'Aktif','0'=>'Tidak Aktif'];
-        $cols['branch_id']['caption'] = 'Branch';
-        $cols['branch_id']['type'] = 'dropdown';
-        $cols['branch_id']['dropdown_model'] = 'App\Branch';
-        $cols['branch_id']['dropdown_value'] = 'id';
-        $cols['branch_id']['dropdown_caption'] = 'branch';
-        $cols['branch_id']['B'] = 0;
         $cols['role_id']['caption'] = 'Role';
         $cols['role_id']['type'] = 'dropdown';
         $cols['role_id']['dropdown_model'] = 'App\Role';

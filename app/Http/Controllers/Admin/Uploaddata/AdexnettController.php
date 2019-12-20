@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Uploaddata;
 use App\Http\Controllers\Controller;
-use Schema;
-use Session;
-use DB;
 
 use Illuminate\Http\Request;
 use App\Adexnett;
@@ -13,7 +10,6 @@ use Rap2hpoutre\FastExcel\FastExcel;
 
 class AdexnettController extends Controller
 {
-    private $cols;
     /**
      * Create a new controller instance.
      *

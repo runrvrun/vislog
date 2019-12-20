@@ -100,6 +100,7 @@
                   <li><a href="{{ url('/admin/spotpairing') }}" class="menu-item"><i class="ft-voicemail"></i>Spot Pairing</a></li>
                   <li><a href="{{ url('/admin/videodataupdate') }}" class="menu-item"><i class="ft-video"></i>Video Data Update</a></li>
                   <li><a href="{{ url('/admin/targetaudience') }}" class="menu-item"><i class="ft-star"></i>Target Audiece</a></li>
+                  <li><a href="{{ url('/admin/channel') }}" class="menu-item"><i class="ft-tv"></i>Channel</a></li>
                 </ul>
               </li>
               <li class="has-sub nav-item" id="usermgt"><a href="#"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">User Management</span></a>
@@ -171,7 +172,10 @@
 
         <!-- BEGIN : Footer-->
         <footer class="footer footer-static footer-light">
-          <p class="pull-left clearfix text-muted text-sm-center px-2"><span>Copyright  &copy; 2019 Vislog, All rights reserved. </span></p>
+        <p class="pull-left clearfix text-muted text-sm-center px-2">
+          <span>Copyright  &copy; 2019 Vislog, All rights reserved. </span>
+          <span style="font-size:6px;">Powered by <a href="http://arfianagus.com/">arfianagus.com</a> </span>
+        </p>
         </footer>
         <!-- End : Footer-->
 

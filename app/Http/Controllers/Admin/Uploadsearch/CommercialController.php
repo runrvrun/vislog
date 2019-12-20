@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Uploadsearch;
 use App\Http\Controllers\Controller;
-use Session;
-use DB;
 
 use Illuminate\Http\Request;
 use App\Commercialsearch;

@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
 @section('pagetitle')
-    <title>{{ config('app.name', 'Laravel') }} | Pengguna</title>
+    <title>User</title>
 @endsection
 
 @section('content')
@@ -83,7 +83,7 @@ $(document).ready(function() {
         responsive: resp,
         processing: true,
         serverSide: true,
-        ajax: '{!! url('user/indexjson') !!}',
+        ajax: '{!! url('admin/user/indexjson') !!}',
         columns: [
           { data: 'id', name: 'checkbox' },
           @foreach($cols as $val)
@@ -101,7 +101,7 @@ $(document).ready(function() {
             {
               text: '<i class="ft-plus"></i> Add New', className: 'buttons-add',
               action: function ( e, dt, node, config ) {
-                  window.location = '{{ url('user/create') }}'
+                  window.location = '{{ url('admin/user/create') }}'
               }
             },  
             { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
@@ -110,7 +110,7 @@ $(document).ready(function() {
               text: 'CSV All',
               className: 'buttons-csvall',
               action: function ( e, dt, node, config ) {
-                  window.location = '{{ url('user/csvall') }}'
+                  window.location = '{{ url('admin/user/csvall') }}'
               }
             },
             {
@@ -157,7 +157,7 @@ $(document).ready(function() {
       if(deleteids_arr.length > 0){
         var confirmdelete = confirm("Hapus seluruh data terpilih?");
         if (confirmdelete == true) {
-          window.location = '{{ url('user/destroymulti?id=') }}'+deleteids_str
+          window.location = '{{ url('admin/user/destroymulti?id=') }}'+deleteids_str
         } 
       }
       });

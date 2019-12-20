@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Admin\Uploadsearch;
 use App\Http\Controllers\Controller;
-use Schema;
-use Session;
-use DB;
 
 use Illuminate\Http\Request;
 use App\Tvprogrammesearch;
@@ -14,7 +11,6 @@ use App\Imports\TvprogrammesImport;
 
 class TvprogrammeController extends Controller
 {
-    private $cols;
     /**
      * Create a new controller instance.
      *

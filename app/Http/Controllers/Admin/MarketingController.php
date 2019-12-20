@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Role;
-use App\Page;
-use App\Role_privilege;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class RoleController extends Controller
+class MarketingController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -43,10 +41,10 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Role  $role
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Role $role)
+    public function show($id)
     {
         //
     }
@@ -54,10 +52,10 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Role  $role
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Role $role)
+    public function edit($id)
     {
         //
     }
@@ -66,10 +64,10 @@ class RoleController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Role  $role
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -77,34 +75,26 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Role  $role
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Role $role)
+    public function destroy($id)
     {
         //
     }
- 
-    public function privilege($role_id = null)
+    
+    public function mktsummary($id)
     {
-        $pages = Page::all();
-        return view('role.privilege', compact('pages','role_id'));
+        //
     }
 
-    public function privilegesave(Request $request)
+    public function adexnett($id)
     {
-        $role_id = $request->role_id;
-        Role_privilege::where('role_id',$role_id)->delete();
-        foreach($request->priv as $key=>$val){
-            $requestData = ['role_id'=>$role_id,'page_id'=>$key];            
-            $requestData = array_merge($requestData,$val);
-            Role_privilege::create($requestData);
-        }
-        $pages = Page::all();
-        return redirect('role/'.$role_id);
+        //
     }
-
-    public function privilegejson($role_id){
-        return Role_privilege::where('role_id',$role_id)->get();
+    
+    public function spotmatching($id)
+    {
+        //
     }
 }

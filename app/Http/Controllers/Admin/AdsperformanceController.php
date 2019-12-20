@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
-use Session;
 
 use Illuminate\Http\Request;
 use App\Commercial;
 
-class CommercialController extends Controller
+class AdsperformanceController extends Controller
 {
     public function __construct()
     {
@@ -24,9 +23,12 @@ class CommercialController extends Controller
         return view('admin.adsperformance');
     }
 
-    public function indexjson()
+    public function indexjson(Request $request)
     {
-        $query = Commercial::select('date','channel','iprogramme','iproduct','iadstype','start_time','duration','cost','tvr01','000s01')
+        $filterchannel = explode(',',$request->filterchannel);
+        $query = Commercial::select('date','channel','iprogramme','iproduct','iadstype','start_time',
+        'duration','cost','tvr01','000s01')
+        ->whereIn('channel',$filterchannel)
         ->get();
         return datatables($query
         )
