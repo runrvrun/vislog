@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Uploadsearch;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Session;
 use App\Commercialsearch;
 use \Carbon\Carbon;
 use Rap2hpoutre\FastExcel\FastExcel;
@@ -82,5 +83,16 @@ class CommercialController extends Controller
         }else{
             return response(['message'=>'Upload failed'],400);
         }
+    }
+
+    public function destroymulti(Request $request)
+    {
+        $ids = explode(',',htmlentities($request->id));
+        foreach($ids as $id){
+            Commercialsearch::where('_id',$id)->delete();
+        }
+        Session::flash('message', 'Search Data Commercial dihapus'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('admin/uploadsearch/commercial');
     }
 }

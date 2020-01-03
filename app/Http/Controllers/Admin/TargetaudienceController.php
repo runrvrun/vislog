@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-use App\Channel;
+use App\Targetaudience;
 use Session;
 
-class ChannelController extends Controller
+class TargetaudienceController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -25,14 +25,14 @@ class ChannelController extends Controller
      */
     public function index()
     {
-        return view('admin.channel.index');
+        return view('admin.targetaudience.index');
     }
 
     public function indexjson()
     {
-        return datatables(Channel::all())
+        return datatables(Targetaudience::all())
         ->addColumn('action', function ($dt) {
-            return view('admin.channel.action',compact('dt'));
+            return view('admin.targetaudience.action',compact('dt'));
         })->toJson();
     }
 
@@ -42,10 +42,10 @@ class ChannelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Channel $channel)
+    public function edit(Targetaudience $targetaudience)
     {
-        $item = Channel::find($channel->id);
-        return view('admin.channel.createupdate',compact('item'));
+        $item = Targetaudience::find($targetaudience->id);
+        return view('admin.targetaudience.createupdate',compact('item'));
     }
 
     /**
@@ -57,19 +57,19 @@ class ChannelController extends Controller
      */
     public function update(Request $request)
     {        
-        $requestData['channel'] = $request->channel;
-        Channel::find($request->id)->update($requestData);
-        Session::flash('message', 'Channel diubah'); 
+        $requestData['targetaudience'] = $request->targetaudience;
+        Targetaudience::find($request->id)->update($requestData);
+        Session::flash('message', 'Target audience diubah'); 
         Session::flash('alert-class', 'alert-success'); 
-        return redirect('admin/channel');
+        return redirect('admin/targetaudience');
     }
 
     public function searchjson(Request $request)
     {
         if(isset($request->term)){
-            return Channel::select('channel')->distinct()->whereNotNull('channel')->where('channel','like','%'.$request->term.'%')->get();
+            return Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->where('targetaudience','like','%'.$request->term.'%')->get();
         }else{
-            return Channel::select('channel')->distinct()->whereNotNull('channel')->take(50)->get();
+            return Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->take(50)->get();
         }
     }
 

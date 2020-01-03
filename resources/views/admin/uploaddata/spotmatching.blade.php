@@ -102,7 +102,7 @@ $(document).ready(function() {
           type: 'POST'
         },
         columns: [
-          { data: 'id', name: 'checkbox' },
+          { data: '_id.date', name: 'checkbox' },
           { data: '_id.year', name: '_id.year' },
           { data: '_id.month', name: '_id.month' },
           { data: '_id.date', name: '_id.date' },
@@ -158,18 +158,18 @@ $(document).ready(function() {
     $('.buttons-deletemulti').addClass('btn-danger mr-1');
 
     $('.buttons-deletemulti').click(function(){
-      var deleteids_arr = [];
+      var deletedates_arr = [];
       var rows_selected = table.column(0).checkboxes.selected();
       $.each(rows_selected, function(index, rowId){
-         deleteids_arr.push(rowId);
+         deletedates_arr.push(rowId);
       });
-      var deleteids_str = encodeURIComponent(deleteids_arr);
+      var deletedates_str = encodeURIComponent(deletedates_arr);
 
       // Check any checkbox checked or not
-      if(deleteids_arr.length > 0){
+      if(deletedates_arr.length > 0){
         var confirmdelete = confirm("Hapus seluruh data terpilih?");
         if (confirmdelete == true) {
-          window.location = '{{ url('admin/uploaddata/destroymulti?id=') }}'+deleteids_str
+          window.location = '{{ url('admin/uploaddata/spotmatching/destroymulti?date=') }}'+deletedates_str
         } 
       }
     });

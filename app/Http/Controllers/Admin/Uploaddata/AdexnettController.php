@@ -40,7 +40,6 @@ class AdexnettController extends Controller
                         '_id'   => [
                             'year'=>'$year',
                             'month'=>'$month',
-                            'date'=>'$date',
                         ],
                         'count' => [
                             '$sum'  => 1
@@ -99,5 +98,15 @@ class AdexnettController extends Controller
         }else{
             return response(['message'=>'Upload failed'],400);
         }
+    }
+    
+    public function destroymulti(Request $request)
+    {
+        dd($request->all());
+        $dates = explode(",",htmlentities($request->date));
+        foreach($dates as $date){
+            Tvprogramme::where('date',$date)->delete();
+        }
+        return redirect('admin/uploaddata/adexnett');
     }
 }

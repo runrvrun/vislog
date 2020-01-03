@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Adstypesearch;
 use \Carbon\Carbon;
+use Session;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Imports\AdstypesImport;
 
@@ -83,5 +84,16 @@ class AdstypeController extends Controller
         }else{
             return response(['message'=>'Upload failed'],400);
         }
+    }
+
+    public function destroymulti(Request $request)
+    {
+        $ids = explode(',',htmlentities($request->id));
+        foreach($ids as $id){
+            Adstypesearch::where('_id',$id)->delete();
+        }
+        Session::flash('message', 'Search Ads Type dihapus'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('admin/uploadsearch/adstype');
     }
 }

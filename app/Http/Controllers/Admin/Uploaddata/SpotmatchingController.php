@@ -100,4 +100,13 @@ class SpotmatchingController extends Controller
             return response(['message'=>'Upload failed'],400);
         }
     }
+    
+    public function destroymulti(Request $request)
+    {
+        $dates = explode(",",htmlentities($request->date));
+        foreach($dates as $date){
+            Spotmatching::where('date',$date)->delete();
+        }
+        return redirect('admin/uploaddata/spotmatching');
+    }
 }

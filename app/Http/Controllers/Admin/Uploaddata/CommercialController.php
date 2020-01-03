@@ -41,6 +41,7 @@ class CommercialController extends Controller
                             'year'=>'$year',
                             'month'=>'$month',
                             'date'=>'$date',
+                            // 'date'=> ['$dateToString' => ['format' => '%d-%m-%Y', 'date' => '$date', 'timezone' => '+07:00' ]] ,
                         ],
                         'count' => [
                             '$sum'  => 1
@@ -82,7 +83,15 @@ class CommercialController extends Controller
                     $colname = strtolower($key);
                     $colname = str_replace(' ','_',$colname);
                     $colname = str_replace('.','',$colname);
-                    $insertData[$colname] = $val;
+                    switch($colname){
+                        case 'date':
+                            $date = Carbon::createFromFormat('d/m/Y H:i:s',$val.' 00:00:00')->toDateTimeString();
+                            $insertData[$colname] = $val;
+                            $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+                            break;
+                        default:
+                            $insertData[$colname] = $val;
+                    }
                 }
                 return Commercial::create($insertData);
             });
@@ -99,5 +108,14 @@ class CommercialController extends Controller
         }else{
             return response(['message'=>'Upload failed'],400);
         }
+    }
+    
+    public function destroymulti(Request $request)
+    {
+        $dates = explode(",",htmlentities($request->date));
+        foreach($dates as $date){
+            Commercial::where('date',$date)->delete();
+        }
+        return redirect('admin/uploaddata/commercial');
     }
 }

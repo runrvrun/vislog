@@ -109,7 +109,7 @@ $(document).ready(function() {
           type: 'POST'
         },
         columns: [
-          { data: 'id', name: 'checkbox' },
+          { data: '_id', name: 'checkbox' },
           { data: 'nsector', name: 'nsector' },
           { data: 'ncategory', name: 'ncategory' },
           { data: 'nadvertiser', name: 'nadvertiser' },
@@ -182,7 +182,7 @@ $(document).ready(function() {
       if(deleteids_arr.length > 0){
         var confirmdelete = confirm("Hapus seluruh data terpilih?");
         if (confirmdelete == true) {
-          window.location = '{{ url('admin/uploadsearch/destroymulti?id=') }}'+deleteids_str
+          window.location = '{{ url('admin/uploadsearch/commercial/destroymulti?id=') }}'+deleteids_str
         } 
       }
     });

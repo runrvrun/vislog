@@ -90,7 +90,7 @@
                       <li><a href="{{ url('/admin/uploaddata/spotunpaired') }}" class="menu-item"><i class="ft-upload-cloud"></i>Spot Unpaired</a></li>
                     </ul>
                   </li>
-                  <li class="has-sub nav-item" id="administrator"><a href="#"><i class="ft-zoom-in"></i><span data-i18n="" class="menu-title">Upload Search Data</span></a>
+                  <li class="has-sub nav-item" id="administrator"><a href="#"><i class="ft-zoom-in"></i><span data-i18n="" class="menu-title">Search Data</span></a>
                     <ul class="menu-content">
                       <li><a href="{{ url('/admin/uploadsearch/commercial') }}" class="menu-item"><i class="ft-zoom-in"></i>Commercial</a></li>
                       <li><a href="{{ url('/admin/uploadsearch/tvprogramme') }}" class="menu-item"><i class="ft-zoom-in"></i>TV Programme</a></li>
@@ -98,7 +98,7 @@
                     </ul>
                   </li>
                   <li><a href="{{ url('/admin/spotpairing') }}" class="menu-item"><i class="ft-voicemail"></i>Spot Pairing</a></li>
-                  <li><a href="{{ url('/admin/videodataupdate') }}" class="menu-item"><i class="ft-video"></i>Video Data Update</a></li>
+                  <li><a href="{{ url('/admin/videodataupdate') }}" class="menu-item"><i class="ft-video"></i>Video Data</a></li>
                   <li><a href="{{ url('/admin/targetaudience') }}" class="menu-item"><i class="ft-star"></i>Target Audiece</a></li>
                   <li><a href="{{ url('/admin/channel') }}" class="menu-item"><i class="ft-tv"></i>Channel</a></li>
                 </ul>
@@ -134,12 +134,6 @@
               <ul class="navbar-nav">
                 <li class="nav-item mr-2 d-none d-lg-block"><a id="navbar-fullscreen" href="javascript:;" class="nav-link apptogglefullscreen"><i class="ft-maximize font-medium-3 blue-grey darken-4"></i>
                     <p class="d-none">fullscreen</p></a></li>
-                <li class="dropdown nav-item"><a id="dropdownBasic2" href="#" data-toggle="dropdown" class="nav-link position-relative dropdown-toggle"><i class="ft-bell font-medium-3 blue-grey darken-4"></i><span class="notification badge badge-pill badge-danger">4</span>
-                    <p class="d-none">Notifications</p></a>
-                  <div class="notification-dropdown dropdown-menu dropdown-menu-right">
-                    <div class="noti-list"><a class="dropdown-item noti-container py-3 border-bottom border-bottom-blue-grey border-bottom-lighten-4"><i class="ft-bell info float-left d-block font-large-1 mt-1 mr-2"></i><span class="noti-wrapper"><span class="noti-title line-height-1 d-block text-bold-400 info">New Order Received</span><span class="noti-text">Lorem ipsum dolor sit ametitaque in, et!</span></span></a><a class="dropdown-item noti-container py-3 border-bottom border-bottom-blue-grey border-bottom-lighten-4"><i class="ft-bell warning float-left d-block font-large-1 mt-1 mr-2"></i><span class="noti-wrapper"><span class="noti-title line-height-1 d-block text-bold-400 warning">New User Registered</span><span class="noti-text">Lorem ipsum dolor sit ametitaque in </span></span></a><a class="dropdown-item noti-container py-3 border-bottom border-bottom-blue-grey border-bottom-lighten-4"><i class="ft-bell danger float-left d-block font-large-1 mt-1 mr-2"></i><span class="noti-wrapper"><span class="noti-title line-height-1 d-block text-bold-400 danger">New Order Received</span><span class="noti-text">Lorem ipsum dolor sit ametest?</span></span></a><a class="dropdown-item noti-container py-3"><i class="ft-bell success float-left d-block font-large-1 mt-1 mr-2"></i><span class="noti-wrapper"><span class="noti-title line-height-1 d-block text-bold-400 success">New User Registered</span><span class="noti-text">Lorem ipsum dolor sit ametnatus aut.</span></span></a></div><a class="noti-footer primary text-center d-block border-top border-top-blue-grey border-top-lighten-4 text-bold-400 py-1">Read All Notifications</a>
-                  </div>
-                </li>
                 <li class="dropdown nav-item"><a id="dropdownBasic3" href="#" data-toggle="dropdown" class="nav-link position-relative dropdown-toggle"><i class="ft-user font-medium-3 blue-grey darken-4"></i>
                     <p class="d-none">User Settings</p></a>
                   <div ngbdropdownmenu="" aria-labelledby="dropdownBasic3" class="dropdown-menu text-left dropdown-menu-right">

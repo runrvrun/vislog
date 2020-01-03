@@ -101,7 +101,7 @@ $(document).ready(function() {
           type: 'POST'
         },
         columns: [
-          { data: 'id', name: 'checkbox' },
+          { data: '_id', name: 'checkbox' },
           { data: 'nadstype', name: 'nadstype' },
           { data: 'iadstype', name: 'iadstype' },
           { data: 'tadstype', name: 'tadstype' },
@@ -166,7 +166,7 @@ $(document).ready(function() {
       if(deleteids_arr.length > 0){
         var confirmdelete = confirm("Hapus seluruh data terpilih?");
         if (confirmdelete == true) {
-          window.location = '{{ url('admin/uploadsearch/destroymulti?id=') }}'+deleteids_str
+          window.location = '{{ url('admin/uploadsearch/adstype/destroymulti?id=') }}'+deleteids_str
         } 
       }
     });
