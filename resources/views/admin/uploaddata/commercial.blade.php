@@ -173,19 +173,30 @@ $(document).ready(function() {
         } 
       }
     });
+    
+  // reload page after upload finishes
+  Dropzone.options.uploadDropzone = {
+      maxFilesize: 200, // Mb
+      init: function () {
+        this.on("processing", function (file) {
+            if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+              location.reload();
+            }
+        });
+      }
+  };
+
 });
 </script>
 <script>
-// reload page after upload finishes ==== doesn't work in commercial due to to long process
-Dropzone.options.uploadDropzone = {
-    maxFilesize: 100, // Mb
+  // reload page after upload finishes
+  Dropzone.options.uploadDropzone = {
     init: function () {
-      this.on("processing", function (file) {
-          if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-            location.reload();
-          }
-      });
-    }
-};
+        this.on("success", function(file) { 
+          alert("Upload and insert finished."); 
+          location.reload();
+        });
+      }
+  };
 </script>
 @endsection

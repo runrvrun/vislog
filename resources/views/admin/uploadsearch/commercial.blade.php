@@ -185,9 +185,18 @@ $(document).ready(function() {
           window.location = '{{ url('admin/uploadsearch/commercial/destroymulti?id=') }}'+deleteids_str
         } 
       }
-    });
-
-    
+    });   
 });
+</script>
+<script>
+  // reload page after upload finishes
+  Dropzone.options.uploadDropzone = {
+    init: function () {
+        this.on("success", function(file) { 
+          alert("Upload and insert finished."); 
+          location.reload();
+        });
+      }
+  };
 </script>
 @endsection
