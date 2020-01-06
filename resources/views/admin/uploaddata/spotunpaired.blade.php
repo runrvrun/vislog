@@ -183,6 +183,9 @@ $(document).ready(function() {
           alert("Upload and insert finished."); 
           location.reload();
         });
+        this.on("error", function(file,response) { 
+          alert("Error: "+response.message); 
+        });
       }
   };
 </script>

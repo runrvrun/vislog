@@ -91,9 +91,11 @@
         </button>
       </div>
       <div class="modal-body">
+        <div id="loadingvideo" style="font-size:20px;">Loading video... Please wait  <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i></div>
         <video src="" controls id="playvideo"></video>
       </div>
       <div class="modal-footer">
+        <a href="" download="" id="downloadvideo" class="btn white btn-warning"> <i class="ft-download"></i> Download </a>
         <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -233,6 +235,7 @@ $(document).ready(function(){
   $(".browse-table").on("click", ".playvideo-button", function(){
     $("#playvideo-title").html($(this).data("iproduct") + " - " + $(this).data("iprogramme") + " - " + $(this).data("channel"));
     $("#playvideo").attr('src','');
+    $("#loadingvideo").show();
     // get video path
     $.ajax({
         url:"{{ url('/admin/video/generatevideo') }}",
@@ -241,7 +244,10 @@ $(document).ready(function(){
         },
         success:function(response) {
           videopath = response;
+          $("#loadingvideo").hide();
           $("#playvideo").attr('src',videopath);
+          $("#downloadvideo").attr('href',videopath);
+          $("#downloadvideo").attr('download',$("#playvideo-title").html());
        },
        error:function(){
         console.log("error getting video path");

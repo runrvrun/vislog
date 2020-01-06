@@ -41,6 +41,7 @@ class AdsperformanceController extends Controller
         $filterncategory = array_filter(explode(',',$request->filterncategory));
         $filternadstype = array_filter(explode(',',$request->filternadstype));
         $filterntargetaudience = $request->filterntargetaudience ?? '001';
+        
         // 'date'=> ['$dateToString' => ['format' => '%d-%m-%Y', 'date' => '$date', 'timezone' => '+07:00' ]] ,
         if($request->commercialdata == 'grouped'){
             $query = Commercialgrouped::select('date','channel','iprogramme','iproduct','iadstype','start_time',

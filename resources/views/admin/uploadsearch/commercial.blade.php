@@ -69,6 +69,9 @@
                 </form>
               </div>
               <div class="modal-footer">
+                <div class="modal-footer-processing-info" style="display:none">
+                Inserting data... Please wait <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>
+                </div>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               </div>
             </div>
@@ -192,9 +195,15 @@ $(document).ready(function() {
   // reload page after upload finishes
   Dropzone.options.uploadDropzone = {
     init: function () {
+        this.on("processing", function(file) { 
+          $(".modal-footer-processing-info").show();
+        });
         this.on("success", function(file) { 
           alert("Upload and insert finished."); 
           location.reload();
+        });
+        this.on("error", function(file,response) { 
+          alert("Error: "+response.message); 
         });
       }
   };

@@ -167,6 +167,7 @@ return [
          */
         // Collective\Html\HtmlServiceProvider::class,
         Jenssegers\Mongodb\MongodbServiceProvider::class,
+        Jenssegers\Mongodb\Auth\PasswordResetServiceProvider::class,
         Pbmedia\LaravelFFMpeg\FFMpegServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         /*

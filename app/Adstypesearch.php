@@ -8,3 +8,5 @@ class Adstypesearch extends Eloquent
 {
     protected $guarded = ['id'];
 }
+
+// db.adstypesearches.createIndex( { "nadstype": 1 }, { unique: true } )
