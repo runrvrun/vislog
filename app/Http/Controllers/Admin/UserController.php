@@ -209,4 +209,29 @@ class UserController extends Controller
             User::find($val->id)->update(['password'=>$hashpass]);
         }
     }
+
+    public function changepassword()
+    {
+        $token = csrf_token();
+        return view('auth.passwords.change',compact('token'));
+    }
+
+    public function editpassword(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|confirmed|min:4|max:50',
+        ]);
+        
+        $password = Hash::make($request->password);
+        User::find(\Auth::user()->id)->update(['password'=>$password]);
+                
+        Session::flash('message', 'Password changed'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('admin');
+    
+    }
+    public function myprofile()
+    {
+        return view ('admin.user.myprofile');
+    }
 }

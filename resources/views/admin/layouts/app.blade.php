@@ -36,7 +36,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/css/app.css">
     <!-- END APEX CSS-->
     <!-- BEGIN Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}css/style.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}css/style.css?v=1">
     <!-- END Custom CSS-->
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -98,7 +98,7 @@
                     </ul>
                   </li>
                   <li><a href="{{ url('/admin/spotpairing') }}" class="menu-item"><i class="ft-voicemail"></i>Spot Pairing</a></li>
-                  <li><a href="{{ url('/admin/videodataupdate') }}" class="menu-item"><i class="ft-video"></i>Video Data</a></li>
+                  <li><a href="{{ url('/admin/videodata') }}" class="menu-item"><i class="ft-video"></i>Video Data</a></li>
                   <li><a href="{{ url('/admin/targetaudience') }}" class="menu-item"><i class="ft-star"></i>Target Audiece</a></li>
                   <li><a href="{{ url('/admin/channel') }}" class="menu-item"><i class="ft-tv"></i>Channel</a></li>
                 </ul>
@@ -139,6 +139,8 @@
                   <div ngbdropdownmenu="" aria-labelledby="dropdownBasic3" class="dropdown-menu text-left dropdown-menu-right">
                   @if (Auth::check()) 
                   <a href="#" class="dropdown-item py-1">Hi, <span>{{ Auth::user()->name }}</span></a>
+                  <a href="{{ url('admin/myprofile') }}" class="dropdown-item py-1"><i class="ft-user"></i> My Profile</a>
+                  <a href="{{ url('admin/changepassword') }}" class="dropdown-item py-1"><i class="fa fa-key"></i> Change Password</a>
                   @endif
                   <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ route('logout') }}"

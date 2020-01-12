@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('pagetitle')
-    <title>Ads Performance</title>
+    <title>TV Programme</title>
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
             <section id="page">
               <div class="row">
                 <div class="col-sm-12">
-                  <div class="content-header">Ads Performance</div>                
+                  <div class="content-header">TV Programme</div>                
                 </div>
               </div>
               <div class="row">

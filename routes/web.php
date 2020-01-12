@@ -7,6 +7,9 @@ Route::post('userlogin','Auth\\LoginController@authenticate')->name('userlogin')
 Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
 {
     Route::get('/', 'Admin\DashboardController@highlight');
+    Route::get('/changepassword', 'Admin\UserController@changepassword');
+    Route::post('/editpassword', 'Admin\UserController@editpassword');
+    Route::get('/myprofile', 'Admin\UserController@myprofile');
     Route::get('/highlight', 'Admin\DashboardController@highlight');
     Route::get('/dashboard', 'Admin\DashboardController@dashboard');
     Route::get('/adsperformance', 'Admin\AdsperformanceController@index');
@@ -67,8 +70,15 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::post('/uploadsearch/adstype/indexjson', 'Admin\Uploadsearch\AdstypeController@indexjson');
     Route::get('/uploadsearch/adstype/destroymulti', 'Admin\Uploadsearch\AdstypeController@destroymulti');
     /**/
-    Route::get('/spotpairing', 'Admin\DashboardController@spotpairing');
-    Route::get('/videodata', 'Admin\DashboardController@videodata');
+    Route::get('/spotpairing', 'Admin\VideoController@spotpairing');
+    Route::get('/videodata', 'Admin\VideoController@videodata');
+    Route::get('/videodata/indexjson', 'Admin\VideoController@videodatajson');
+    Route::get('/videodata/create', 'Admin\VideoController@videodatacreate');
+    Route::post('/videodatastore', 'Admin\VideoController@videodatastore');
+    Route::get('/videodata/{a}/edit', 'Admin\VideoController@videodataedit');
+    Route::patch('/videodataupdate/{a}', 'Admin\VideoController@videodataupdate');
+    Route::get('/videodatadelete/{a}', 'Admin\VideoController@videodatadestroy');
+    Route::post('/videodata/updateconfigs', 'Admin\VideoController@updateconfigs');
     Route::get('/targetaudience/indexjson','Admin\TargetaudienceController@indexjson');
     Route::get('/targetaudience/searchjson','Admin\TargetaudienceController@searchjson');
     Route::resource('/targetaudience', 'Admin\TargetaudienceController');

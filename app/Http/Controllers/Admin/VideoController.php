@@ -8,9 +8,11 @@ use FFMpeg;
 use \App\Channel;
 use \App\Commercial;
 use \App\Config;
+use \App\Videodata;
 use \Carbon\Carbon;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Session;
 
 class VideoController extends Controller
 {
@@ -215,7 +217,7 @@ class VideoController extends Controller
         $temppath = Config::select('value')->where('key','temp path')->first();
         // check if video already exist in temp
         if(file_exists($temppath->value."\\".$request->id.".mp4")){
-            return url("/temp_video/".$request->id.".mp4");
+            return url($temppath->value."\\".$request->id.".mp4");
         }
 
         // video not exist, create
@@ -228,9 +230,9 @@ class VideoController extends Controller
         }elseif(file_exists($librarypath->value."\\channel".substr($channel->code,1,2))){
             $channel = "channel".substr($channel->code,1,2);
         }
-        // get buffer
-        $buffer = Config::select('value')->where('key','video buffer')->first();
-        $buffer = $buffer->value;
+        // get bumper
+        $bumper = Config::select('value')->where('key','video bumper')->first();
+        $bumper = $bumper->value;
         $date = Carbon::createFromFormat('d/m/Y', $commercial->date)->format('Y_m_d');
         $start_video1 = Carbon::createFromFormat('H:i:s',$commercial->start_video1);
         $end_video1 = Carbon::createFromFormat('H:i:s',$commercial->end_video1);
@@ -242,8 +244,8 @@ class VideoController extends Controller
             $sourcepath = $librarypath->value."\\".$channel."\\".$date."\\";
             $sourcefilename = $channel."_".$date."_".$start_video1->format("H")."_".$minute."_00.mp4";
             $sourcestarttime = Carbon::createFromFormat("H_i_s",$start_video1->format("H")."_".$minute."_00");
-            $clipbeginning = $sourcestarttime->diffInSeconds($start_video1)-$buffer;
-            $duration = Carbon::createFromFormat("H:i:s",$commercial->duration)->addSeconds($buffer*2)->format("s");
+            $clipbeginning = $sourcestarttime->diffInSeconds($start_video1)-$bumper;
+            $duration = Carbon::createFromFormat("H:i:s",$commercial->duration)->addSeconds($bumper*2)->format("s");
             $process = new Process('ffmpeg -i "'.$sourcepath.$sourcefilename.'" -ss '.$clipbeginning.' -c copy -t '.$duration.' "'.$temppath->value.'\\'.$request->id.'.mp4" -y');
             $process->run();
             if (!$process->isSuccessful()) {
@@ -268,8 +270,8 @@ class VideoController extends Controller
                 throw new ProcessFailedException($joinedsource);
             }
             $sourcestarttime = Carbon::createFromFormat("H_i_s",$start_video1->format("H")."_".$minute1."_00");
-            $clipbeginning = $sourcestarttime->diffInSeconds($start_video1)-$buffer;
-            $duration = Carbon::createFromFormat("H:i:s",$commercial->duration)->addSeconds($buffer*2)->format("s");
+            $clipbeginning = $sourcestarttime->diffInSeconds($start_video1)-$bumper;
+            $duration = Carbon::createFromFormat("H:i:s",$commercial->duration)->addSeconds($bumper*2)->format("s");
             $process = new Process('ffmpeg -i "'.$temppath->value.'\\join'.$request->id.'.mp4" -ss '.$clipbeginning.' -c copy -t '.$duration.' "'.$temppath->value.'\\'.$request->id.'.mp4" -y');
             $process->run();
             if (!$process->isSuccessful()) {
@@ -281,5 +283,74 @@ class VideoController extends Controller
             unlink($temppath->value.'\\join'.$request->id.'.mp4');
         }
         return url("/temp_video/".$request->id.".mp4");
+    }
+
+    public function spotpairing()
+    {
+        return view('admin.spotpairing.index');
+    }
+
+    public function videodata()
+    {
+        $config = [];
+        $configs = Config::all();
+        foreach($configs as $val){
+            $key = strtolower(str_replace(' ','_',$val->key));
+            $config[$key] = $val->value;
+        }
+        return view('admin.videodata.index',compact('config'));
+    }    
+    public function videodatajson()
+    {
+        $query = Videodata::select('date','channel','count','remarks');
+        return datatables($query->get())
+        ->addColumn('action', function ($dt) {
+            return view('admin.videodata.action',compact('dt'));
+        })->toJson();
+    }
+    
+    public function videodatacreate()
+    {
+        return view('admin.videodata.createupdate');
+    }
+    
+    public function videodatastore(Request $request)
+    {
+        $requestData = $request->all();
+        Videodata::create($requestData);
+        Session::flash('message', 'Video Data disimpan'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('admin/videodata');
+    }
+
+    public function videodataedit($id)
+    {
+        $item = Videodata::find($id);
+        return view('admin.videodata.createupdate',compact('item'));
+    }
+
+    public function videodataupdate($id, Request $request)
+    {
+        $requestData = $request->all();
+        Videodata::find($id)->update($requestData);
+        Session::flash('message', 'Video Data diubah'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('admin/videodata');
+    }
+
+    public function videodatadestroy($id)
+    {
+        Videodata::destroy($id);
+        Session::flash('message', 'Video Data dihapus'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('admin/videodata');
+    }
+
+    public function updateconfigs(Request $request)
+    {
+        Config::where('key',$request->key)->update(['value'=>$request->value]);
+        Session::flash('message', 'Video Setting diubah'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('admin/videodata');
     }
 }
