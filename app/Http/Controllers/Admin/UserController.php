@@ -12,49 +12,9 @@ use Hash;
 
 class UserController extends Controller
 {
-
     public function __construct()
     {
-        //setup cols
-        $dbcols = [];
-        foreach($dbcols as $key=>$val){
-            // add bread props
-            $cols[$val] = ['column'=>$val,'dbcolumn'=>$val,
-                'caption'=>ucwords(str_replace('_',' ',$val)),
-                'type' => 'text',
-                'B'=>1,'R'=>1,'E'=>1,'A'=>1,'D'=>1
-            ];
-            // add joined columns, if any
-            if($val == 'role_id'){
-                $cols['role'] = ['column'=>'role','dbcolumn'=>'roles.role',
-                'caption'=>'Role',
-                'type' => 'text',
-                'B'=>1,'R'=>1,'E'=>0,'A'=>0,'D'=>1
-                ];
-            }
-        } 
-        // modify defaults
-        $cols['password']['B'] = 0;
-        $cols['status']['B'] = 0;
-        $cols['remember_token']['B'] = 0;
-        $cols['remember_token']['R'] = 0;
-        $cols['remember_token']['E'] = 0;
-        $cols['remember_token']['A'] = 0;
-        $cols['email_verified_at']['B'] = 0;
-        $cols['email_verified_at']['R'] = 0;
-        $cols['email_verified_at']['E'] = 0;
-        $cols['email_verified_at']['A'] = 0;
-        $cols['password']['type'] = 'password';
-        $cols['status']['type'] = 'enum';
-        $cols['status']['enum_values'] = ['1'=>'Aktif','0'=>'Tidak Aktif'];
-        $cols['role_id']['caption'] = 'Role';
-        $cols['role_id']['type'] = 'dropdown';
-        $cols['role_id']['dropdown_model'] = 'App\Role';
-        $cols['role_id']['dropdown_value'] = 'id';
-        $cols['role_id']['dropdown_caption'] = 'role';
-        $cols['role_id']['B'] = 0;
-
-        $this->cols = $cols;
+        //
     }
     /**
      * Display a listing of the resource.
@@ -63,19 +23,15 @@ class UserController extends Controller
      */
     public function index()
     {
-        $cols = $this->cols;        
-        return view('user.index',compact('cols'));
+        return view('admin.user.index');
     }
 
     public function indexjson()
     {
-        return datatables(User::select('users.*','branch','role')
-        ->leftJoin('branches','branch_id','branches.id')
-        ->leftJoin('roles','role_id','roles.id')
-        )->addColumn('action', function ($dt) {
-            return view('user.action',compact('dt'));
-        })
-        ->toJson();
+        return datatables(User::get())
+        ->addColumn('action', function ($dt) {
+            return view('admin.user.action',compact('dt'));
+        })->toJson();
     }
 
     public function csvall()
@@ -98,8 +54,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $cols = $this->cols;        
-        return view('user.createupdate',compact('cols'));
+        return view('admin.user.createupdate');
     }
 
     /**
@@ -123,9 +78,9 @@ class UserController extends Controller
             unset($requestData['password']);
         }
         User::create($requestData);
-        Session::flash('message', 'Pengguna ditambahkan'); 
+        Session::flash('message', 'User ditambahkan'); 
         Session::flash('alert-class', 'alert-success'); 
-        return redirect('user');
+        return redirect('admin/user');
     }
 
     /**
@@ -145,11 +100,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit($userid)
     {
-        $cols = $this->cols;        
-        $item = user::find($user->id);
-        return view('user.createupdate',compact('cols','item'));
+        $item = user::find($userid);
+        return view('admin.user.createupdate',compact('item'));
     }
 
     /**
@@ -159,11 +113,12 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update($userid,Request $request)
     {
+        $user = User::find($userid);
         $request->validate([
-            'name' => 'required|unique:users,name,'.$user->id,
-            'email' => 'required|unique:users,email,'.$user->id,
+            'name' => 'required|unique:users,name,'.$user->_id. ',_id',
+            'email' => 'required|unique:users,email,'.$user->_id. ',_id',
         ]);
         
         $requestData = $request->all();
@@ -173,9 +128,9 @@ class UserController extends Controller
             unset($requestData['password']);
         }        
         User::find($user->id)->update($requestData);
-        Session::flash('message', 'Pengguna diubah'); 
+        Session::flash('message', 'User diubah'); 
         Session::flash('alert-class', 'alert-success'); 
-        return redirect('user');
+        return redirect('admin/user');
     }
 
     /**
@@ -184,21 +139,21 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($userid)
     {
-        User::destroy($user->id);
-        Session::flash('message', 'Pengguna dihapus'); 
+        User::destroy($userid);
+        Session::flash('message', 'User dihapus'); 
         Session::flash('alert-class', 'alert-success'); 
-        return redirect('user');
+        return redirect('admin/user');
     }
     
     public function destroymulti(Request $request)
     {
         $ids = htmlentities($request->id);
-        User::whereRaw('id in ('.$ids.')')->delete();
-        Session::flash('message', 'Pengguna dihapus'); 
+        User::whereRaw('_id in ('.$ids.')')->delete();
+        Session::flash('message', 'User dihapus'); 
         Session::flash('alert-class', 'alert-success'); 
-        return redirect('user');
+        return redirect('admin/user');
     }
 
     public function hashunhashed()

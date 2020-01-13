@@ -88,10 +88,11 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/user/indexjson','Admin\UserController@indexjson');
     Route::get('/user/csvall','Admin\UserController@csvall');
     Route::get('/user/destroymulti','Admin\UserController@destroymulti');
-    Route::resource('/user', 'Admin\UserController');
-    Route::get('/role/indexjson','Admin\RoleController@indexjson');
-    Route::get('/role/csvall','Admin\RoleController@csvall');
-    Route::get('/role/destroymulti','Admin\RoleController@destroymulti');
-    Route::resource('/role', 'Admin\RoleController');
+    Route::get('/user', 'Admin\UserController@index');
+    Route::get('/user/create', 'Admin\UserController@create');
+    Route::post('/user/store', 'Admin\UserController@store');
+    Route::get('/user/{a}/edit', 'Admin\UserController@edit');
+    Route::patch('/user/{a}/update', 'Admin\UserController@update');
+    Route::get('/user/delete/{a}', 'Admin\UserController@destroy');
     
 });

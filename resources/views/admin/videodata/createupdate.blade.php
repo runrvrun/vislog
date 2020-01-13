@@ -21,7 +21,7 @@
           <h4 class="card-title">Video Data</h4>
         </div>
         <div class="card-content">
-        <div class="px-3">
+          <div class="px-3">
           @if(isset($item))
               {{ Form::model($item, ['url' => 'admin/videodataupdate/'.$item->id, 'method' => 'patch']) }}
           @else
