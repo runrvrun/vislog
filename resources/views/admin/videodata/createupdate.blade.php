@@ -31,7 +31,7 @@
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="date">Date: </label>
                   <div class="col-md-9">
-                  {{ Form::text('date', old('date',$item->date ?? null), array('class' => 'form-control','required')) }}
+                  {{ Form::text('date', old('date',$item->date ?? null), array('class' => 'form-control datepicker-here','required','autocomplete'=>'off', 'data-language'=>'id')) }}
                   </div>
                 </div>
                 <div class="form-group row">
@@ -77,6 +77,9 @@
         </div>
 @endsection
 @section('pagecss')
+<link href="{{ asset('css') }}/datepicker.min.css" rel="stylesheet" type="text/css">
 @endsection
 @section('pagejs')
+<script src="{{ asset('js') }}/datepicker.min.js"></script>
+<script src="{{ asset('js') }}/i18n/datepicker.id.js"></script>
 @endsection

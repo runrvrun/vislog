@@ -9,6 +9,7 @@ use Rap2hpoutre\FastExcel\FastExcel;
 use Session;
 use Validator;
 use Hash;
+use \Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -72,6 +73,8 @@ class UserController extends Controller
         ]);
 
         $requestData = $request->all();
+        $date = Carbon::createFromFormat('d/m/Y H:i:s',$requestData['expired_at'].' 00:00:00')->toDateTimeString();
+        $requestData['isoexpired_at'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
         if(!empty($requestData['password'])){
             $requestData['password'] = Hash::make($requestData['password']);
         }else{
@@ -122,6 +125,8 @@ class UserController extends Controller
         ]);
         
         $requestData = $request->all();
+        $date = Carbon::createFromFormat('d/m/Y H:i:s',$requestData['expired_at'].' 00:00:00')->toDateTimeString();
+        $requestData['isoexpired_at'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
         if(!empty($requestData['password'])){
             $requestData['password'] = Hash::make($requestData['password']);
         }else{

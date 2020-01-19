@@ -302,7 +302,7 @@ class VideoController extends Controller
     }    
     public function videodatajson()
     {
-        $query = Videodata::select('date','channel','count','remarks');
+        $query = Videodata::select('date','channel','count','remarks')->orderBy('isodate','desc');
         return datatables($query->get())
         ->addColumn('action', function ($dt) {
             return view('admin.videodata.action',compact('dt'));
@@ -317,6 +317,8 @@ class VideoController extends Controller
     public function videodatastore(Request $request)
     {
         $requestData = $request->all();
+        $date = Carbon::createFromFormat('d/m/Y H:i:s',$requestData['date'].' 00:00:00')->toDateTimeString();
+        $requestData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
         Videodata::create($requestData);
         Session::flash('message', 'Video Data disimpan'); 
         Session::flash('alert-class', 'alert-success'); 
@@ -332,6 +334,8 @@ class VideoController extends Controller
     public function videodataupdate($id, Request $request)
     {
         $requestData = $request->all();
+        $date = Carbon::createFromFormat('d/m/Y H:i:s',$requestData['date'].' 00:00:00')->toDateTimeString();
+        $requestData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
         Videodata::find($id)->update($requestData);
         Session::flash('message', 'Video Data diubah'); 
         Session::flash('alert-class', 'alert-success'); 

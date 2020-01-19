@@ -58,7 +58,7 @@
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="date">Expired At: </label>
                   <div class="col-md-9">
-                  {{ Form::text('expired_at', old('expired_at',$item->expired_at ?? null), array('class' => 'form-control','required')) }}
+                  {{ Form::text('expired_at', old('expired_at',$item->expired_at ?? null), array('class' => 'form-control datepicker-here','autocomplete'=>'off', 'data-language'=>'id')) }}
                   </div>
                 </div>
               </div>
@@ -83,16 +83,9 @@
         </div>
 @endsection
 @section('pagecss')
+<link href="{{ asset('css') }}/datepicker.min.css" rel="stylesheet" type="text/css">
 @endsection
 @section('pagejs')
-<script>
-  // make city dropdown conditional to province
-  $("select[name='province_id']").change(function () {
-    var opt = $("option:selected", this);
-    var val = this.value;
-    $("select[name='city_id'] option").hide();
-    $("select[name='city_id'] option[value^='"+ val +"']").show();
-    $("select[name='city_id'] option[value^='"+ val +"']:first").attr('selected','selected');
-  });  
-</script>
+<script src="{{ asset('js') }}/datepicker.min.js"></script>
+<script src="{{ asset('js') }}/i18n/datepicker.id.js"></script>
 @endsection
