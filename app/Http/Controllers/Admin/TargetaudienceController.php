@@ -67,10 +67,9 @@ class TargetaudienceController extends Controller
     public function searchjson(Request $request)
     {
         if(isset($request->term)){
-            return Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->where('targetaudience','like','%'.$request->term.'%')->get();
+            return Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->where('targetaudience','like','%'.$request->term.'%')->groupBy('targetaudience')->get();
         }else{
-            return Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->take(50)->get();
+            return Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->take(50)->groupBy('targetaudience')->get();
         }
     }
-
 }

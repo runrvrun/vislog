@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Role;
-use App\Page;
-use App\Role_privilege;
 use Illuminate\Http\Request;
+use Session;
+use Validator;
 
 class RoleController extends Controller
 {
@@ -57,9 +58,10 @@ class RoleController extends Controller
      * @param  \App\Role  $role
      * @return \Illuminate\Http\Response
      */
-    public function edit(Role $role)
+    public function edit()
     {
-        //
+        $item = Role::select('role','pages')->where('role','Admin')->first();
+        return view('admin.role.privilege',compact('item'));
     }
 
     /**
@@ -84,27 +86,20 @@ class RoleController extends Controller
     {
         //
     }
- 
-    public function privilege($role_id = null)
-    {
-        $pages = Page::all();
-        return view('role.privilege', compact('pages','role_id'));
-    }
 
     public function privilegesave(Request $request)
     {
-        $role_id = $request->role_id;
-        Role_privilege::where('role_id',$role_id)->delete();
-        foreach($request->priv as $key=>$val){
-            $requestData = ['role_id'=>$role_id,'page_id'=>$key];            
-            $requestData = array_merge($requestData,$val);
-            Role_privilege::create($requestData);
-        }
-        $pages = Page::all();
-        return redirect('role/'.$role_id);
+        $role = Role::where('_id',$request->role_id)->first();
+        $requestData = $request->all();
+        unset($requestData['role_id']);
+        unset($requestData['_method']);
+        unset($requestData['_patch']);
+        unset($requestData['_token']);
+        $role->update(['pages'=>$requestData]);
+        return redirect('admin/role');
     }
 
     public function privilegejson($role_id){
-        return Role_privilege::where('role_id',$role_id)->get();
+        return Role::where('_id',$role_id)->first();
     }
 }

@@ -202,11 +202,11 @@ $(document).ready(function(){
         if(result.length){
           $.each(result, function(k,v) {
             var curfil = $("#filter-selected").html();
-            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v + ',')+1){
+            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ',')+1){
               // previously selected, set style
-              $('#filter-modal-search-result').append( '<button class="btn search-result btn-primary mr-1" value="'+v+'">'+v+'</button>' );
+              $('#filter-modal-search-result').append( '<button class="btn search-result btn-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }else{
-              $('#filter-modal-search-result').append( '<button class="btn search-result btn-outline-primary mr-1" value="'+v+'">'+v+'</button>' );
+              $('#filter-modal-search-result').append( '<button class="btn search-result btn-outline-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }
           });
         }else{
@@ -386,9 +386,9 @@ $(document).ready(function(){
         {{ Form::hidden('filter-channel') }}
         <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> Programme</button>
         {{ Form::hidden('filter-nprogramme') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_1"><span id="filter-nlevel_1-count"></span> Level 1</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel1"><span id="filter-nlevel_1-count"></span> Level 1</button>
         {{ Form::hidden('filter-nlevel_1') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_2"><span id="filter-nlevel_2-count"></span> Level 2</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel2"><span id="filter-nlevel_2-count"></span> Level 2</button>
         {{ Form::hidden('filter-nlevel_2') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
@@ -409,16 +409,14 @@ $(document).ready(function(){
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Other</h6>
         <div class="form-group">
         <select name="filter-ncommercialdata" class="form-control col-10">
-          <option value="" selected disabled>- Commercial Data -</option>
-          <option value="ungrouped">Ungrouped</option>
+          <option value="ungrouped" selected>Ungrouped</option>
           <option value="grouped">Grouped</option>
         </select>
         </div>
         <div class="form-group">
         <select name="filter-ncommercialtype" class="form-control col-10">
-          <option value="" selected disabled>- Commercial Type -</option>
           <option value="allads">All Ads</option>
-          <option value="commercialonly">Commercial Only</option>
+          <option value="commercialonly" selected>Commercial Only</option>
         </select>
         </div>
         <hr>

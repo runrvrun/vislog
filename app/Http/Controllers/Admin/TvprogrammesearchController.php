@@ -21,27 +21,27 @@ class TvprogrammesearchController extends Controller
     public function searchnprogrammejson(Request $request)
     {
         if(isset($request->term)){
-            return Tvprogrammesearch::select('nprogramme')->distinct()->where('nprogramme','like','%'.$request->term.'%')->get();
+            return Tvprogrammesearch::select('nprogramme')->where('nprogramme','like','%'.$request->term.'%')->groupBy('nprogramme')->get();
         }else{
-            return [];
+            return Tvprogrammesearch::select('nprogramme')->take(50)->groupBy('nprogramme')->get();
         }
     }
 
-    public function searchnlevel_1json(Request $request)
+    public function searchnlevel1json(Request $request)
     {
         if(isset($request->term)){
-            return Tvprogrammesearch::select('nlevel1')->distinct()->where('nlevel1','like','%'.$request->term.'%')->get();
+            return Tvprogrammesearch::select('nlevel1')->where('nlevel1','like','%'.$request->term.'%')->groupBy('nlevel1')->get();
         }else{
-            return [];
+            return Tvprogrammesearch::select('nlevel1')->take(50)->groupBy('nlevel1')->get();
         }
     }
     
-    public function searchnlevel_2json(Request $request)
+    public function searchnlevel2json(Request $request)
     {
         if(isset($request->term)){
-            return Tvprogrammesearch::select('nlevel2')->distinct()->where('nlevel2','like','%'.$request->term.'%')->get();
+            return Tvprogrammesearch::select('nlevel2')->where('nlevel2','like','%'.$request->term.'%')->groupBy('nlevel2')->get();
         }else{
-            return [];
+            return Tvprogrammesearch::select('nlevel2')->take(50)->groupBy('nlevel2')->get();
         }
     }
 }

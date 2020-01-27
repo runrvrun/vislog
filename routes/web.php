@@ -14,15 +14,17 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/dashboard', 'Admin\DashboardController@dashboard');
     Route::get('/adsperformance', 'Admin\AdsperformanceController@index');
     Route::post('/adsperformance/indexjson', 'Admin\AdsperformanceController@indexjson');
+    Route::get('/adsperformance/search-targetaudience-json', 'Admin\TargetaudienceController@searchjson');    
     Route::get('/adsperformance/search-channel-json', 'Admin\ChannelController@searchjson');    
     Route::get('/adsperformance/search-nprogramme-json', 'Admin\TvprogrammesearchController@searchnprogrammejson');    
-    Route::get('/adsperformance/search-nlevel_1-json', 'Admin\TvprogrammesearchController@searchnlevel_1json');    
-    Route::get('/adsperformance/search-nlevel_2-json', 'Admin\TvprogrammesearchController@searchnlevel_2json');    
+    Route::get('/adsperformance/search-nlevel1-json', 'Admin\TvprogrammesearchController@searchnlevel1json');    
+    Route::get('/adsperformance/search-nlevel2-json', 'Admin\TvprogrammesearchController@searchnlevel2json');    
     Route::get('/adsperformance/search-nadvertiser-json', 'Admin\CommercialsearchController@searchnadvertiserjson');    
     Route::get('/adsperformance/search-nproduct-json', 'Admin\CommercialsearchController@searchnproductjson');    
     Route::get('/adsperformance/search-nsector-json', 'Admin\CommercialsearchController@searchnsectorjson');    
     Route::get('/adsperformance/search-ncategory-json', 'Admin\CommercialsearchController@searchncategoryjson');    
     Route::get('/adsperformance/search-nadstype-json', 'Admin\AdstypesearchController@searchnadstypejson'); 
+    Route::get('/adsperformance/search-ncopy-json', 'Admin\CommercialsearchController@searchncopyjson'); 
     Route::get('/tvads', 'Admin\VideoController@tvads');
     Route::post('/tvads/indexjson', 'Admin\VideoController@tvadsjson');
     Route::get('/tvprogramme', 'Admin\VideoController@tvprogramme');
@@ -94,5 +96,8 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/user/{a}/edit', 'Admin\UserController@edit');
     Route::patch('/user/{a}/update', 'Admin\UserController@update');
     Route::get('/user/delete/{a}', 'Admin\UserController@destroy');
+    Route::get('/role/privilegejson/{a}', 'Admin\RoleController@privilegejson');
+    Route::patch('/role/privilegesave', 'Admin\RoleController@privilegesave');
+    Route::get('/role', 'Admin\RoleController@edit');
     
 });

@@ -28,7 +28,6 @@ class AdsperformanceController extends Controller
 
     public function indexjson(Request $request)
     {
-        // dd($request->all());
         $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->subDays(1);
         $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate);
         $filterchannel = array_filter(explode(',',$request->filterchannel));
@@ -40,7 +39,7 @@ class AdsperformanceController extends Controller
         $filternsector = array_filter(explode(',',$request->filternsector));
         $filterncategory = array_filter(explode(',',$request->filterncategory));
         $filternadstype = array_filter(explode(',',$request->filternadstype));
-        $filterntargetaudience = $request->filterntargetaudience ?? '001';
+        $filterntargetaudience = $request->filterntargetaudience ?? '01';
         
         // 'date'=> ['$dateToString' => ['format' => '%d-%m-%Y', 'date' => '$date', 'timezone' => '+07:00' ]] ,
         if($request->commercialdata == 'grouped'){
@@ -84,6 +83,7 @@ class AdsperformanceController extends Controller
         if($request->filterncommercialtype == "commercialonly"){
             $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
         }
+        // dd($query->toSql());
         return datatables($query->get())
         ->addColumn('action', function ($dt) {
             return view('admin.adsperformance.action',compact('dt'));

@@ -67,9 +67,9 @@ class ChannelController extends Controller
     public function searchjson(Request $request)
     {
         if(isset($request->term)){
-            return Channel::select('channel')->distinct()->whereNotNull('channel')->where('channel','like','%'.$request->term.'%')->get();
+            return Channel::select('channel')->whereNotNull('channel')->where('channel','like','%'.$request->term.'%')->get();
         }else{
-            return Channel::select('channel')->distinct()->whereNotNull('channel')->take(50)->get();
+            return Channel::select('channel')->whereNotNull('channel')->take(50)->get();
         }
     }
 

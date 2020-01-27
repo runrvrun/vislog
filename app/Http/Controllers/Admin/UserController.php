@@ -32,7 +32,12 @@ class UserController extends Controller
         return datatables(User::get())
         ->addColumn('action', function ($dt) {
             return view('admin.user.action',compact('dt'));
-        })->toJson();
+        })
+        ->editColumn('expired_at', function ($user) 
+        {
+            return date('d-m-Y', strtotime($user->expired_at) );
+        })
+        ->toJson();
     }
 
     public function csvall()
@@ -126,13 +131,30 @@ class UserController extends Controller
         
         $requestData = $request->all();
         $date = Carbon::createFromFormat('d/m/Y H:i:s',$requestData['expired_at'].' 00:00:00')->toDateTimeString();
-        $requestData['isoexpired_at'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+        $requestData['expired_at'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
         if(!empty($requestData['password'])){
             $requestData['password'] = Hash::make($requestData['password']);
         }else{
             unset($requestData['password']);
+        }      
+        if(isset($requestData['status'])){
+            $requestData['status'] = 1;
+        }else{
+            $requestData['status'] = 0;
         }        
-        User::find($user->id)->update($requestData);
+        unset($requestData['_method']);
+        unset($requestData['_token']);
+        //add comma at end of privileges. fix for TRANS TV also selected by TRANS on filtering
+        foreach($requestData['privileges'] as $k=>$p){
+            if($k == 'startdate' || $k == 'enddate'){
+                continue;
+            }
+            if(!empty($p) && substr($p,strlen($p)-1) != ','){
+                $requestData['privileges'][$k] .= ',';
+            }
+        }
+        // dd($requestData);
+        User::where('_id',$userid)->update($requestData);
         Session::flash('message', 'User diubah'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('admin/user');

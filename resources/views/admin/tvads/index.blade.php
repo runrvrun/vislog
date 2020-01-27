@@ -199,11 +199,11 @@ $(document).ready(function(){
         if(result.length){
           $.each(result, function(k,v) {
             var curfil = $("#filter-selected").html();
-            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v + ',')+1){
+            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ',')+1){
               // previously selected, set style
-              $('#filter-modal-search-result').append( '<button class="btn search-result btn-primary mr-1" value="'+v+'">'+v+'</button>' );
+              $('#filter-modal-search-result').append( '<button class="btn search-result btn-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }else{
-              $('#filter-modal-search-result').append( '<button class="btn search-result btn-outline-primary mr-1" value="'+v+'">'+v+'</button>' );
+              $('#filter-modal-search-result').append( '<button class="btn search-result btn-outline-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }
           });
         }else{

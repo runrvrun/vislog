@@ -64,13 +64,15 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $role = Role::where('role','user')->first();
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role_id' => $role->id,
-            'expired_at' =>  "2099-12-31"
+            'role' => 'Trial',
+            'status' => 1,
+            'expired_at' =>  "2099-12-31",
+            'privileges[period_start]' =>  "2000-01-01",
+            'privileges[period_end]' =>  "2099-12-31"
         ]);
     }
 }

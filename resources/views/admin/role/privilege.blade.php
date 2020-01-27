@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('admin.layouts.app')
 
 @section('pagetitle')
-    <title>{{ config('app.name', 'Laravel') }} | Role</title>
+    <title>Role</title>
 @endsection
 
 @section('content')
@@ -19,32 +19,32 @@
           <h4 class="card-title">Role Privilege</h4>
         </div>
         <div class="card-content ">
-        {{ Form::model('Role_privilege', ['url' => ['role/privilegesave'], 'method' => 'patch']) }}
+        {{ Form::model('Role_privilege', ['url' => ['admin/role/privilegesave'], 'method' => 'patch']) }}
           <div class="card-body card-dashboard table-responsive">
             <div class="form-group row">
               <label class="col-md-3 label-control" for="role_id">@lang('Role'): </label>
               <div class="col-md-9">
-              {{ Form::select('role_id', App\Role::pluck('role','id'), $role_id ?? null, array('id'=>'role_id','class' => 'form-control')) }}
+              {{ Form::select('role_id', App\Role::pluck('role','_id'), $role_id ?? null, array('id'=>'role_id','class' => 'form-control')) }}
               </div>
             </div>    
             
             <table class="table">
               <thead>
                 <tr>
-                  <th>Halaman</th>
+                  <th>Page</th>
                   <th>Browse</th>
                   <th>Edit</th>
                   <th>Add</th>
                   <th>Delete</th>
                   </tr>
               </thead>
-              @foreach($pages as $key=>$val)
+              @foreach($item->pages as $key=>$val)
               <tr>
-                <td>{{ $val->page }}</td>
-                <td>{{ Form::checkbox('priv['.$val->id.'][browse]',1, null, array('id'=>'priv'.$val->id.'browse','class'=>'privchk form-control form-control-sm')) }}
-                <td>{{ Form::checkbox('priv['.$val->id.'][add]',1, null, array('id'=>'priv'.$val->id.'edit','class'=>'privchk form-control form-control-sm')) }}
-                <td>{{ Form::checkbox('priv['.$val->id.'][edit]',1, null, array('id'=>'priv'.$val->id.'add','class'=>'privchk form-control form-control-sm')) }}
-                <td>{{ Form::checkbox('priv['.$val->id.'][delete]',1, null, array('id'=>'priv'.$val->id.'delete','class'=>'privchk form-control form-control-sm')) }}
+                <td>{{ $key }}</td>
+                <td>{{ Form::checkbox($key.'[browse]',1, null, array('id'=>str_replace('/','_',$key).'_browse','class'=>'privchk form-control form-control-sm')) }}
+                <td>{{ Form::checkbox($key.'[add]',1, null, array('id'=>str_replace('/','_',$key).'_edit','class'=>'privchk form-control form-control-sm')) }}
+                <td>{{ Form::checkbox($key.'[edit]',1, null, array('id'=>str_replace('/','_',$key).'_add','class'=>'privchk form-control form-control-sm')) }}
+                <td>{{ Form::checkbox($key.'[delete]',1, null, array('id'=>str_replace('/','_',$key).'_delete','class'=>'privchk form-control form-control-sm')) }}
               </tr>
               @endforeach
             </table>
@@ -79,17 +79,18 @@
     var val = this.value;
     // load privilege for that role
     $.ajax({
-      url: "{{ url('/role/privilegejson') }}"+'/'+val,
+      url: "{{ url('admin/role/privilegejson') }}"+'/'+val,
       type: 'GET',
       success: function(data) {
         // uncheck all/reset
         $(".privchk").prop("checked",false);
         // check based on data
-        data.forEach(function(item) {
-          $("#priv"+item.page_id+"browse").prop("checked",item.browse);
-          $("#priv"+item.page_id+"edit").prop("checked",item.edit);
-          $("#priv"+item.page_id+"add").prop("checked",item.add);
-          $("#priv"+item.page_id+"delete").prop("checked",item.delete);
+        pages = data.pages;
+        $.each(pages,function(item) {
+          $("#"+item.replace('/','_')+"_browse").prop("checked",pages[item].browse);
+          $("#"+item.replace('/','_')+"_edit").prop("checked",pages[item].edit);
+          $("#"+item.replace('/','_')+"_add").prop("checked",pages[item].add);
+          $("#"+item.replace('/','_')+"_delete").prop("checked",pages[item].delete);
         });
       }
     });

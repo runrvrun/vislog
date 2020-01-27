@@ -215,9 +215,10 @@ class VideoController extends Controller
     public function generatevideo(Request $request)
     {
         $temppath = Config::select('value')->where('key','temp path')->first();
+        $webpath = Config::select('value')->where('key','web path')->first();
         // check if video already exist in temp
         if(file_exists($temppath->value."\\".$request->id.".mp4")){
-            return url($temppath->value."\\".$request->id.".mp4");
+            return url($webpath->value."/".$request->id.".mp4");
         }
 
         // video not exist, create
@@ -225,15 +226,12 @@ class VideoController extends Controller
         $librarypath = Config::select('value')->where('key','video path')->first();
         // get channel
         $channel = Channel::where('channel',$commercial->channel)->first();
-        if(file_exists($librarypath->value."\\channel".$channel->code)){
-            $channel = "channel".$channel->code;
-        }elseif(file_exists($librarypath->value."\\channel".substr($channel->code,1,2))){
-            $channel = "channel".substr($channel->code,1,2);
-        }
+
+        $channel = "channel".$channel->code;
         // get bumper
         $bumper = Config::select('value')->where('key','video bumper')->first();
         $bumper = $bumper->value;
-        $date = Carbon::createFromFormat('d/m/Y', $commercial->date)->format('Y_m_d');
+        $date = Carbon::createFromFormat('Y-m-d', $commercial->date)->format('Y_m_d');
         $start_video1 = Carbon::createFromFormat('H:i:s',$commercial->start_video1);
         $end_video1 = Carbon::createFromFormat('H:i:s',$commercial->end_video1);
         $start5minute = floor($start_video1->format("i") / 5)*5;
@@ -282,7 +280,7 @@ class VideoController extends Controller
             unlink($temppath->value.'\\ts2'.$request->id.'.ts');
             unlink($temppath->value.'\\join'.$request->id.'.mp4');
         }
-        return url("/temp_video/".$request->id.".mp4");
+        return url($webpath->value."/".$request->id.".mp4");
     }
 
     public function spotpairing()
