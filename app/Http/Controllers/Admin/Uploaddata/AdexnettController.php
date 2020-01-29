@@ -74,7 +74,7 @@ class AdexnettController extends Controller
             // store file to temp folder
             $file->move($upload_path,$upload_filename);
 
-            // import to database
+            // import to database 
             $imp = (new FastExcel)->configureCsv(';', '}', '\n', 'gbk')->import($upload_path.'/'.$upload_filename, function ($line) {
                 $insertData = [];
                 foreach($line as $key=>$val){
@@ -85,7 +85,6 @@ class AdexnettController extends Controller
                 }
                 return Adexnett::create($insertData);
             });
-
             $data['rowCount'] = $imp->count();
             
             unlink($upload_path.'/'.$upload_filename);

@@ -32,12 +32,15 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/video/generatevideo', 'Admin\VideoController@generatevideo');
     Route::get('/mktsummary', 'Admin\MarketingController@mktsummary');
     Route::get('/adexnett', 'Admin\MarketingController@adexnett');
+    Route::post('/adexnett/indexjson', 'Admin\MarketingController@adexnettjson');
     Route::get('/spotmatching', 'Admin\MarketingController@spotmatching');
+    Route::post('/spotmatching/indexjson', 'Admin\MarketingController@spotmatchingjson');
     /**/
     Route::get('/uploaddata/commercial', 'Admin\Uploaddata\CommercialController@index');
     Route::post('/uploaddata/commercial/upload', 'Admin\Uploaddata\CommercialController@upload');
     Route::post('/uploaddata/commercial/indexjson', 'Admin\Uploaddata\CommercialController@indexjson');
     Route::get('/uploaddata/commercial/destroymulti', 'Admin\Uploaddata\CommercialController@destroymulti');
+    Route::get('/uploaddata/commercial/csvall', 'Admin\Uploaddata\CommercialController@csvall');
     Route::get('/uploaddata/commercialgrouped', 'Admin\Uploaddata\CommercialgroupedController@index');
     Route::post('/uploaddata/commercialgrouped/upload', 'Admin\Uploaddata\CommercialgroupedController@upload');
     Route::post('/uploaddata/commercialgrouped/indexjson', 'Admin\Uploaddata\CommercialgroupedController@indexjson');
