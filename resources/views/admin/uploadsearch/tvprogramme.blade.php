@@ -111,8 +111,8 @@ $(document).ready(function() {
           { data: 'nlevel1', name: 'nlevel1' },
           { data: 'nlevel2', name: 'nlevel2' },
           { data: 'nprogramme', name: 'nprogramme' },
-          { data: 'ilevel1', name: 'ilevel1' },
-          { data: 'ilevel2', name: 'ilevel2' },
+          { data: 'ilevel_1', name: 'ilevel_1' },
+          { data: 'ilevel_2', name: 'ilevel_2' },
           { data: 'iprogramme', name: 'iprogramme' },
         ],
         dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +

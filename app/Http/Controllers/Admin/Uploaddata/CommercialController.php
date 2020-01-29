@@ -121,6 +121,7 @@ class CommercialController extends Controller
 
     public function csvall()
     {
+        $exp = [];
         $export = Commercial::raw(function($collection)
         {
             return $collection->aggregate([
@@ -144,7 +145,7 @@ class CommercialController extends Controller
             $exp[$key]['date'] = $val->_id->date;
             $exp[$key]['count'] = $val->count;
         }
-        $filename = 'vislog-commercial-upload.csv';
+        $filename = 'vislog-commercial-uploaded.csv';
         $temp = 'uploads/temp/'.$filename;
         (new FastExcel($exp))->export($temp);
         $headers = [

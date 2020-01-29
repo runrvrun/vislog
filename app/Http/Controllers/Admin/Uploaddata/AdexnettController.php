@@ -101,11 +101,44 @@ class AdexnettController extends Controller
     
     public function destroymulti(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $dates = explode(",",htmlentities($request->date));
         foreach($dates as $date){
-            Tvprogramme::where('date',$date)->delete();
+            Adexnett::where('date',$date)->delete();
         }
         return redirect('admin/uploaddata/adexnett');
+    }
+
+    public function csvall()
+    {
+        $exp = [];
+        $export = Adexnett::raw(function($collection)
+        {
+            return $collection->aggregate([
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'year'=>'$year',
+                            'month'=>'$month',
+                        ],
+                        'count' => [
+                            '$sum'  => 1
+                        ]
+                    ]
+                ]
+            ]);
+        });
+        foreach($export as $key=>$val){
+            $exp[$key]['year'] = $val->_id->year;
+            $exp[$key]['month'] = $val->_id->month;
+            $exp[$key]['count'] = $val->count;
+        }
+        $filename = 'vislog-adexnett-upload.csv';
+        $temp = 'uploads/temp/'.$filename;
+        (new FastExcel($exp))->export($temp);
+        $headers = [
+            'Content-Type: text/csv',
+            ];
+        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);
     }
 }

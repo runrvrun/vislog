@@ -84,4 +84,16 @@ class TvprogrammeController extends Controller
             return response(['message'=>'Upload failed'],400);
         }
     }
+
+    public function csvall()
+    {
+        $export = Tvprogrammesearch::all();
+        $filename = 'vislog-tvprogramme-search-uploaded.csv';
+        $temp = 'uploads/temp/'.$filename;
+        (new FastExcel($export))->export($temp);
+        $headers = [
+            'Content-Type: text/csv',
+            ];
+        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);
+    }
 }

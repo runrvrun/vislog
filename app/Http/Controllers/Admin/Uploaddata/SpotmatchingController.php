@@ -117,4 +117,39 @@ class SpotmatchingController extends Controller
         }
         return redirect('admin/uploaddata/spotmatching');
     }
+
+    public function csvall()
+    {
+        $exp = [];
+        $export = Spotmatching::raw(function($collection)
+        {
+            return $collection->aggregate([
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'year'=>'$year',
+                            'month'=>'$month',
+                            'date'=>'$date',
+                        ],
+                        'count' => [
+                            '$sum'  => 1
+                        ]
+                    ]
+                ]
+            ]);
+        });
+        foreach($export as $key=>$val){
+            $exp[$key]['year'] = $val->_id->year;
+            $exp[$key]['month'] = $val->_id->month;
+            $exp[$key]['date'] = $val->_id->date;
+            $exp[$key]['count'] = $val->count;
+        }
+        $filename = 'vislog-spotmatching-uploaded.csv';
+        $temp = 'uploads/temp/'.$filename;
+        (new FastExcel($exp))->export($temp);
+        $headers = [
+            'Content-Type: text/csv',
+            ];
+        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);
+    }
 }

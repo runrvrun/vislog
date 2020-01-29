@@ -95,4 +95,16 @@ class CommercialController extends Controller
         Session::flash('alert-class', 'alert-success'); 
         return redirect('admin/uploadsearch/commercial');
     }
+
+    public function csvall()
+    {
+        $export = Commercialsearch::all();
+        $filename = 'vislog-commercial-search-uploaded.csv';
+        $temp = 'uploads/temp/'.$filename;
+        (new FastExcel($export))->export($temp);
+        $headers = [
+            'Content-Type: text/csv',
+            ];
+        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);
+    }
 }

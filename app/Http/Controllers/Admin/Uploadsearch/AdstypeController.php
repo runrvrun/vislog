@@ -96,4 +96,16 @@ class AdstypeController extends Controller
         Session::flash('alert-class', 'alert-success'); 
         return redirect('admin/uploadsearch/adstype');
     }
+
+    public function csvall()
+    {
+        $export = Adstypesearch::all();
+        $filename = 'vislog-adstype-search-uploaded.csv';
+        $temp = 'uploads/temp/'.$filename;
+        (new FastExcel($export))->export($temp);
+        $headers = [
+            'Content-Type: text/csv',
+            ];
+        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);
+    }
 }
