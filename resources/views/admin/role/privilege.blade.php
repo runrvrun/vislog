@@ -87,10 +87,10 @@
         // check based on data
         pages = data.pages;
         $.each(pages,function(item) {
-          $("#"+item.replace('/','_')+"_browse").prop("checked",pages[item].browse);
-          $("#"+item.replace('/','_')+"_edit").prop("checked",pages[item].edit);
-          $("#"+item.replace('/','_')+"_add").prop("checked",pages[item].add);
-          $("#"+item.replace('/','_')+"_delete").prop("checked",pages[item].delete);
+          $("#"+item.replace(/\//g,'_')+"_browse").prop("checked",pages[item].browse);
+          $("#"+item.replace(/\//g,'_')+"_edit").prop("checked",pages[item].edit);
+          $("#"+item.replace(/\//g,'_')+"_add").prop("checked",pages[item].add);
+          $("#"+item.replace(/\//g,'_')+"_delete").prop("checked",pages[item].delete);
         });
       }
     });

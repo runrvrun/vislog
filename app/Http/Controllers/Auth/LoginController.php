@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Session;
 use Lang;
+use App\Log;
+use App\Role;
+use App\User;
 
 class LoginController extends Controller
 {
@@ -52,16 +55,25 @@ class LoginController extends Controller
                     'email' => 'User already expire',
                 ]);
             }
-            // $priv = \App\Role_privilege::where('role_id',Auth::user()->role_id)->get();
-            // foreach($priv as $key=>$pri){
-            //     $privilege[$pri->page_id] = ['browse'=>$pri->browse,'add'=>$pri->add,'edit'=>$pri->edit,'delete'=>$pri->delete];
-            // }
-            // session(['privilege'=>$privilege]);
+            // check active
+            if (!$user->status) {                    
+                Auth::logout();
+                return redirect('login')->withErrors([
+                    'email' => 'User inactive',
+                ]);
+            }
+            $role = Role::where('role',$user->role)->first();
+            session(['privilege'=>$role->pages]);
+            Log::create(['user_id'=>Auth::user()->id,'action'=>'login','date'=>date('Y-m-d')]);
             return redirect()->intended('/admin');
         }else{
             return redirect('login')->withErrors([
                 'email' => Lang::get('auth.failed'),
             ]);;
         }
+    }
+
+    protected function loggedOut(Request $request) {
+        return redirect('/admin');
     }
 }

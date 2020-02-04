@@ -13,6 +13,8 @@ use \Carbon\Carbon;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Session;
+use App\Log;
+use Auth;
 
 class VideoController extends Controller
 {
@@ -145,6 +147,19 @@ class VideoController extends Controller
         if($request->filterncommercialtype == "commercialonly"){
             $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
         }
+        // add filter by user privilege
+        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
+        if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(',',Auth::user()->privileges['nsector']));
+        if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(',',Auth::user()->privileges['ncategory']??'%%'));
+        if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(',',Auth::user()->privileges['nproduct']??'%%'));
+        if(!empty(Auth::user()->privileges['nadvertiser']))  $query->whereIn('nadvertiser',explode(',',Auth::user()->privileges['nadvertiser']??'%%'));
+        if(!empty(Auth::user()->privileges['ncopy']))  $query->whereIn('ncopy',explode(',',Auth::user()->privileges['ncopy']??'%%'));
+        if(!empty(Auth::user()->privileges['nadstype']))  $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']??'%%'));
+        if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']??'%%'));
+        if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel1']??'%%'));
+        if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel2']??'%%'));
+        if(!empty(Auth::user()->privileges['nprogramme'])) $query->whereIn('nprogramme',explode(',',Auth::user()->privileges['nprogramme']??'%%'));
+
         return datatables($query->get())
         ->addColumn('action', function ($dt) {
             return view('admin.adsperformance.action',compact('dt'));
@@ -206,6 +221,19 @@ class VideoController extends Controller
         if($request->filterncommercialtype == "commercialonly"){
             $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
         }
+        // add filter by user privilege
+        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
+        if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(',',Auth::user()->privileges['nsector']));
+        if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(',',Auth::user()->privileges['ncategory']??'%%'));
+        if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(',',Auth::user()->privileges['nproduct']??'%%'));
+        if(!empty(Auth::user()->privileges['nadvertiser']))  $query->whereIn('nadvertiser',explode(',',Auth::user()->privileges['nadvertiser']??'%%'));
+        if(!empty(Auth::user()->privileges['ncopy']))  $query->whereIn('ncopy',explode(',',Auth::user()->privileges['ncopy']??'%%'));
+        if(!empty(Auth::user()->privileges['nadstype']))  $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']??'%%'));
+        if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']??'%%'));
+        if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel1']??'%%'));
+        if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel2']??'%%'));
+        if(!empty(Auth::user()->privileges['nprogramme'])) $query->whereIn('nprogramme',explode(',',Auth::user()->privileges['nprogramme']??'%%'));
+
         return datatables($query->get())
         ->addColumn('action', function ($dt) {
             return view('admin.adsperformance.action',compact('dt'));
@@ -218,6 +246,7 @@ class VideoController extends Controller
         $webpath = Config::select('value')->where('key','web path')->first();
         // check if video already exist in temp
         if(file_exists($temppath->value."\\".$request->id.".mp4")){
+            Log::create(['user_id'=>Auth::user()->id,'action'=>'play','page'=>$request->page??'','target'=>$webpath->value."/".$request->id.".mp4"]);
             return url($webpath->value."/".$request->id.".mp4");
         }
 
@@ -280,6 +309,7 @@ class VideoController extends Controller
             unlink($temppath->value.'\\ts2'.$request->id.'.ts');
             unlink($temppath->value.'\\join'.$request->id.'.mp4');
         }
+        Log::create(['user_id'=>Auth::user()->id,'action'=>'play','page'=>$request->page??'','target'=>$webpath->value."/".$request->id.".mp4"]);
         return url($webpath->value."/".$request->id.".mp4");
     }
 
@@ -354,5 +384,10 @@ class VideoController extends Controller
         Session::flash('message', 'Video Setting diubah'); 
         Session::flash('alert-class', 'alert-success'); 
         return redirect('admin/videodata');
+    }
+
+    public function logdownload(Request $request)
+    {
+        Log::create(['user_id'=>Auth::user()->id,'action'=>'download','page'=>$request->page,'target'=>$request->target]);
     }
 }

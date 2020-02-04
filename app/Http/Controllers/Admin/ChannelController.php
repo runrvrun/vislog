@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Channel;
 use Session;
+use Auth; 
 
 class ChannelController extends Controller
 {
@@ -67,9 +68,13 @@ class ChannelController extends Controller
     public function searchjson(Request $request)
     {
         if(isset($request->term)){
-            return Channel::select('channel')->whereNotNull('channel')->where('channel','like','%'.$request->term.'%')->get();
+            $query = Channel::select('channel')->whereNotNull('channel')->where('channel','like','%'.$request->term.'%');
+            $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']??'%%'));
+            return $query->get();
         }else{
-            return Channel::select('channel')->whereNotNull('channel')->take(50)->get();
+            $query = Channel::select('channel')->whereNotNull('channel')->take(50);
+            $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']??'%%'));
+            return $query->get();
         }
     }
 

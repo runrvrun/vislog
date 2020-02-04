@@ -112,7 +112,7 @@
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="date">Channel: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[nchannel]', old('privileges[nchannel]',$item->privileges->nchannel ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Channel', 'data-filter'=>'channel','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[channel]', old('privileges[channel]',$item->privileges->channel ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Channel', 'data-filter'=>'channel','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">

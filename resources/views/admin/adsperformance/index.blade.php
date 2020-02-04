@@ -178,6 +178,7 @@ $(document).ready(function(){
     $('#search-term').val('');
     $("#filter-modal").modal();
     // show existing filter in modal footer
+    $("#filter-selected").html('');
     $("#filter-selected").html($("input[name=filter-"+filter+"]").val());
     // if filter by channel, load directly
     if(filter=="channel"){
@@ -244,6 +245,7 @@ $(document).ready(function(){
         url:"{{ url('/admin/video/generatevideo') }}",
         data:{
           id: $(this).data("id"),
+          page: window.location.href,
         },
         success:function(response) {
           videopath = response;
@@ -255,6 +257,16 @@ $(document).ready(function(){
        error:function(){
         console.log("error getting video path");
        }
+    });
+  });
+  $("#downloadvideo").click(function(){
+    $.ajax({
+        url:"{{ url('/admin/video/logdownload') }}",
+        data:{
+          id: $(this).data("id"),
+          page: window.location.href,
+          target: $(this).attr('href')
+        }
     });
   });
 }); 
@@ -287,8 +299,8 @@ $(document).ready(function(){
             d.enddate = $('#enddate').val();
             d.filterchannel = $("input[name=filter-channel]").val();
             d.filternprogramme = $("input[name=filter-nprogramme]").val();
-            d.filternlevel_1 = $("input[name=filter-nlevel_1]").val();
-            d.filternlevel_2 = $("input[name=filter-nlevel_2]").val();
+            d.filternlevel_1 = $("input[name=filter-nlevel1]").val();
+            d.filternlevel_2 = $("input[name=filter-nlevel2]").val();
             d.filternadvertiser = $("input[name=filter-nadvertiser]").val();
             d.filternproduct = $("input[name=filter-nproduct]").val();
             d.filternsector = $("input[name=filter-nsector]").val();
@@ -386,10 +398,10 @@ $(document).ready(function(){
         {{ Form::hidden('filter-channel') }}
         <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> Programme</button>
         {{ Form::hidden('filter-nprogramme') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel1"><span id="filter-nlevel_1-count"></span> Level 1</button>
-        {{ Form::hidden('filter-nlevel_1') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel2"><span id="filter-nlevel_2-count"></span> Level 2</button>
-        {{ Form::hidden('filter-nlevel_2') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel1"><span id="filter-nlevel1-count"></span> Level 1</button>
+        {{ Form::hidden('filter-nlevel1') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel2"><span id="filter-nlevel2-count"></span> Level 2</button>
+        {{ Form::hidden('filter-nlevel2') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
         <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> Advertiser</button>

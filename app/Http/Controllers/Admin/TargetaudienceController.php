@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Targetaudience;
 use Session;
+use Auth; 
 
 class TargetaudienceController extends Controller
 {
@@ -67,9 +68,13 @@ class TargetaudienceController extends Controller
     public function searchjson(Request $request)
     {
         if(isset($request->term)){
-            return Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->where('targetaudience','like','%'.$request->term.'%')->groupBy('targetaudience')->get();
+            $query = Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->where('targetaudience','like','%'.$request->term.'%')->groupBy('targetaudience');
+            $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']??'%%'));
+            return $query->get();
         }else{
-            return Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->take(50)->groupBy('targetaudience')->get();
+            $query = Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->take(50)->groupBy('targetaudience');
+            $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']??'%%'));
+            return $query->get();
         }
     }
 }

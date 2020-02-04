@@ -30,6 +30,7 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/tvprogramme', 'Admin\VideoController@tvprogramme');
     Route::post('/tvprogramme/indexjson', 'Admin\VideoController@tvprogrammejson');
     Route::get('/video/generatevideo', 'Admin\VideoController@generatevideo');
+    Route::get('/video/logdownload', 'Admin\VideoController@logdownload');
     Route::get('/mktsummary', 'Admin\MarketingController@mktsummary');
     Route::get('/adexnett', 'Admin\MarketingController@adexnett');
     Route::post('/adexnett/indexjson', 'Admin\MarketingController@adexnettjson');

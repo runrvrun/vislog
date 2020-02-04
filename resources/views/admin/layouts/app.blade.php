@@ -28,7 +28,6 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/fonts/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/perfect-scrollbar.min.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/prism.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/chartist.min.css">
     <!-- END VENDOR CSS-->
     <!-- BEGIN APEX CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/css/app.css">
@@ -59,54 +58,51 @@
         <div class="sidebar-content">
           <div class="nav-container">
             <ul id="main-menu-navigation" data-menu="menu-navigation" data-scroll-to-active="true" class="navigation navigation-main">
-              <li class=" home-nav nav-item"><a href="{{ url('/admin/highlight') }}"><i class="ft-award"></i><span data-i18n="" class="menu-title">Highlight</span></a></li>
-              <li class=" home-nav nav-item"><a href="{{ url('/admin/dashboard') }}"><i class="ft-bar-chart-2"></i><span data-i18n="" class="menu-title">Dashboard</span></a></li>
-              <li class=" nav-item"><a href="{{ url('/admin/adsperformance') }}"><i class="ft-activity"></i><span data-i18n="" class="menu-title">Ads Performance</span></a>
-              </li>
+              @if(session('privilege')['admin/highlight']['browse'] ?? 0)<li class=" home-nav nav-item"><a href="{{ url('/admin/highlight') }}"><i class="ft-award"></i><span data-i18n="" class="menu-title">Highlight</span></a></li>@endif
+              @if(session('privilege')['admin/dashboard']['browse'] ?? 0)<li class=" home-nav nav-item"><a href="{{ url('/admin/dashboard') }}"><i class="ft-bar-chart-2"></i><span data-i18n="" class="menu-title">Dashboard</span></a></li>@endif
+              @if(session('privilege')['admin/adsperformance']['browse'] ?? 0)<li class=" nav-item"><a href="{{ url('/admin/adsperformance') }}"><i class="ft-activity"></i><span data-i18n="" class="menu-title">Ads Performance</span></a></li>@endif
               <li class="has-sub nav-item" id="cliplibrary"><a href="#"><i class="ft-film"></i><span data-i18n="" class="menu-title">Clip Library</span></a>
                 <ul class="menu-content">
-                  <li><a href="{{ url('/admin/tvads') }}" class="menu-item"><i class="ft-monitor"></i>TV Ads</a></li>
-                  <li><a href="{{ url('/admin/tvprogramme') }}" class="menu-item"><i class="ft-play-circle"></i>TV Programme</a></li>
+                @if(session('privilege')['admin/tvads']['browse'] ?? 0)<li><a href="{{ url('/admin/tvads') }}" class="menu-item"><i class="ft-monitor"></i>TV Ads</a></li>@endif
+                  @if(session('privilege')['admin/tvprogramme']['browse'] ?? 0)<li><a href="{{ url('/admin/tvprogramme') }}" class="menu-item"><i class="ft-play-circle"></i>TV Programme</a></li>@endif
                 </ul>
               </li>
               <li class="has-sub nav-item" id="marketingtools"><a href="#"><i class="ft-phone-call"></i><span data-i18n="" class="menu-title">Marketing Tools</span></a>
                 <ul class="menu-content">
-                  <li><a href="{{ url('/admin/mktsummary') }}" class="menu-item"><i class="ft-aperture"></i>Summary</a></li>
-                  <li><a href="{{ url('/admin/adexnett') }}" class="menu-item"><i class="ft-target"></i>Adex Nett</a></li>
-                  <li><a href="{{ url('/admin/spotmatching') }}" class="menu-item"><i class="ft-check-circle"></i>Spot Matching</a></li>
+                @if(session('privilege')['admin/mktsummary']['browse'] ?? 0)<li><a href="{{ url('/admin/mktsummary') }}" class="menu-item"><i class="ft-aperture"></i>Summary</a></li>@endif
+                  @if(session('privilege')['admin/adexnett']['browse'] ?? 0)<li><a href="{{ url('/admin/adexnett') }}" class="menu-item"><i class="ft-target"></i>Adex Nett</a></li>@endif
+                  @if(session('privilege')['admin/spotmatching']['browse'] ?? 0)<li><a href="{{ url('/admin/spotmatching') }}" class="menu-item"><i class="ft-check-circle"></i>Spot Matching</a></li>@endif
                 </ul>
               </li>
               <li class="has-sub nav-item" id="administrator"><a href="#"><i class="ft-aperture"></i><span data-i18n="" class="menu-title">Administrator</span></a>
                 <ul class="menu-content">
                   <li class="has-sub nav-item" id="administrator"><a href="#"><i class="ft-upload-cloud"></i><span data-i18n="" class="menu-title">Upload Data</span></a>
                     <ul class="menu-content">
-                      <li><a href="{{ url('/admin/uploaddata/commercial') }}" class="menu-item"><i class="ft-upload-cloud"></i>Commercial</a></li>
-                      <li><a href="{{ url('/admin/uploaddata/commercialgrouped') }}" class="menu-item"><i class="ft-upload-cloud"></i>Commercial Grouped</a></li>
-                      <li><a href="{{ url('/admin/uploaddata/tvprogramme') }}" class="menu-item"><i class="ft-upload-cloud"></i>TV Programme</a></li>
-                      <li><a href="{{ url('/admin/uploaddata/adexnett') }}" class="menu-item"><i class="ft-upload-cloud"></i>Adex Nett</a></li>
-                      <li><a href="{{ url('/admin/uploaddata/spotmatching') }}" class="menu-item"><i class="ft-upload-cloud"></i>Spot Matching</a></li>
-                      <li><a href="{{ url('/admin/uploaddata/spotunpaired') }}" class="menu-item"><i class="ft-upload-cloud"></i>Spot Unpaired</a></li>
+                      @if(session('privilege')['admin/uploaddata/commercial']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/commercial') }}" class="menu-item"><i class="ft-upload-cloud"></i>Commercial</a></li>@endif
+                      @if(session('privilege')['admin/uploaddata/commercialgrouped']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/commercialgrouped') }}" class="menu-item"><i class="ft-upload-cloud"></i>Commercial Grouped</a></li>@endif
+                      @if(session('privilege')['admin/uploaddata/tvprogramme']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/tvprogramme') }}" class="menu-item"><i class="ft-upload-cloud"></i>TV Programme</a></li>@endif
+                      @if(session('privilege')['admin/uploaddata/adexnett']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/adexnett') }}" class="menu-item"><i class="ft-upload-cloud"></i>Adex Nett</a></li>@endif
+                      @if(session('privilege')['admin/uploaddata/spotmatching']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/spotmatching') }}" class="menu-item"><i class="ft-upload-cloud"></i>Spot Matching</a></li>@endif
+                      @if(session('privilege')['admin/uploaddata/spotunpaired']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/spotunpaired') }}" class="menu-item"><i class="ft-upload-cloud"></i>Spot Unpaired</a></li>@endif
                     </ul>
                   </li>
                   <li class="has-sub nav-item" id="administrator"><a href="#"><i class="ft-zoom-in"></i><span data-i18n="" class="menu-title">Search Data</span></a>
                     <ul class="menu-content">
-                      <li><a href="{{ url('/admin/uploadsearch/commercial') }}" class="menu-item"><i class="ft-zoom-in"></i>Commercial</a></li>
-                      <li><a href="{{ url('/admin/uploadsearch/tvprogramme') }}" class="menu-item"><i class="ft-zoom-in"></i>TV Programme</a></li>
-                      <li><a href="{{ url('/admin/uploadsearch/adstype') }}" class="menu-item"><i class="ft-zoom-in"></i>Ads Type</a></li>
+                      @if(session('privilege')['admin/uploadsearch/commercial']['browse'] ?? 0)<li><a href="{{ url('/admin/uploadsearch/commercial') }}" class="menu-item"><i class="ft-zoom-in"></i>Commercial</a></li>@endif
+                      @if(session('privilege')['admin/uploadsearch/tvprogramme']['browse'] ?? 0)<li><a href="{{ url('/admin/uploadsearch/tvprogramme') }}" class="menu-item"><i class="ft-zoom-in"></i>TV Programme</a></li>@endif
+                      @if(session('privilege')['admin/uploadsearch/adstype']['browse'] ?? 0)<li><a href="{{ url('/admin/uploadsearch/adstype') }}" class="menu-item"><i class="ft-zoom-in"></i>Ads Type</a></li>@endif
                     </ul>
                   </li>
-                  <li><a href="{{ url('/admin/spotpairing') }}" class="menu-item"><i class="ft-voicemail"></i>Spot Pairing</a></li>
-                  <li><a href="{{ url('/admin/videodata') }}" class="menu-item"><i class="ft-video"></i>Video Data</a></li>
-                  <li><a href="{{ url('/admin/targetaudience') }}" class="menu-item"><i class="ft-star"></i>Target Audiece</a></li>
-                  <li><a href="{{ url('/admin/channel') }}" class="menu-item"><i class="ft-tv"></i>Channel</a></li>
+                  @if(session('privilege')['admin/spotpairing']['browse'] ?? 0)<li><a href="{{ url('/admin/spotpairing') }}" class="menu-item"><i class="ft-voicemail"></i>Spot Pairing</a></li>@endif
+                  @if(session('privilege')['admin/videodata']['browse'] ?? 0)<li><a href="{{ url('/admin/videodata') }}" class="menu-item"><i class="ft-video"></i>Video Data</a></li>@endif
+                  @if(session('privilege')['admin/targetaudience']['browse'] ?? 0)<li><a href="{{ url('/admin/targetaudience') }}" class="menu-item"><i class="ft-star"></i>Target Audience</a></li>@endif
+                  @if(session('privilege')['admin/channel']['browse'] ?? 0)<li><a href="{{ url('/admin/channel') }}" class="menu-item"><i class="ft-tv"></i>Channel</a></li>@endif
                 </ul>
               </li>
               <li class="has-sub nav-item" id="usermgt"><a href="#"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">User Management</span></a>
                 <ul class="menu-content">
-                  <li><a href="{{ url('/admin/user') }}" class="menu-item"><i class="ft-user"></i>User</a>
-                  </li>
-                  <li><a href="{{ url('/admin/role') }}" class="menu-item"><i class="ft-users"></i>Role</a>
-                  </li>
+                  @if(session('privilege')['admin/user']['browse'] ?? 0)<li><a href="{{ url('/admin/user') }}" class="menu-item"><i class="ft-user"></i>User</a></li>@endif
+                  @if(session('privilege')['admin/role']['browse'] ?? 0)<li><a href="{{ url('/admin/role') }}" class="menu-item"><i class="ft-users"></i>Role</a></li>@endif
                 </ul>
               </li>
             </ul>
@@ -167,7 +163,7 @@
         <!-- BEGIN : Footer-->
         <footer class="footer footer-static footer-light">
         <p class="pull-left clearfix text-muted text-sm-center px-2">
-          <span>Copyright  &copy; 2019 Vislog, All rights reserved. </span>
+          <span>Copyright  &copy; 2019 VISLOG - Integrated Advertising Analysis & Monitoring Tools. </span>
           <span style="font-size:6px;">Powered by <a href="http://arfianagus.com/">arfianagus.com</a> </span>
         </p>
         </footer>

@@ -15,7 +15,7 @@
         <div class="card-body pt-2 pb-0">
           <div class="media">
             <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">2156</h3>
+              <h3 class="font-large-1 mb-0">{{ $data['total_user'] }}</h3>
               <span>Total User</span>
             </div>
             <div class="media-right white text-right">
@@ -34,7 +34,7 @@
         <div class="card-body pt-2 pb-0">
           <div class="media">
             <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">1567</h3>
+              <h3 class="font-large-1 mb-0">{{ $data['total_access'] }}</h3>
               <span>Total Access</span>
             </div>
             <div class="media-right white text-right">
@@ -55,8 +55,8 @@
         <div class="card-body pt-2 pb-0">
           <div class="media">
             <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">4566</h3>
-              <span>Average User Per Day</span>
+              <h3 class="font-large-1 mb-0">{{ $data['avg_user_day'] }}</h3>
+              <span>Avg User Per Day</span>
             </div>
             <div class="media-right white text-right">
               <i class="icon-graph font-large-1"></i>
@@ -74,8 +74,8 @@
         <div class="card-body pt-2 pb-0">
           <div class="media">
             <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">8695</h3>
-              <span>Total Video Download</span>
+              <h3 class="font-large-1 mb-0">{{ $data['total_download'] }}</h3>
+              <span>Total Download</span>
             </div>
             <div class="media-right white text-right">
               <i class="icon-cloud-download font-large-1"></i>
@@ -95,12 +95,11 @@
   <div class="col-sm-12">
     <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Number of User</h4>
+        <h4 class="card-title">Daily Users</h4>
       </div>
       <div class="card-content">
         <div class="card-body">
-          <div id="line-area" class="height-350 lineArea">
-          <svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="100%" class="ct-chart-line" style="width: 100%; height: 100%;"><g class="ct-grids"><line y1="315" y2="315" x1="50" x2="893.3333740234375" class="ct-grid ct-vertical"></line><line y1="255" y2="255" x1="50" x2="893.3333740234375" class="ct-grid ct-vertical"></line><line y1="195" y2="195" x1="50" x2="893.3333740234375" class="ct-grid ct-vertical"></line><line y1="135" y2="135" x1="50" x2="893.3333740234375" class="ct-grid ct-vertical"></line><line y1="75" y2="75" x1="50" x2="893.3333740234375" class="ct-grid ct-vertical"></line><line y1="15" y2="15" x1="50" x2="893.3333740234375" class="ct-grid ct-vertical"></line></g><g><g class="ct-series ct-series-a"><path d="M50,315L50,315C90.159,275,130.317,195,170.476,195C210.635,195,250.794,255,290.952,255C331.111,255,371.27,45,411.429,45C451.587,45,491.746,195,531.905,195C572.064,195,612.222,99,652.381,99C692.54,99,732.698,154,772.857,189C813.016,224,853.175,273,893.333,315L893.333,315Z" class="ct-area"></path><path d="M50,315C90.159,275,130.317,195,170.476,195C210.635,195,250.794,255,290.952,255C331.111,255,371.27,45,411.429,45C451.587,45,491.746,195,531.905,195C572.064,195,612.222,99,652.381,99C692.54,99,732.698,154,772.857,189C813.016,224,853.175,273,893.333,315" class="ct-line"></path><line x1="50" y1="315" x2="50.01" y2="315" class="ct-point" ct:value="0"></line><line x1="170.4761962890625" y1="195" x2="170.4861962890625" y2="195" class="ct-point" ct:value="20"></line><line x1="290.952392578125" y1="255" x2="290.962392578125" y2="255" class="ct-point" ct:value="10"></line><line x1="411.4285888671875" y1="45" x2="411.4385888671875" y2="45" class="ct-point" ct:value="45"></line><line x1="531.90478515625" y1="195" x2="531.91478515625" y2="195" class="ct-point" ct:value="20"></line><line x1="652.3809814453125" y1="99" x2="652.3909814453125" y2="99" class="ct-point" ct:value="36"></line><line x1="772.857177734375" y1="189" x2="772.867177734375" y2="189" class="ct-point" ct:value="21"></line><line x1="893.3333740234375" y1="315" x2="893.3433740234375" y2="315" class="ct-point" ct:value="0"></line></g><g class="ct-series ct-series-b"><path d="M50,315L50,315C90.159,305,130.317,300.455,170.476,285C210.635,269.545,250.794,183,290.952,183C331.111,183,371.27,231,411.429,231C451.587,231,491.746,123,531.905,123C572.064,123,612.222,243,652.381,243C692.54,243,732.698,147,772.857,147C813.016,147,853.175,259,893.333,315L893.333,315Z" class="ct-area"></path><path d="M50,315C90.159,305,130.317,300.455,170.476,285C210.635,269.545,250.794,183,290.952,183C331.111,183,371.27,231,411.429,231C451.587,231,491.746,123,531.905,123C572.064,123,612.222,243,652.381,243C692.54,243,732.698,147,772.857,147C813.016,147,853.175,259,893.333,315" class="ct-line"></path><line x1="50" y1="315" x2="50.01" y2="315" class="ct-point" ct:value="0"></line><line x1="170.4761962890625" y1="285" x2="170.4861962890625" y2="285" class="ct-point" ct:value="5"></line><line x1="290.952392578125" y1="183" x2="290.962392578125" y2="183" class="ct-point" ct:value="22"></line><line x1="411.4285888671875" y1="231" x2="411.4385888671875" y2="231" class="ct-point" ct:value="14"></line><line x1="531.90478515625" y1="123" x2="531.91478515625" y2="123" class="ct-point" ct:value="32"></line><line x1="652.3809814453125" y1="243" x2="652.3909814453125" y2="243" class="ct-point" ct:value="12"></line><line x1="772.857177734375" y1="147" x2="772.867177734375" y2="147" class="ct-point" ct:value="28"></line><line x1="893.3333740234375" y1="315" x2="893.3433740234375" y2="315" class="ct-point" ct:value="0"></line></g></g><g class="ct-labels"><foreignObject style="overflow: visible;" x="50" y="320" width="120.4761962890625" height="20"><span class="ct-label ct-horizontal ct-end" xmlns="http://www.w3.org/2000/xmlns/" style="width: 120px; height: 20px;">1</span></foreignObject><foreignObject style="overflow: visible;" x="170.4761962890625" y="320" width="120.4761962890625" height="20"><span class="ct-label ct-horizontal ct-end" xmlns="http://www.w3.org/2000/xmlns/" style="width: 120px; height: 20px;">2</span></foreignObject><foreignObject style="overflow: visible;" x="290.952392578125" y="320" width="120.4761962890625" height="20"><span class="ct-label ct-horizontal ct-end" xmlns="http://www.w3.org/2000/xmlns/" style="width: 120px; height: 20px;">3</span></foreignObject><foreignObject style="overflow: visible;" x="411.4285888671875" y="320" width="120.4761962890625" height="20"><span class="ct-label ct-horizontal ct-end" xmlns="http://www.w3.org/2000/xmlns/" style="width: 120px; height: 20px;">4</span></foreignObject><foreignObject style="overflow: visible;" x="531.90478515625" y="320" width="120.4761962890625" height="20"><span class="ct-label ct-horizontal ct-end" xmlns="http://www.w3.org/2000/xmlns/" style="width: 120px; height: 20px;">5</span></foreignObject><foreignObject style="overflow: visible;" x="652.3809814453125" y="320" width="120.4761962890625" height="20"><span class="ct-label ct-horizontal ct-end" xmlns="http://www.w3.org/2000/xmlns/" style="width: 120px; height: 20px;">6</span></foreignObject><foreignObject style="overflow: visible;" x="772.857177734375" y="320" width="120.4761962890625" height="20"><span class="ct-label ct-horizontal ct-end" xmlns="http://www.w3.org/2000/xmlns/" style="width: 120px; height: 20px;">7</span></foreignObject><foreignObject style="overflow: visible;" x="893.3333740234375" y="320" width="30" height="20"><span class="ct-label ct-horizontal ct-end" xmlns="http://www.w3.org/2000/xmlns/" style="width: 30px; height: 20px;">8</span></foreignObject><foreignObject style="overflow: visible;" y="255" x="10" height="60" width="30"><span class="ct-label ct-vertical ct-start" xmlns="http://www.w3.org/2000/xmlns/" style="height: 60px; width: 30px;">0</span></foreignObject><foreignObject style="overflow: visible;" y="195" x="10" height="60" width="30"><span class="ct-label ct-vertical ct-start" xmlns="http://www.w3.org/2000/xmlns/" style="height: 60px; width: 30px;">10</span></foreignObject><foreignObject style="overflow: visible;" y="135" x="10" height="60" width="30"><span class="ct-label ct-vertical ct-start" xmlns="http://www.w3.org/2000/xmlns/" style="height: 60px; width: 30px;">20</span></foreignObject><foreignObject style="overflow: visible;" y="75" x="10" height="60" width="30"><span class="ct-label ct-vertical ct-start" xmlns="http://www.w3.org/2000/xmlns/" style="height: 60px; width: 30px;">30</span></foreignObject><foreignObject style="overflow: visible;" y="15" x="10" height="60" width="30"><span class="ct-label ct-vertical ct-start" xmlns="http://www.w3.org/2000/xmlns/" style="height: 60px; width: 30px;">40</span></foreignObject><foreignObject style="overflow: visible;" y="-15" x="10" height="30" width="30"><span class="ct-label ct-vertical ct-start" xmlns="http://www.w3.org/2000/xmlns/" style="height: 30px; width: 30px;">50</span></foreignObject></g><defs><linearGradient id="gradient" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="rgba(0, 201, 255, 1)"></stop><stop offset="1" stop-color="rgba(146, 254, 157, 1)"></stop></linearGradient><linearGradient id="gradient1" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="rgba(132, 60, 247, 1)"></stop><stop offset="1" stop-color="rgba(56, 184, 242, 1)"></stop></linearGradient></defs></svg></div>
+          <div class="daily-user-chart ct-major-twelfth"></div>
         </div>
       </div>
     </div>
@@ -204,6 +203,25 @@
         </div>
 @endsection
 @section('pagecss')
+    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/chartist.min.css">
 @endsection
 @section('pagejs')
+    <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+    <script>
+      var data = {
+        labels: [
+            @foreach($data['daily_user'] as $key=>$val)
+              '{{ $val->_id['date'] }}',
+            @endforeach
+            ],
+        series: [
+          [
+            @foreach($data['daily_user'] as $key=>$val)
+              {{ $val->count.',' }}
+            @endforeach
+          ]
+        ]
+      };
+      new Chartist.Bar('.daily-user-chart', data);
+    </script>
 @endsection
