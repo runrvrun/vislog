@@ -10,6 +10,7 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/changepassword', 'Admin\UserController@changepassword');
     Route::post('/editpassword', 'Admin\UserController@editpassword');
     Route::get('/myprofile', 'Admin\UserController@myprofile');
+    Route::post('/updateprofile', 'Admin\UserController@updateprofile');
     Route::get('/highlight', 'Admin\DashboardController@highlight');
     Route::get('/dashboard', 'Admin\DashboardController@dashboard');
     Route::get('/adsperformance', 'Admin\AdsperformanceController@index');

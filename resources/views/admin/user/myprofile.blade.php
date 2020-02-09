@@ -9,6 +9,8 @@
         <div class="main-content">
           <div class="content-wrapper"><!--User Profile Starts-->
 <!--Basic User Details Starts-->
+<form method="POST" action="updateprofile" enctype="multipart/form-data">
+@csrf
 <section id="user-profile">
   <div class="row">
     <div class="col-12">
@@ -16,9 +18,12 @@
         <div class="card-img-top img-fluid bg-cover height-300" style="background: url('{{ asset('') }}app-assets/img/photos/14.jpg') 50%;"></div>
         <div class="media profil-cover-details row">
           <div class="col-5">
-            <div class="align-self-start halfway-fab pl-3 pt-2">
+            <div class="align-self-start halfway-fab pl-3">
               <div class="text-left">
-                <h3 class="card-title white">{{ Auth::user()->name }}</h3>
+                <h3 id="txtname" class="card-title white">{{ Auth::user()->name }}</h3>
+                <p id="txttitle" class="card-title white">{{ Auth::user()->title }}</p>
+                <input id="inputname" type="text" name="name" class="form-control" style="display:none" value="{{ Auth::user()->name }}"></input>
+                <input id="inputtitle" type="text" name="title" class="form-control" style="display:none" value="{{ Auth::user()->title }}"></input>
               </div>
             </div>
           </div>
@@ -35,7 +40,8 @@
           <div class="profile-cover-buttons">
             <div class="media-body halfway-fab align-self-end">
               <div class="text-right d-none d-sm-none d-md-none d-lg-block">
-                <button type="button" class="btn btn-primary btn-raised mr-2"><i class="fa fa-edit"></i> Edit</button>
+                <button id="btnsave" type="submit" class="btn btn-warning btn-raised mr-2" style="display:none"><i class="fa fa-save"></i> Save</button>
+                <button id="btnedit" type="button" class="btn btn-primary btn-raised mr-2"><i class="fa fa-edit"></i> Edit</button>
               </div>
               <div class="text-right d-block d-sm-block d-md-block d-lg-none">
                 <button type="button" class="btn btn-primary btn-raised mr-2"><i class="fa fa-plus"></i></button>
@@ -57,8 +63,6 @@
               </ul>
             </div>
             <div class="col-lg-2 col-md-2 text-center">
-              <span class="font-medium-2 text-uppercase">{{ Auth::user()->name }}</span>
-              <p class="grey font-small-2">{{ Auth::user()->title }}</p>
             </div>
             <div class="col-lg-5 col-md-5">
               <ul class="profile-menu no-list-style">
@@ -91,8 +95,8 @@
         <div class="card-content">
           <div class="card-body">
             <div class="mb-3">
-              <span class="d-block overflow-hidden">{{ Auth::user()->about }}
-              </span>
+              <div id="txtabout" class="overflow-hidden">{!! nl2br(Auth::user()->about) !!}</div>
+              <textarea id="inputabout" name="about" class="form-control" rows=3 style="display:none">{{ Auth::user()->about }}</textarea>
             </div>
           </div>
         </div>
@@ -101,6 +105,7 @@
   </div>
 </section>
 <!--About section ends-->
+</form>
 
 <section id="privileges">
   <div class="row">
@@ -114,7 +119,7 @@
         <div class="card-content">
           <div class="card-body">
             <div class="mb-3">
-              <span class="d-block overflow-hidden">{{ Auth::user()->about }}
+              <span class="d-block overflow-hidden">{{ Auth::user()->privileges }}
               </span>
             </div>
           </div>
@@ -132,8 +137,17 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-12 col-md-6 col-lg-4">
-    Coming Soon ...
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-body">
+            <div class="mb-3">
+              <span class="d-block overflow-hidden">Coming soon...
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -147,8 +161,17 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-12 col-md-6 col-lg-4">
-    Coming Soon ...
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-body">
+            <div class="mb-3">
+              <span class="d-block overflow-hidden">Coming soon...
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -161,4 +184,28 @@
 @section('pagecss')
 @endsection
 @section('pagejs')
+<script>
+$(document).ready(function(){
+  $("#btnedit").click(function(){
+    $("#btnsave").show();
+    $("#inputname").show();
+    $("#inputtitle").show();
+    $("#inputabout").show();  
+    $("#btnedit").hide();  
+    $("#txtname").hide();  
+    $("#txttitle").hide();  
+    $("#txtabout").hide();  
+  });
+  $("#btnsave").click(function(){
+    $("#btnsave").hide();  
+    $("#inputname").hide();
+    $("#inputtitle").hide();
+    $("#inputabout").hide();  
+    $("#btnedit").show(); 
+    $("#txtname").show();  
+    $("#txttitle").show();
+    $("#txtabout").show();  
+  });
+});
+</script>
 @endsection

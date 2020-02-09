@@ -10,6 +10,7 @@ use Session;
 use Validator;
 use Hash;
 use \Carbon\Carbon;
+use Auth;
 
 class UserController extends Controller
 {
@@ -218,5 +219,16 @@ class UserController extends Controller
     public function myprofile()
     {
         return view ('admin.user.myprofile');
+    }
+
+    public function updateprofile(Request $request)
+    {
+        $user = Auth::user();
+        $requestData['name'] = $request->name;
+        $requestData['title'] = $request->title;
+        $requestData['about'] = $request->about;
+
+        $user->update($requestData);
+        return redirect('admin/myprofile');
     }
 }
