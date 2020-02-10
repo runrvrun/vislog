@@ -61,7 +61,6 @@ class DashboardController extends Controller
             $data['grp'] += Commercial::sum('tvr'.$i);
         }
         $data['grp'] += Commercial::sum('tvr100');
-        $data['cprp'] = 0;
         // dd($data);
         return view('admin.dashboard',compact('data'));
     }

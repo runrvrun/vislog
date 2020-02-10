@@ -67,7 +67,7 @@
         <div class="card-body pt-2 pb-0">
           <div class="media">
             <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">{{ number_format($data['cprp'],2) }}</h3>
+              <h3 class="font-large-1 mb-0">{{ number_format($data['cost']*1000/$data['grp'],2) }}</h3>
               <span>CPRP (IDR Millions)</span>
             </div>
             <div class="media-right white text-right">
