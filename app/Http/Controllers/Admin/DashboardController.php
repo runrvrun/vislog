@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use DB;
 use \Carbon\Carbon;
 use App\Log;
+use App\Commercial;
 
 class DashboardController extends Controller
 {
@@ -49,6 +50,18 @@ class DashboardController extends Controller
                 ]
             ]);
         });
+        //
+        $data['number_of_spot'] = Commercial::count();        
+        $data['cost'] = Commercial::sum('cost')/1000000000;
+        $data['grp'] = 0;
+        for($i=1;$i<10;$i++){
+            $data['grp'] += Commercial::sum('tvr0'.$i);
+        }
+        for($i=10;$i<100;$i++){
+            $data['grp'] += Commercial::sum('tvr'.$i);
+        }
+        $data['grp'] += Commercial::sum('tvr100');
+        $data['cprp'] = 0;
         // dd($data);
         return view('admin.dashboard',compact('data'));
     }
