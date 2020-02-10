@@ -28,11 +28,8 @@
             </div>
           </div>
           <div class="col-2">
-            <div class="align-self-center halfway-fab text-center">
-              <a class="profile-image">
-                <img src="{{ asset('') }}app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer width-100"
-                  alt="Card image">
-              </a>
+            <div class="align-self-center halfway-fab text-center circle">
+                <img src="{{ asset('') }}app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer width-100 profile-pic" alt="Card image">
             </div>
           </div>
           <div class="col-5">
@@ -119,7 +116,23 @@
         <div class="card-content">
           <div class="card-body">
             <div class="mb-3">
-              <span class="d-block overflow-hidden">{{ Auth::user()->privileges }}
+              <span class="d-block overflow-hidden">
+              @if(!empty(Auth::user()->privileges))
+              @foreach(Auth::user()->privileges as $key=>$val)
+                <div class="row">
+                  @if($key == 'isostartdate' || $key == 'isoenddate'  || $key == 'enddate')
+                    @php continue @endphp
+                  @endif                  
+                  @if($key == 'startdate')
+                  <div class="col-2"><strong>Data period</strong></div>
+                  <div class="col-10">{{ \Carbon\Carbon::createFromFormat('Y-m-d',str_replace(',','',$val))->format('d M Y') }} - {{ \Carbon\Carbon::createFromFormat('Y-m-d',str_replace(',','',Auth::user()->privileges['enddate']))->format('d M Y') }}</div>
+                  @else
+                  <div class="col-2"><strong>{{ ucwords($key) }}</strong></div>
+                  <div class="col-10">{{ ucwords($val ?? "All") }}</div>
+                  @endif
+                </div>
+              @endforeach
+              @endif
               </span>
             </div>
           </div>
@@ -191,6 +204,7 @@ $(document).ready(function(){
     $("#inputname").show();
     $("#inputtitle").show();
     $("#inputabout").show();  
+    $(".upload-button").show();
     $("#btnedit").hide();  
     $("#txtname").hide();  
     $("#txttitle").hide();  
@@ -201,6 +215,7 @@ $(document).ready(function(){
     $("#inputname").hide();
     $("#inputtitle").hide();
     $("#inputabout").hide();  
+    $(".upload-button").hide();
     $("#btnedit").show(); 
     $("#txtname").show();  
     $("#txttitle").show();
