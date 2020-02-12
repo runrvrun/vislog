@@ -104,7 +104,7 @@ $(document).ready(function() {
           type: 'POST'
         },
         columns: [
-          { data: '_id.month', name: 'checkbox' },
+          { data: '_id.date', name: 'checkbox' },
           { data: '_id.year', name: '_id.year' },
           { data: '_id.month', name: '_id.month' },
           { data: 'count', name: 'count' },

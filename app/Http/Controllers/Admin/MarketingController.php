@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use \Carbon\Carbon;
 use App\Adexnett;
 use App\Spotmatching;
+use Auth;
 
 class MarketingController extends Controller
 {
@@ -147,7 +148,12 @@ class MarketingController extends Controller
     
     public function spotmatching()
     {
-        return view('admin.spotmatching.index');
+        // populate dropdown
+        $query = \App\Targetaudience::whereNotNull('targetaudience');
+        if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
+        $data['ddtargetaudience'] = $query->pluck('targetaudience','code');
+        
+        return view('admin.spotmatching.index',compact('data'));
     }
 
     public function spotmatchingjson(Request $request)

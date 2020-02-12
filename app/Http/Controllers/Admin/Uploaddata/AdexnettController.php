@@ -38,6 +38,7 @@ class AdexnettController extends Controller
                 [
                     '$group'    => [
                         '_id'   => [
+                            'date'=>'$date',
                             'year'=>'$year',
                             'month'=>'$month',
                         ],
@@ -79,9 +80,59 @@ class AdexnettController extends Controller
                 $insertData = [];
                 foreach($line as $key=>$val){
                     $colname = strtolower($key);
-                    $colname = str_replace(' ','_',$colname);
+                    $colname = str_replace(' ','_',$colname); 
                     $colname = str_replace('.','',$colname);
-                    $insertData[$colname] = $val;
+                    switch($colname){
+                        case 'month':
+                            switch($val){
+                                case 'Januari':
+                                    $mon = '01';
+                                    break;
+                                case 'Februari':
+                                    $mon = '02';
+                                    break;
+                                case 'Maret':
+                                    $mon = '03';
+                                    break;
+                                case 'April':
+                                    $mon = '04';
+                                    break;
+                                case 'Mei':
+                                    $mon = '05';
+                                    break;
+                                case 'Juni':
+                                    $mon = '06';
+                                    break;
+                                case 'Juli':
+                                    $mon = '07';
+                                    break;
+                                case 'Agustus':
+                                    $mon = '08';
+                                    break;
+                                case 'September':
+                                    $mon = '09';
+                                    break;
+                                case 'Oktober':
+                                    $mon = '10';
+                                    break;
+                                case 'November':
+                                    $mon = '11';
+                                    break;
+                                case 'Desember':
+                                    $mon = '12';
+                                    break;
+                                default:
+                                    $mon = '01';
+                            }
+                            $dt = $line['year']."-".$mon."-01";
+                            $date = Carbon::createFromFormat('Y-m-d H:i:s',$dt.' 00:00:00')->toDateTimeString();
+                            $insertData[$colname] = $val;
+                            $insertData['date'] = $dt;
+                            $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+                            break;
+                        default:
+                            $insertData[$colname] = $val;
+                    }
                 }
                 return Adexnett::create($insertData);
             });

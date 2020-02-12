@@ -400,7 +400,7 @@ $(document).ready(function(){
         {{ Form::hidden('filter-nadstype') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>
-        {{ Form::select('filter-ntargetaudience',\App\Targetaudience::whereNotNull('targetaudience')->pluck('targetaudience','code'),null,['class'=>'form-control']) }}
+        {{ Form::select('filter-ntargetaudience',$data['ddtargetaudience'],null,['class'=>'form-control']) }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Other</h6>
         <div class="form-group">

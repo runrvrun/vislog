@@ -7,4 +7,5 @@ use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 class Adexnett extends Eloquent
 {
     protected $guarded = ['id'];
+    protected $dates = ['isodate'];
 }
