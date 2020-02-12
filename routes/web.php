@@ -13,6 +13,9 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::post('/updateprofile', 'Admin\UserController@updateprofile');
     Route::get('/highlight', 'Admin\DashboardController@highlight');
     Route::get('/dashboard', 'Admin\DashboardController@dashboard');
+    Route::post('/dashboard/spot_per_productjson', 'Admin\DashboardController@spot_per_productjson');
+    Route::post('/dashboard/spot_per_programmejson', 'Admin\DashboardController@spot_per_programmejson');
+    Route::post('/dashboard/spot_per_adstypejson', 'Admin\DashboardController@spot_per_adstypejson');
     Route::get('/adsperformance', 'Admin\AdsperformanceController@index');
     Route::post('/adsperformance/indexjson', 'Admin\AdsperformanceController@indexjson');
     Route::get('/adsperformance/search-targetaudience-json', 'Admin\TargetaudienceController@searchjson');    
@@ -20,11 +23,11 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/adsperformance/search-nprogramme-json', 'Admin\TvprogrammesearchController@searchnprogrammejson');    
     Route::get('/adsperformance/search-nlevel1-json', 'Admin\TvprogrammesearchController@searchnlevel1json');    
     Route::get('/adsperformance/search-nlevel2-json', 'Admin\TvprogrammesearchController@searchnlevel2json');    
+    Route::get('/adsperformance/search-nadstype-json', 'Admin\AdstypesearchController@searchnadstypejson'); 
     Route::get('/adsperformance/search-nadvertiser-json', 'Admin\CommercialsearchController@searchnadvertiserjson');    
     Route::get('/adsperformance/search-nproduct-json', 'Admin\CommercialsearchController@searchnproductjson');    
     Route::get('/adsperformance/search-nsector-json', 'Admin\CommercialsearchController@searchnsectorjson');    
     Route::get('/adsperformance/search-ncategory-json', 'Admin\CommercialsearchController@searchncategoryjson');    
-    Route::get('/adsperformance/search-nadstype-json', 'Admin\AdstypesearchController@searchnadstypejson'); 
     Route::get('/adsperformance/search-ncopy-json', 'Admin\CommercialsearchController@searchncopyjson'); 
     Route::get('/tvads', 'Admin\VideoController@tvads');
     Route::post('/tvads/indexjson', 'Admin\VideoController@tvadsjson');

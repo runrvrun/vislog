@@ -8,8 +8,12 @@ class Commercial extends Eloquent
 {
     protected $guarded = ['id'];
 
+    protected $dates = ['isodate'];
+
     protected $casts = [
+        'no_of_spots' => 'integer',
         'cost' => 'integer',
+        'start_timestamp' => 'integer',
         'tvr01' => 'float',
         'tvr02' => 'float',
         'tvr03' => 'float',

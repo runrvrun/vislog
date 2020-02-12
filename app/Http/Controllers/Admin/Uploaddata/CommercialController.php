@@ -85,9 +85,15 @@ class CommercialController extends Controller
                     $colname = str_replace('.','',$colname);
                     switch($colname){
                         case 'date':
-                            $date = Carbon::createFromFormat('d/m/Y H:i:s',$val.' 00:00:00')->toDateTimeString();
+                            // $date = Carbon::createFromFormat('d/m/Y H:i:s',$val.' 00:00:00')->toDateTimeString();
+                            $date = Carbon::createFromFormat('Y-m-d H:i:s',$val.' 00:00:00')->toDateTimeString();
                             $insertData[$colname] = $val;
                             $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+                            break;
+                        case 'start_time':
+                            $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$val)->timestamp;
+                            $insertData[$colname] = $val;
+                            $insertData['start_timestamp'] = $timestamp;
                             break;
                         case 'count':
                             $insertData[$colname] = $val;

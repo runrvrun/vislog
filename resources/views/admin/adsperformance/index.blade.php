@@ -180,10 +180,7 @@ $(document).ready(function(){
     // show existing filter in modal footer
     $("#filter-selected").html('');
     $("#filter-selected").html($("input[name=filter-"+filter+"]").val());
-    // if filter by channel, load directly
-    if(filter=="channel"){
-      $("#search-button").click();
-    }
+    $("#search-button").click();
   });
   $('#search-term').keypress(function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -416,7 +413,7 @@ $(document).ready(function(){
         {{ Form::hidden('filter-nadstype') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>
-        {{ Form::select('filter-ntargetaudience',\App\Targetaudience::whereNotNull('targetaudience')->pluck('targetaudience','code'),null,['class'=>'form-control']) }}
+        {{ Form::select('filter-ntargetaudience',$data['ddtargetaudience'],null,['class'=>'form-control']) }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Other</h6>
         <div class="form-group">

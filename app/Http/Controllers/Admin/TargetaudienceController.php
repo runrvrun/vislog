@@ -69,11 +69,11 @@ class TargetaudienceController extends Controller
     {
         if(isset($request->term)){
             $query = Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->where('targetaudience','like','%'.$request->term.'%')->groupBy('targetaudience');
-            $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']??'%%'));
+            if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
             return $query->get();
         }else{
             $query = Targetaudience::select('targetaudience')->whereNotNull('targetaudience')->take(50)->groupBy('targetaudience');
-            $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']??'%%'));
+            if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
             return $query->get();
         }
     }

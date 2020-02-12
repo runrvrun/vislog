@@ -69,11 +69,11 @@ class ChannelController extends Controller
     {
         if(isset($request->term)){
             $query = Channel::select('channel')->whereNotNull('channel')->where('channel','like','%'.$request->term.'%');
-            $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']??'%%'));
+            if(!empty(Auth::user()->privileges['channel'])) $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']));
             return $query->get();
         }else{
             $query = Channel::select('channel')->whereNotNull('channel')->take(50);
-            $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']??'%%'));
+            if(!empty(Auth::user()->privileges['channel'])) $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']));
             return $query->get();
         }
     }

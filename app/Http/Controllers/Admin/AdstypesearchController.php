@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Adstypesearch;
 use Session;
+use Auth;
 
 class AdstypesearchController extends Controller
 {
@@ -21,9 +22,13 @@ class AdstypesearchController extends Controller
     public function searchnadstypejson(Request $request)
     {
         if(isset($request->term)){
-            return Adstypesearch::select('nadstype')->distinct()->where('nadstype','like','%'.$request->term.'%')->get();
+            $query = Adstypesearch::select('nadstype')->distinct()->where('nadstype','like','%'.$request->term.'%')->get();
+            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']));
+            return $query->get();
         }else{
-            return [];
+            $query = Adstypesearch::select('nadstype')->take(50)->groupBy('nadstype');
+            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']));
+            return $query->get();
         }
     }
 
