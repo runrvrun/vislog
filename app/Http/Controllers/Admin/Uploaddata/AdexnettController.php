@@ -62,7 +62,7 @@ class AdexnettController extends Controller
             $file = $request->file('file');
             // File Details 
             $filename = $file->getClientOriginalName();
-            $upload_filename = Carbon::now()->format('Ymd').$filename;
+            $upload_filename = Carbon::now()->format('YmdHis').$filename;
             $extension = $file->getClientOriginalExtension();
             $tempPath = $file->getRealPath();
             $fileSize = $file->getSize();
@@ -124,9 +124,10 @@ class AdexnettController extends Controller
                                 default:
                                     $mon = '01';
                             }
-                            $dt = $line['year']."-".$mon."-01";
+                            $dt = $line['Year']."-".$mon."-01";
                             $date = Carbon::createFromFormat('Y-m-d H:i:s',$dt.' 00:00:00')->toDateTimeString();
                             $insertData[$colname] = $val;
+                            $insertData['key'] = $key;
                             $insertData['date'] = $dt;
                             $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
                             break;
