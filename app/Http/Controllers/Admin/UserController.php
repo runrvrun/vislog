@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Notifications\Notifiable;
 use App\User;
 use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
@@ -14,6 +15,8 @@ use Auth;
 
 class UserController extends Controller
 {
+    use Notifiable;
+    
     public function __construct()
     {
         //

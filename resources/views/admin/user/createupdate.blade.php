@@ -149,7 +149,11 @@
                   <label class="col-md-3 label-control" for="date">Status: </label>
                   <div class="col-md-9">
                     <div class="custom-control custom-switch">
+                      @if(isset($item->status))
                       <input type="checkbox" class="custom-control-input" id="status" name="status" {{ ($item->status)? "checked":"" }}>
+                      @else
+                      <input type="checkbox" class="custom-control-input" id="status" name="status" checked>
+                      @endif
                       <label class="custom-control-label" for="status" id="status_text">Active</label>
                     </div>
                   </div>
@@ -157,7 +161,11 @@
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="date">Access  Time: </label>
                   <div class="col-md-9">                  
-                    {{ Form::text('expired_at', old('expired_at',$item->expired_at->format('d/m/Y') ?? null), array('class' => 'form-control datepicker-here','autocomplete'=>'off', 'data-language'=>'id')) }}
+                    @if(isset($item->expired_at))
+                    {{ Form::text('expired_at', old('expired_at',$item->expired_at->format('d/m/Y')), array('class' => 'form-control datepicker-here','autocomplete'=>'off', 'data-language'=>'id')) }}
+                    @else
+                    {{ Form::text('expired_at', old('expired_at','31/12/2099'), array('class' => 'form-control datepicker-here','autocomplete'=>'off', 'data-language'=>'id')) }}
+                    @endif
                   </div>
                 </div>
               </div>

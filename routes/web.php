@@ -103,6 +103,10 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/channel/indexjson','Admin\ChannelController@indexjson');
     Route::get('/channel/searchjson','Admin\ChannelController@searchjson');
     Route::resource('/channel', 'Admin\ChannelController');
+    Route::get('/notification', 'Admin\NotificationController@index');
+    Route::get('/notification/indexjson','Admin\NotificationController@indexjson');
+    Route::post('/notification/store', 'Admin\NotificationController@store');
+    Route::get('/notification/markallread', 'Admin\NotificationController@markallread');
     Route::get('/user/indexjson','Admin\UserController@indexjson');
     Route::get('/user/csvall','Admin\UserController@csvall');
     Route::get('/user/destroymulti','Admin\UserController@destroymulti');

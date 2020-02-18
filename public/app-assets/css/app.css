@@ -2276,7 +2276,7 @@ input[type="button"].btn-block {
   font-weight: 400;
   color: #212529;
   text-align: inherit;
-  white-space: nowrap;
+  /* white-space: nowrap; */
   background-color: transparent;
   border: 0; }
   .dropdown-item:hover, .dropdown-item:focus {
@@ -32967,7 +32967,7 @@ datetime .form-group {
   width: 400px; }
   .notification-dropdown .noti-list {
     position: relative;
-    height: 290px; }
+    max-height: 290px; }
   .notification-dropdown.dropdown-menu {
     padding: 0; }
   .notification-dropdown .noti-text {

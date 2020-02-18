@@ -10,7 +10,7 @@
     @if (trim($__env->yieldContent('pagetitle')))
     <h1>@yield('pagetitle')</h1>
     @else
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'VISLOG') }}</title>
     @endif
     <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('/') }}app-assets/img/ico/apple-icon-60.png">
     <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('/') }}app-assets/img/ico/apple-icon-76.png">
@@ -30,7 +30,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/prism.min.css">
     <!-- END VENDOR CSS-->
     <!-- BEGIN APEX CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/css/app.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/css/app.css?v=2">
     <!-- END APEX CSS-->
     <!-- BEGIN Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}css/style.css?v=1">
@@ -97,6 +97,7 @@
                   @if(session('privilege')['admin/videodata']['browse'] ?? 0)<li><a href="{{ url('/admin/videodata') }}" class="menu-item"><i class="ft-video"></i>Video Data</a></li>@endif
                   @if(session('privilege')['admin/targetaudience']['browse'] ?? 0)<li><a href="{{ url('/admin/targetaudience') }}" class="menu-item"><i class="ft-star"></i>Target Audience</a></li>@endif
                   @if(session('privilege')['admin/channel']['browse'] ?? 0)<li><a href="{{ url('/admin/channel') }}" class="menu-item"><i class="ft-tv"></i>Channel</a></li>@endif
+                  @if(session('privilege')['admin/notification']['browse'] ?? 0)<li><a href="{{ url('/admin/notification') }}" class="menu-item"><i class="ft-bell"></i>Notification</a></li>@endif
                 </ul>
               </li>
               <li class="has-sub nav-item" id="usermgt"><a href="#"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">User Management</span></a>
@@ -126,8 +127,31 @@
           <div class="navbar-container">
             <div id="navbarSupportedContent" class="collapse navbar-collapse">
               <ul class="navbar-nav">
-                <li class="nav-item mr-2 d-none d-lg-block"><a id="navbar-fullscreen" href="javascript:;" class="nav-link apptogglefullscreen"><i class="ft-maximize font-medium-3 blue-grey darken-4"></i>
-                    <p class="d-none">fullscreen</p></a></li>
+                <li class="dropdown nav-item"><a id="ddnotif" href="#" data-toggle="dropdown" class="nav-link position-relative dropdown-toggle"><i class="ft-bell font-medium-3 blue-grey darken-4"></i>
+                <?php
+                $notif = App\Notification::where('user_to_notify',Auth::user()->id)->whereNull('read')->get();
+                ?>
+                <span class="notification badge badge-pill badge-danger">{{ ($notif->count()>0)? $notif->count():'' }}</span>
+                  <p class="d-none">Notifications</p></a>
+                  <div class="notification-dropdown dropdown-menu dropdown-menu-right">
+                    <div class="noti-list">
+                      @if(!$notif->count())
+                      <a class="dropdown-item noti-container py-3 border-bottom border-bottom-blue-grey border-bottom-lighten-4">
+                        <span class="noti-wrapper">
+                          <span class="noti-text">No new notification.</span>
+                        </span>
+                      </a>
+                      @endif
+                      @foreach($notif as $noti)
+                      <a class="dropdown-item noti-container py-3 border-bottom border-bottom-blue-grey border-bottom-lighten-4">
+                        <span class="noti-wrapper">
+                          <span class="noti-title line-height-1 d-block text-bold-400 info">{{ $noti->data['title'] ?? '' }}</span>
+                          <span class="noti-text">{!! nl2br($noti->data['message'])  ?? '' !!}</span>
+                        </span>
+                      </a>
+                      @endforeach
+                  </div>
+                </li>
                 <li class="dropdown nav-item"><a id="dropdownBasic3" href="#" data-toggle="dropdown" class="nav-link position-relative dropdown-toggle"><i class="ft-user font-medium-3 blue-grey darken-4"></i>
                     <p class="d-none">User Settings</p></a>
                   <div ngbdropdownmenu="" aria-labelledby="dropdownBasic3" class="dropdown-menu text-left dropdown-menu-right">
@@ -329,6 +353,9 @@
         if(!$("#usermgt>ul").children().length){
           $("#usermgt").hide();
         }
+      });
+      $('#ddnotif').click(function(){
+        $.ajax( "{{ url('admin/notification/markallread') }}" );
       });
     </script>
     @yield('pagejs')
