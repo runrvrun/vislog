@@ -94,7 +94,7 @@
 						<div class="col-sm-6 animated" data-delay="200" data-duration="700" data-animation="fadeInRight">
 							<br/>
 							<article class="align-center">
-								<h3>FOR EVERY <span class="highlight">STARTUP</span></h3>
+								<h3>FOR EVERY <span class="highlight">USER</span></h3>
 								<p class="sub-title">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br/> sdfs sit atmet sit dolor greand fdanrh sdfs</p>
 								<p>In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. Sed virtutem ipsam inchoavit, nihil ampliusuma. Scien tiam pollicentur, quam non erat mirum sapientiae lorem cupido patria esse cariorem. Quae qui non vident, nihilamane umquam magnum ac cognitione.</p>
 								<br/>
@@ -186,7 +186,7 @@
 				<div class="col-sm-6 align-right animated" data-duration="500" data-animation="fadeInRight">
 					<br/><br/>
 					<article>
-						<h3>HANG <span class="highlight">ON TO</span> YER HELMET</h3>
+						<h3>MORE <span class="highlight">COMPLETE</span> FEATURES</h3>
 						<p class="sub-title">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br/> sdfs sit atmet sit dolor greand fdanrh sdfs</p>
 						<p>In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. Sed virtutem ipsam inchoavit, nihil ampliusuma. Scien tiam pollicentur, quam non erat mirum sapientiae lorem cupido patria esse cariorem. Quae qui non vident, nihilamane umquam magnum ac cognitione.</p>
 					</article>
@@ -204,7 +204,7 @@
 						<li class="active">
 							<a href="#home" data-toggle="tab">
 								<div class="tab-info">
-									<div class="tab-title">Lorem Dolor</div>
+									<div class="tab-title">Dashboard</div>
 									<div class="tab-desc">Sit amet, consectetur adipiscing elit<br />hac divisione rem ipsam prorsus</div>
 								</div>
 								<!--<div class="tab-icon"><span class="icon icon-multimedia-20"></span></div>-->
@@ -213,7 +213,7 @@
 						<li>
 							<a href="#profile" data-toggle="tab">
 								<div class="tab-info">
-									<div class="tab-title">Lorem Dolor</div>
+									<div class="tab-title">Ads Performance</div>
 									<div class="tab-desc">Sit amet, consectetur adipiscing elit<br />hac divisione rem ipsam prorsus</div>
 								</div>
 								<!--<div class="tab-icon"><span class="icon icon-seo-icons-27"></span></div>-->
@@ -222,7 +222,7 @@
 						<li>
 							<a href="#messages" data-toggle="tab">
 								<div class="tab-info">
-									<div class="tab-title">Lorem Dolor</div>
+									<div class="tab-title">Clip Library</div>
 									<div class="tab-desc">Sit amet, consectetur adipiscing elit<br />hac divisione rem ipsam prorsus</div>
 								</div>
 								<!-- <div class="tab-icon"><span class="icon icon-seo-icons-28"></span></div>-->
@@ -490,7 +490,7 @@
 	<section id="team" class="section team-section align-center dark-text">
 		<div class="container">
 			<div class="section-header">
-				<h2>BEHIND <span class="highlight">THE</span> SCENES</h2>
+				<h2>BEHIND <span class="highlight">THE</span> PROCESS</h2>
 				<p class="sub-header">
 					Lorem ipsum dolor sit atmet sit dolor greand fdanrh s
 					<br>dfs sit atmet sit dolor greand fdanrh sdfs
@@ -602,7 +602,7 @@
 			<div class="col-md-12 col-lg-9">
 				<i class="icon icon-seo-icons-24 pull-left"></i>
 				<article class="pull-left">
-					<h2>LAUNCH YOUR STARTUP NOW!</h2>
+					<h2>MONITOR YOUR ADS NOW!</h2>
 					<p class="thin">In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret.</p>
 				</article>
 			</div>
@@ -620,19 +620,7 @@
 					<p><strong>John Doeson, Founder</strong>.</p>
 				</div>
 				<div class="col-sm-5 social-wrap col-xs-12">
-					<strong class="heading">Social Networks</strong>
-					<ul class="list-inline socials">
-						<li><a href="#"><span class="icon icon-socialmedia-08"></span></a></li>
-						<li><a href="#"><span class="icon icon-socialmedia-09"></span></a></li>
-						<li><a href="#"><span class="icon icon-socialmedia-16"></span></a></li>
-						<li><a href="#"><span class="icon icon-socialmedia-04"></span></a></li>
-					</ul>
-					<ul class="list-inline socials">
-						<li><a href="#"><span class="icon icon-socialmedia-07"></span></a></li>
-						<li><a href="#"><span class="icon icon-socialmedia-16"></span></a></li>
-						<li><a href="#"><span class="icon icon-socialmedia-09"></span></a></li>
-						<li><a href="#"><span class="icon icon-socialmedia-08"></span></a></li>
-					</ul>
+					
 				</div>
 				<div class="col-sm-3 col-xs-12">
 					<strong class="heading">Our Contacts</strong>
@@ -644,7 +632,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="copyright">startup.ly 2014. All rights reserved.</div>
+		<div class="copyright">Vislog 2020. All rights reserved.</div>
 	</footer>
 
 	<div class="back-to-top"><i class="fa fa-angle-up fa-3x"></i></div>

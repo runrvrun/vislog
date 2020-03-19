@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Spotunpaired;
+use App\Log;
+use Auth;
 use \Carbon\Carbon;
 use Rap2hpoutre\FastExcel\FastExcel;
 
@@ -47,16 +49,17 @@ class SpotunpairedController extends Controller
                         ]
                     ]
                 ]
-            ]);
-        });
-        // dd($query);
-        return datatables($query
-        )
-        ->toJson();
-    }
-
+                ]);
+            });
+            // dd($query);
+            return datatables($query
+            )
+            ->toJson();
+        }
+        
     public function upload(Request $request)
     {             
+        Log::create(['user_id'=>Auth::user()->id,'action'=>'data update - spotunpaired','date'=>date('Y-m-d')]);
         $upload_path = 'uploads/temp';
         if ($request->file('file')->isValid()) {
             $file = $request->file('file');

@@ -7,6 +7,8 @@ use DB;
 use \Carbon\Carbon;
 use App\Log;
 use App\Commercial;
+use App\Commercialsearch;
+use App\Adexnett;
 use Auth;
 
 class DashboardController extends Controller
@@ -218,47 +220,124 @@ class DashboardController extends Controller
 
         return view('admin.dashboard',compact('data'));
     }
-    public function highlight()
-    {
-        // $data['total_user'] = DB::collection('users')->count();
-        // $data['total_access'] = Log::where('action','login')->count();
-        // $data['min_date'] = Log::min('created_at');
-        // $data['max_date'] = Log::max('created_at');
-        // $data['days'] = Carbon::createFromTimestampUTC($data['min_date'])->diffInDays(Carbon::createFromTimestampUTC($data['max_date']));
-        // $data['avg_user_day'] = number_format(round($data['total_access']/$data['days']),0);
-        // $data['total_download'] = Log::where('action','download')->count();
-        // $data['daily_user'] = Log::raw(function($collection)
-        // {
-        //     return $collection->aggregate([
-        //         [ '$sort' => [ 'date' => 1 ] ],
-        //         [ '$match' => [ 'action' => 'login' ] ],
-        //         [ '$match' => [ 'date' => [ '$gte' => Carbon::now()->subDays(30)->format('Y-m-d') ] ] ],
-        //         [
-        //             '$group'    => [
-        //                 '_id'   => [
-        //                     'date'=>'$date',
-        //                 ],
-        //                 'count' => [
-        //                     '$sum'  => 1
-        //                 ]
-        //             ]
-        //         ]
-        //     ]);
-        // });
-        //
-        $data['number_of_spot'] = Commercial::count();        
-        $data['cost'] = Commercial::sum('cost')/1000000000;
-        $data['grp'] = 0;
-        for($i=1;$i<10;$i++){
-            $data['grp'] += Commercial::sum('tvr0'.$i);
+    public function highlight(Request $request)
+    {    
+        $filter = [];
+        $commercial = Commercial::whereNotNull('_id');
+        $adexnett = Adexnett::whereNotNull('_id');
+        $log = Log::whereNotNull('_id');
+        if($request->startdate){
+            $commercial->whereBetween('isodate',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
+            $adexnett->whereBetween('isodate',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
+            $log->whereBetween('created_at',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }else{
+            $commercial->whereBetween('isodate',[Carbon::now()->subDays(6),Carbon::now()]);
+            $adexnett->whereBetween('isodate',[Carbon::now()->subDays(6),Carbon::now()]);
+            $log->whereBetween('created_at',[Carbon::now()->subDays(6),Carbon::now()]);
+            $date = Carbon::now()->subDays(1)->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::now()->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );    
         }
-        for($i=10;$i<100;$i++){
-            $data['grp'] += Commercial::sum('tvr'.$i);
+
+        $data['advertiser'] = $commercial->distinct('nadvertiser')->get();
+        $data['advertiser'] = count($data['advertiser']);
+        $data['product'] = $commercial->distinct('nproduct')->get();
+        $data['product'] = count($data['product']);
+        $data['number_of_spot'] = $commercial->sum('no_of_spots');        
+        $data['adex'] = $adexnett->sum('gross');
+        if ($data['adex'] < 1000000) {
+            // Anything less than a million
+            $data['adex'] = number_format($data['adex']);
+        } else if ($data['adex'] < 1000000000) {
+            // Anything less than a billion
+            $data['adex'] = number_format($data['adex'] / 1000000, 2) . 'M';
+        } else {
+            // At least a billion
+            $data['adex'] = number_format($data['adex'] / 1000000000, 2) . 'B';
         }
-        $data['grp'] += Commercial::sum('tvr100');
-        $query = Commercial::raw(function($collection)
+        
+        $query = Commercial::raw(function($collection) use ($filter)
         {
-            return $collection->aggregate([
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'nproduct'=>'$nproduct',
+                        ],
+                        'count' => [
+                            '$sum'  => 1
+                        ]
+                    ]
+                ],
+                [
+                    '$sort' => [
+                        "_id.yymmdd" => 1,
+                        "count" => -1
+                    ]
+                ],
+            ]));
+        });
+        if(count($query)){
+            $data['top_commercial'] = Commercial::where('nproduct',$query[0]->_id->nproduct)->orderBy('created_at','desc')->first();              
+        }
+        
+        $c = clone($commercial);// clone object as so not copy by reference and got additional "where" clause
+        $data['adstype_loose_spot'] = $c->where('nadstype','LOOSE SPOT')->get();
+        $data['adstype_loose_spot'] = count($data['adstype_loose_spot']);
+        if ($data['adstype_loose_spot'] < 1000000) {
+            //
+        } else if ($data['adstype_loose_spot'] < 1000000000) {
+            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'] / 1000000, 2) . 'M';
+        } else {
+            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'] / 1000000000, 2) . 'B';
+        }
+
+        $c = clone($commercial);// clone object as so not copy by reference
+        $data['adstype_virtual_ads'] = $c->where('nadstype','VIRTUAL ADS')->get();
+        $data['adstype_virtual_ads'] = count($data['adstype_virtual_ads']);
+        if ($data['adstype_virtual_ads'] < 1000000) {
+            //
+        } else if ($data['adstype_virtual_ads'] < 1000000000) {
+            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'] / 1000000, 2) . 'M';
+        } else {
+            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'] / 1000000000, 2) . 'B';
+        }
+
+        $c = clone($commercial);// clone object as so not copy by reference
+        $data['adstype_squeeze_frames'] = $c->where('nadstype','SQUEEZE FRAMES')->get();
+        $data['adstype_squeeze_frames'] = count($data['adstype_squeeze_frames']);
+        if ($data['adstype_squeeze_frames'] < 1000000) {
+            //
+        } else if ($data['adstype_squeeze_frames'] < 1000000000) {
+            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'] / 1000000, 2) . 'M';
+        } else {
+            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'] / 1000000000, 2) . 'B';
+        }
+
+        $c = clone($commercial);// clone object as so not copy by reference
+        $data['adstype_quiz'] = $c->where('nadstype','QUIZ')->get();
+        $data['adstype_quiz'] = count($data['adstype_quiz']);
+        if ($data['adstype_quiz'] < 1000000) {
+            //
+        } else if ($data['adstype_quiz'] < 1000000000) {
+            $data['adstype_quiz'] = number_format($data['adstype_quiz'] / 1000000, 2) . 'M';
+        } else {
+            $data['adstype_quiz'] = number_format($data['adstype_quiz'] / 1000000000, 2) . 'B';
+        }
+         
+        $query = Commercial::raw(function($collection) use ($filter)
+        {
+            array_push($filter,[ '$match' => ['nadstype' => 'LOOSE SPOT']]);  
+            return $collection->aggregate(array_merge($filter,[               
                 [
                     '$group'    => [
                         '_id'   => [
@@ -269,47 +348,130 @@ class DashboardController extends Controller
                         ]
                     ]
                 ]
-            ]);
+            ]));
         });
-        $data['spot_per_channel'] = $query;
-        $query = Commercial::raw(function($collection)
+        $oquery = [];
+        foreach($query as $key=>$val){
+            $oquery[$val->_id->channel] = ['channel'=>$val->_id->channel,'total'=>$val->total];
+        }
+        asort($oquery);
+        $data['spot_per_channel_loose'] = $oquery;
+        //
+        $query = Commercial::raw(function($collection) use ($filter)
         {
-            return $collection->aggregate([
+            return $collection->aggregate(array_merge($filter,[
                 [
                     '$group'    => [
                         '_id'   => [
-                            'nadstype'=>'$nadstype'
+                            'channel'=>'$channel'
                         ],
                         'total' => [
                             '$sum'  => '$no_of_spots'
-                        ],
+                        ]
                     ]
                 ]
-            ]);
+            ]));
         });
-        // $spotpertype['LOOSE SPOT'] = 0;
-        $spotpertype['NON LOOSE SPOT'] = 0;
+        $oquery = [];
         foreach($query as $key=>$val){
-            // group loose spot vs non loose spot (other)
-            if($val->id['nadstype'] == 'LOOSE SPOT'){
-                // $spotpertype['LOOSE SPOT'] = $val->total;
-            }else{
-                $spotpertype['NON LOOSE SPOT'] += $val->total;
-            }
+            $oquery[$val->_id->channel] = ['channel'=>$val->_id->channel,'total'=>$val->total];
         }
-        $data['spot_per_type'] = $spotpertype;
+        asort($oquery);
+        $data['spot_per_channel'] = $oquery;
+        
         //calculate spot per daypart
-        $data['daypart'][0] = Commercial::whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
-        $data['daypart'][1] = Commercial::whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
-        $data['daypart'][2] = Commercial::whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
-        $data['daypart'][3] = Commercial::whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
-        $data['daypart'][4] = Commercial::whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
+        $c = clone($commercial); 
+        $data['daypart'][0] = $c->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
+        $c = clone($commercial); 
+        $data['daypart'][1] = $c->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
+        $c = clone($commercial); 
+        $data['daypart'][2] = $c->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
+        $c = clone($commercial); 
+        $data['daypart'][3] = $c->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
+        $c = clone($commercial); 
+        $data['daypart'][4] = $c->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
 
-        $data['spot_per_date'] = Commercial::raw(function($collection)
+        $query = Commercial::raw(function($collection) use($filter) 
         {
-            return $collection->aggregate([
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'channel'=>'$channel',
+                        ],
+                        'count' => [
+                            '$sum'  => 1
+                        ]
+                    ]
+                ],
+                [
+                    '$sort' => [
+                        "count" => -1
+                    ]
+                ],
+                [
+                    '$limit' => 5
+                ],
+            ]));
+        });
+        $data['top_channel'] = $query;
+        $query = Commercial::raw(function($collection) use($filter) 
+        {
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'nprogramme'=>'$nprogramme',
+                        ],
+                        'count' => [
+                            '$sum'  => 1
+                        ]
+                    ]
+                ],
+                [
+                    '$sort' => [
+                        "count" => -1
+                    ]
+                ],
+                [
+                    '$limit' => 5
+                ],
+            ]));
+        });
+        $data['top_programme'] = $query;
+        $query = Commercial::raw(function($collection) use($filter) 
+        {
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'nproduct'=>'$nproduct',
+                        ],
+                        'count' => [
+                            '$sum'  => 1
+                        ]
+                    ]
+                ],
+                [
+                    '$sort' => [
+                        "count" => -1
+                    ]
+                ],
+                [
+                    '$limit' => 5
+                ],
+            ]));
+        });
+        $data['top_product'] = $query;
+        $l = clone($log);
+        $data['data_update'] = $l->where('action','regexp','/data update/')->orderBy('created_at','DESC')->take(5)->get();
+        $l = clone($log);
+        $data['video_update'] = $l->where('action','regexp','/video update/')->orderBy('created_at','DESC')->take(5)->get();
+
+        $data['spot_per_date'] = Commercial::raw(function($collection) use($filter) 
+        {
+            return $collection->aggregate(array_merge($filter,[
                 [ '$sort' => [ 'date' => 1 ] ],
-                // [ '$match' => [ 'date' => [ '$gte' => Carbon::now()->subDays(30)->format('Y-m-d') ] ] ],
                 [
                     '$group'    => [
                         '_id'   => [
@@ -320,8 +482,9 @@ class DashboardController extends Controller
                         ]
                     ]
                 ]
-            ]);
+            ]));
         });
+
         return view('admin.highlight',compact('data'));
     }
 

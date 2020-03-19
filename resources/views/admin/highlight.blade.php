@@ -9,183 +9,196 @@
         <div class="main-content">
         <div class="content-wrapper">
 <div class="row">
-  <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-    <div class="card gradient-blackberry">
-      <div class="card-content">
-        <div class="card-body pt-2 pb-0">
-          <div class="media">
-            <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">{{ $data['number_of_spot'] }}</h3>
-              <span>Number of Spot</span>
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card gradient-blackberry">
+          <div class="card-content">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left">
+                  <h3 class="font-large-1 mb-0">{{ $data['advertiser'] ?? 0 }}</h3>
+                  <span>Advertiser</span>
+                </div>
+                <div class="media-right white text-right">
+                  <i class="ft-monitor font-large-1"></i>
+                </div>
+              </div>
             </div>
-            <div class="media-right white text-right">
-              <i class="ft-monitor font-large-1"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card gradient-ibiza-sunset">
+          <div class="card-content">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left">
+                  <h3 class="font-large-1 mb-0">{{ $data['product'] ?? 0 }}</h3>
+                  <span>Products</span>
+                </div>
+                <div class="media-right white text-right">
+                  <i class="ft-credit-card font-large-1"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card gradient-green-tea">
+          <div class="card-content">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left">
+                  <h3 class="font-large-1 mb-0">{{ $data['number_of_spot'] ?? 0 }}</h3>
+                  <span>Spots</span>
+                </div>
+                <div class="media-right white text-right">
+                  <i class="icon-users font-large-1"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card gradient-pomegranate">
+          <div class="card-content">
+            <div class="card-body pt-2 pb-0">
+              <div class="media">
+                <div class="media-body white text-left">
+                  <h3 class="font-large-1 mb-0">{{ $data['adex'] ?? 0 }}</h3>
+                  <span>Adex</span>
+                </div>
+                <div class="media-right white text-right">
+                  <i class="ft-target font-large-1"></i>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-    <div class="card gradient-ibiza-sunset">
-      <div class="card-content">
-        <div class="card-body pt-2 pb-0">
-          <div class="media">
-            <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">{{ number_format($data['cost'],2) }}</h3>
-              <span>Cost (IDR Billions)</span>
-            </div>
-            <div class="media-right white text-right">
-              <i class="ft-credit-card font-large-1"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-    <div class="card gradient-green-tea">
-      <div class="card-content">
-        <div class="card-body pt-2 pb-0">
-          <div class="media">
-            <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">{{ number_format($data['grp'],2) }}</h3>
-              <span>GRP</span>
-            </div>
-            <div class="media-right white text-right">
-              <i class="icon-users font-large-1"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-    <div class="card gradient-pomegranate">
-      <div class="card-content">
-        <div class="card-body pt-2 pb-0">
-          <div class="media">
-            <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">{{ number_format($data['cost']*1000/$data['grp'],2) }}</h3>
-              <span>CPRP (IDR Millions)</span>
-            </div>
-            <div class="media-right white text-right">
-              <i class="ft-target font-large-1"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="col-md-6">
+    <video src="" controls id="playvideo"></video>
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-12">
+  <div class="col-sm-8">
     <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Channel</h4>
+        <h4 class="card-title">Ads Type Selection</h4>
       </div>
       <div class="card-content">
         <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <i class="adsicon bgaqua ft-monitor font-medium-2 p-1"></i>
+              <div class="adsheading">{{ $data['adstype_loose_spot'] ?? 0 }}</div><small>Loose Spot</small>
+            </div>
+            <div class="col-md-3">
+              <i class="adsicon bgtosca ft-check-circle font-medium-2 p-1"></i>
+              <div class="adsheading">{{ $data['adstype_virtual_ads'] ?? 0 }}</div><small>Virtual Ads</small>
+            </div>
+            <div class="col-md-3">
+              <i class="adsicon bgpink ft-film font-medium-2 p-1"></i>
+              <div class="adsheading">{{ $data['adstype_squeeze_frames'] ?? 0 }}</div><small>Squeeze Frame</small>
+            </div>
+            <div class="col-md-3">
+              <i class="adsicon bgpurple ft-message-square font-medium-2 p-1"></i>
+              <div class="adsheading">{{ $data['adstype_quiz'] ?? 0 }}</div><small>Quiz</small>
+            </div>
+          </div>
           <div class="spot-per-channel-chart ct-major-twelfth"></div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-sm-6">
+  <div class="col-sm-4">
     <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Product</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-product-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Spot</th>
-              </tr>
-            </thead>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6">
-  <div class="card">
-    <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Program</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-programme-table">
-            <thead>
-              <tr>
-                <th>Program</th>
-                <th>Spot</th>
-              </tr>
-            </thead>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Type</h4>
+        <h4 class="card-title">Daypart</h4>
       </div>
       <div class="card-content">
         <div class="card-body">
-          <div class="spot-per-type-chart ct-perfect-fifth"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6">
-  <div class="card">
-    <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Ads Type</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-adstype-table">
-            <thead>
-              <tr>
-                <th>Ads Type</th>
-                <th>Spot</th>
-              </tr>
-            </thead>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Time Period</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body">
-          <div class="spot-per-time-chart ct-perfect-fifth"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6">
-  <div class="card">
-    <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Daypart</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
           <div class="spot-per-daypart-chart ct-perfect-fifth"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-6">
+    <div class="card" style="background-color:#2196f3">
+      <div class="card-header">
+        <h4 class="card-title white">Top Performance</h4>
+        <small class="white">Top ranking list based on number of spots TV ads.</small>
+      </div>
+      <div class="card-content"  style="min-height: 218px;">
+        <div class="whitebox">
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="channel-tab" data-toggle="tab" href="#channel" role="tab" aria-controls="channel" aria-selected="true"><i class="ft-monitor"></i> Channel</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="program-tab" data-toggle="tab" href="#program" role="tab" aria-controls="program" aria-selected="false"><i class="ft-aperture"></i> Program</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="product-tab" data-toggle="tab" href="#product" role="tab" aria-controls="product" aria-selected="false"><i class="ft-award"></i> Product</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="channel" role="tabpanel" aria-labelledby="channel-tab">
+                @foreach($data['top_channel'] as $key=>$val)
+                <div class="row"><div class="col-md-8 offset-md-1">{{ $val->_id->channel }}</div><div class="col-md-3">{{ $val->count }}</div></div>
+                @endforeach
+            </div>
+            <div class="tab-pane fade" id="program" role="tabpanel" aria-labelledby="program-tab">
+                @foreach($data['top_programme'] as $key=>$val)
+                <div class="row"><div class="col-md-8 offset-md-1">{{ $val->_id->nprogramme }}</div><div class="col-md-3">{{ $val->count }}</div></div>
+                @endforeach
+            </div>
+            <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="product-tab">
+                @foreach($data['top_product'] as $key=>$val)
+                <div class="row"><div class="col-md-8 offset-md-1">{{ $val->_id->nproduct }}</div><div class="col-md-3">{{ $val->count }}</div></div>
+                @endforeach
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6">
+   <div class="card">
+      <div class="card-content" style="min-height: 286px;">
+        <ul class="nav nav-tabs" id="myTab1" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="dataupdate-tab" data-toggle="tab" href="#dataupdate" role="tab" aria-controls="channel" aria-selected="true"><i class="ft-user"></i> Data update</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="videoupdate-tab" data-toggle="tab" href="#videoupdate" role="tab" aria-controls="program" aria-selected="false"><i class="ft-film"></i> Video Update</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="recentactivity-tab" data-toggle="tab" href="#recentactivity" role="tab" aria-controls="product" aria-selected="false"><i class="ft-bell"></i> Recent Activity</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="dataupdate" role="tabpanel" aria-labelledby="dataupdate-tab">
+              @foreach($data['data_update'] as $key=>$val)
+              <div class="row"><div class="col-md-8">{{ ucfirst($val->action) }}</div><div class="col-md-4"><small>{{ $val->created_at->diffForHumans() }}</small></div></div>
+              @endforeach
+          </div>
+          <div class="tab-pane fade" id="videoupdate" role="tabpanel" aria-labelledby="videoupdate-tab">
+              @foreach($data['video_update'] as $key=>$val)
+              <div class="row"><div class="col-md-8">{{ ucfirst($val->action) }}</div><div class="col-md-4"><small>{{ $val->created_at->diffForHumans() }}</small></div></div>
+              @endforeach
+          </div>
+          <div class="tab-pane fade" id="recentactivity" role="tabpanel" aria-labelledby="recentactivity-tab">
+          </div>
         </div>
       </div>
     </div>
@@ -235,6 +248,39 @@
 button.search-result{
   min-width:100px;
 }
+#playvideo{
+    width: 473px;
+    padding-top: 17px;
+}
+.adsicon{
+    float: left;
+    color: white;
+    border-radius: 50%;
+    margin-right: 7px;
+}
+.adsicon.bgaqua{
+  background-color: #0080ff;
+}
+.adsicon.bgpink{
+  background-color: #ff0080;
+}
+.adsicon.bgpurple{
+  background-color: #b803fc;
+}
+.adsicon.bgtosca{
+  background-color: #408080;
+}
+.adsheading{
+    font-weight: 500;
+    color: coral;
+}
+.adstext{
+    font-size: 12px;
+}
+.whitebox{
+  background-color: white;
+  margin: 15px;
+}
 </style>
 @endsection
 @section('pagejs')
@@ -246,15 +292,9 @@ button.search-result{
 <script>
   var data = {
     labels: [
-        @foreach($data['spot_per_channel'] as $key=>$val)
-          '{{ $val->_id['channel'] }}',
-        @endforeach
         ],
     series: [
       [
-        @foreach($data['spot_per_channel'] as $key=>$val)
-          {{ $val->total.',' }}
-        @endforeach
       ]
     ]
   };
@@ -285,6 +325,21 @@ $(document).ready(function() {
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         order: [[1, 'DESC']]
+    });
+
+    $.ajax({
+        url:"{{ url('/admin/video/generatevideo') }}",
+        data:{
+          id: '{{ $data['top_commercial']->_id ?? 0 }}',
+          page: window.location.href,
+        },
+        success:function(response) {
+          videopath = response;
+          $("#playvideo").attr('src',videopath);
+       },
+       error:function(){
+        console.log("error getting video path");
+       }
     });
 });
 </script>
@@ -347,14 +402,8 @@ $(document).ready(function() {
 <script>
   var data = {
     labels: [
-        @foreach($data['spot_per_type'] as $key=>$val)
-          '{{ $key }} ({{ $val }})',
-        @endforeach
         ],
     series: [
-        @foreach($data['spot_per_type'] as $key=>$val)
-          {{ $val }},
-        @endforeach
     ]
   };
   new Chartist.Pie('.spot-per-type-chart', data, {donut: true});
@@ -362,12 +411,8 @@ $(document).ready(function() {
 <script>
   var data = {
     labels: [
-          'Primetime ({{ $data["daypart"][3] }})',
-          'Non Primetime ({{ $data["daypart"][0]+$data["daypart"][1]+$data["daypart"][2]+$data["daypart"][4] }})',
-        ],
+          ],
     series: [
-        {{ $data["daypart"][3] }},
-        {{ $data["daypart"][0]+$data["daypart"][1]+$data["daypart"][2]+$data["daypart"][4] }}
     ]
   };
   new Chartist.Pie('.spot-per-time-chart', data, {donut: true});
@@ -383,11 +428,11 @@ $(document).ready(function() {
         ],
     series: [
       [
-        {{ $data["daypart"][0] }},
-        {{ $data["daypart"][1] }},
-        {{ $data["daypart"][2] }},
-        {{ $data["daypart"][3] }},
-        {{ $data["daypart"][4] }},
+        {{ $data['daypart'][0] ?? 0 }},
+        {{ $data['daypart'][1] ?? 0 }},
+        {{ $data['daypart'][2] ?? 0 }},
+        {{ $data['daypart'][3] ?? 0 }},
+        {{ $data['daypart'][4] ?? 0 }},
       ]
     ]
   };
@@ -412,7 +457,7 @@ $(document).ready(function() {
 </script>
 <script type="text/javascript">
 $(function() {
-    var start = moment().subtract(1, 'day');
+    var start = moment().subtract(6, 'day');
     $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
     var end = moment();
     $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
@@ -524,8 +569,32 @@ $(document).ready(function(){
   $("select[name='filter-ntargetaudience']").attr('data-size','3'); // dropdown search with bootstrap select
 });
 </script>
+<script>
+  var data = {
+    labels: [
+        @foreach($data['spot_per_channel_loose'] as $key=>$val)
+          '{{ $val['channel'] }}',
+        @endforeach
+        ],
+    series: [
+      [
+        @foreach($data['spot_per_channel_loose'] as $key=>$val)
+          {{ $val['total'].',' }}
+        @endforeach
+      ],
+      [
+        @foreach($data['spot_per_channel'] as $key=>$val)
+          {{ ($val['total'] - $data['spot_per_channel_loose'][$key]['total']).',' }}
+        @endforeach
+      ]
+    ]
+  };
+  new Chartist.Bar('.spot-per-channel-chart', data,{stackBars:true});
+</script>
+
 @endsection
 @section('filterer')
+<form method="GET" action="{{ url('admin/highlight') }}">
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
@@ -540,47 +609,6 @@ $(document).ready(function(){
               {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
               {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
           </div>
-        <hr>
-        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Channel</h6>
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
-        {{ Form::hidden('filter-channel') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> Programme</button>
-        {{ Form::hidden('filter-nprogramme') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel1"><span id="filter-nlevel1-count"></span> Level 1</button>
-        {{ Form::hidden('filter-nlevel1') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel2"><span id="filter-nlevel2-count"></span> Level 2</button>
-        {{ Form::hidden('filter-nlevel2') }}
-        <hr>
-        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
-        <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> Advertiser</button>
-        {{ Form::hidden('filter-nadvertiser') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> Product</button>
-        {{ Form::hidden('filter-nproduct') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> Sector</button>
-        {{ Form::hidden('filter-nsector') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> Category</button>
-        {{ Form::hidden('filter-ncategory') }}
-        <button class="btn btn-primary col-10 filter-button" data-filter="nadstype"><span id="filter-nadstype-count"></span> Ads Type</button>
-        {{ Form::hidden('filter-nadstype') }}
-        <hr>
-        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>
-        {{ Form::select('filter-ntargetaudience',\App\Targetaudience::whereNotNull('targetaudience')->pluck('targetaudience','code'),null,['class'=>'form-control']) }}
-        <hr>
-        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Other</h6>
-        <div class="form-group">
-        <select name="filter-ncommercialdata" class="form-control col-10">
-          <option value="ungrouped" selected>Ungrouped</option>
-          <option value="grouped">Grouped</option>
-        </select>
-        </div>
-        <div class="form-group">
-        <select name="filter-ncommercialtype" class="form-control col-10">
-          <option value="allads">All Ads</option>
-          <option value="commercialonly" selected>Commercial Only</option>
-        </select>
-        </div>
-        <hr>
-        <hr>
         <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
           <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
         </div>
@@ -589,6 +617,7 @@ $(document).ready(function(){
         </div>
       </div>
     </div>
+</form>
 @endsection
 @section('modal')
 <div class="modal fade text-left show" id="filter-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" style="display: none; padding-right: 17px;" aria-modal="true">

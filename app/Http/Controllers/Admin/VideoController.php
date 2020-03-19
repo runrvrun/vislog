@@ -259,7 +259,7 @@ class VideoController extends Controller
         $channel = "channel".$channel->code;
         // get bumper
         $bumper = Config::select('value')->where('key','video bumper')->first();
-        $bumper = $bumper->value;
+        $bumper = $bumper->value ?? 2;
         $date = Carbon::createFromFormat('Y-m-d', $commercial->date)->format('Y_m_d');
         $start_video1 = Carbon::createFromFormat('H:i:s',$commercial->start_video1);
         $end_video1 = Carbon::createFromFormat('H:i:s',$commercial->end_video1);
@@ -282,9 +282,15 @@ class VideoController extends Controller
             // need to concatenate/join 2 file
             $minute1 = str_pad($start5minute, 2, '0', STR_PAD_LEFT);
             $minute2 = str_pad($end5minute, 2, '0', STR_PAD_LEFT);
+            $hour1 = $start_video1->format("H");
+            $hour2 = $hour1;
+            if($minute1 >= 55 ){
+                $hour2 += 1;
+            }
             $sourcepath = $librarypath->value."\\".$channel."\\".$date."\\";
-            $sourcefilename1 = $channel."_".$date."_".$start_video1->format("H")."_".$minute1."_00.mp4";
-            $sourcefilename2 = $channel."_".$date."_".$start_video1->format("H")."_".$minute2."_00.mp4";
+            $sourcefilename1 = $channel."_".$date."_".$hour1."_".$minute1."_00.mp4";
+            $sourcefilename2 = $channel."_".$date."_".$hour2."_".$minute2."_00.mp4";
+            // dd($sourcepath.$sourcefilename1);
             // convert mp4 to ts before concat
             $ts = new Process('ffmpeg -i '.$sourcepath.$sourcefilename1.' -c copy -bsf:v h264_mp4toannexb -f mpegts '.$temppath->value.'\\ts1'.$request->id.'.ts');
             $ts->run();
@@ -345,6 +351,7 @@ class VideoController extends Controller
     public function videodatastore(Request $request)
     {
         $requestData = $request->all();
+        Log::create(['user_id'=>Auth::user()->id,'action'=>'video update - '.$request->channel,'date'=>date('Y-m-d')]);
         $date = Carbon::createFromFormat('d/m/Y H:i:s',$requestData['date'].' 00:00:00')->toDateTimeString();
         $requestData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
         Videodata::create($requestData);

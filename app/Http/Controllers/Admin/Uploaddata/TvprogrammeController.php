@@ -5,6 +5,8 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use App\Tvprogramme;
+use App\Log;
+use Auth;
 use \Carbon\Carbon;
 use Rap2hpoutre\FastExcel\FastExcel;
 
@@ -57,6 +59,7 @@ class TvprogrammeController extends Controller
 
     public function upload(Request $request)
     {             
+        Log::create(['user_id'=>Auth::user()->id,'action'=>'data update - tv programme','date'=>date('Y-m-d')]);
         $upload_path = 'uploads/temp';
         if ($request->file('file')->isValid()) {
             $file = $request->file('file');
