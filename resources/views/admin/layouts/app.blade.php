@@ -83,7 +83,6 @@
                       @if(session('privilege')['admin/uploaddata/tvprogramme']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/tvprogramme') }}" class="menu-item"><i class="ft-upload-cloud"></i>TV Programme</a></li>@endif
                       @if(session('privilege')['admin/uploaddata/adexnett']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/adexnett') }}" class="menu-item"><i class="ft-upload-cloud"></i>Adex Nett</a></li>@endif
                       @if(session('privilege')['admin/uploaddata/spotmatching']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/spotmatching') }}" class="menu-item"><i class="ft-upload-cloud"></i>Spot Matching</a></li>@endif
-                      @if(session('privilege')['admin/uploaddata/spotunpaired']['browse'] ?? 0)<li><a href="{{ url('/admin/uploaddata/spotunpaired') }}" class="menu-item"><i class="ft-upload-cloud"></i>Spot Unpaired</a></li>@endif
                     </ul>
                   </li>
                   <li class="has-sub nav-item" id="administrator"><a href="#"><i class="ft-zoom-in"></i><span data-i18n="" class="menu-title">Search Data</span></a>

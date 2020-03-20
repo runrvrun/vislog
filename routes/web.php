@@ -88,7 +88,9 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/uploadsearch/adstype/destroymulti', 'Admin\Uploadsearch\AdstypeController@destroymulti');
     Route::get('/uploadsearch/adstype/csvall', 'Admin\Uploadsearch\AdstypeController@csvall');
     /**/
-    Route::get('/spotpairing', 'Admin\VideoController@spotpairing');
+    Route::get('/spotpairing', 'Admin\SpotController@spotpairing');
+    Route::get('/spotpairingjson', 'Admin\SpotController@spotpairingjson');
+    Route::post('/spotpairingupdate', 'Admin\SpotController@spotpairingupdate');    
     Route::get('/videodata', 'Admin\VideoController@videodata');
     Route::get('/videodata/indexjson', 'Admin\VideoController@videodatajson');
     Route::get('/videodata/create', 'Admin\VideoController@videodatacreate');

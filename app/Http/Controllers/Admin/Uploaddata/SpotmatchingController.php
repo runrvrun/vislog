@@ -37,11 +37,10 @@ class SpotmatchingController extends Controller
         $query = Spotmatching::raw(function($collection)
         {
             return $collection->aggregate([
+                [ '$sort' => [ 'date' => -1 ] ],
                 [
                     '$group'    => [
                         '_id'   => [
-                            'year'=>'$year',
-                            'month'=>'$month',
                             'date'=>'$date',
                         ],
                         'count' => [

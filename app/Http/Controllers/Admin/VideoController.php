@@ -319,11 +319,6 @@ class VideoController extends Controller
         return url($webpath->value."/".$request->id.".mp4");
     }
 
-    public function spotpairing()
-    {
-        return view('admin.spotpairing.index');
-    }
-
     public function videodata()
     {
         $config = [];

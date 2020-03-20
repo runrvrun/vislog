@@ -29,8 +29,6 @@
                           <thead>
                             <tr>
                               <th></th>                  
-                              <th class="year">@lang('Year')</th>
-                              <th class="month">@lang('Month')</th>
                               <th class="date">@lang('Date')</th>
                               <th class="total_records">@lang('Total Records')</th>
                             </tr>
@@ -103,8 +101,6 @@ $(document).ready(function() {
         },
         columns: [
           { data: '_id.date', name: 'checkbox' },
-          { data: '_id.year', name: '_id.year' },
-          { data: '_id.month', name: '_id.month' },
           { data: '_id.date', name: '_id.date' },
           { data: 'count', name: 'count' },
         ],
