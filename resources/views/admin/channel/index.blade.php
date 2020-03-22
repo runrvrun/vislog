@@ -25,6 +25,7 @@
                 <tr>
                   <th class="code">ID</th>
                   <th class="channel">Channel</th>
+                  <th class="channel">View Order</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -65,6 +66,7 @@ $(document).ready(function() {
         columns: [
           { data: 'code', name: 'code' },
           { data: 'channel', name: 'channel' },
+          { data: 'order', name: 'order' },
           { data: 'action', name: 'action' },
         ],
         dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +

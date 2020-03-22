@@ -36,6 +36,12 @@
                   {{ Form::text('channel', old('channel',$item->channel ?? null), array('class' => 'form-control')) }}
                   </div>
                 </div>
+                </div><div class="form-group row">
+                  <label class="col-md-3 label-control" for="channel">@lang('View Order'): </label>
+                  <div class="col-md-9">
+                  {{ Form::number('order', old('order',$item->order ?? null), array('class' => 'form-control')) }}
+                  </div>
+                </div>
                 <div class="form-actions">
                   <a class="pull-right" href="admin/channel"><button type="button" class="btn btn-raised btn-warning mr-1">
                     <i class="ft-x"></i> Cancel

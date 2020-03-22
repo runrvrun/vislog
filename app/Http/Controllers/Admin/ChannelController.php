@@ -59,6 +59,7 @@ class ChannelController extends Controller
     public function update(Request $request)
     {        
         $requestData['channel'] = $request->channel;
+        $requestData['order'] = $request->order;
         Channel::find($request->id)->update($requestData);
         Session::flash('message', 'Channel diubah'); 
         Session::flash('alert-class', 'alert-success'); 
