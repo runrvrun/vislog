@@ -226,12 +226,20 @@ class MarketingController extends Controller
         foreach ($channel as $key=>$val){
             foreach($query as $k=>$v){
                 if($v->_id->channel == $val->channel){
-                    $data['marketshare_channel'][] = ['channel'=>$val->channel,'marketshare'=>$v->total,'percentage'=>$v->total/$sum_marketshare_channel];
+                    if($sum_marketshare_channel > 0){
+                        $data['marketshare_channel'][] = ['channel'=>$val->channel,'marketshare'=>$v->total,'percentage'=>$v->total/$sum_marketshare_channel];
+                    }else{
+                        $data['marketshare_channel'][] = ['channel'=>$val->channel,'marketshare'=>$v->total,'percentage'=>0];
+                    }
                     $sumtopchannel += $v->total;
                 }
             }
         }
-        $data['marketshare_channel'][] = ['channel'=>'OTHER','marketshare'=>($sum_marketshare_channel-$sumtopchannel),'percentage'=>($sum_marketshare_channel-$sumtopchannel)/$sum_marketshare_channel];
+        if($sum_marketshare_channel > 0){
+            $data['marketshare_channel'][] = ['channel'=>'OTHER','marketshare'=>($sum_marketshare_channel-$sumtopchannel),'percentage'=>($sum_marketshare_channel-$sumtopchannel)/$sum_marketshare_channel];
+        }else{
+            $data['marketshare_channel'][] = ['channel'=>'OTHER','marketshare'=>($sum_marketshare_channel-$sumtopchannel),'percentage'=>0];
+        }
         // market share per month
         $query = Adexnett::raw(function($collection) use ($filter,$nett)
         {
@@ -251,8 +259,8 @@ class MarketingController extends Controller
             ]));
         });
         // sum all
-        $totalmonth = [];
-        foreach($query as $key=>$val){
+        $totalmonth = [];        
+        if($query) foreach($query as $key=>$val){
             $cmonth = Carbon::parse($val->_id->isodate->toDateTime());
             $month = $cmonth->format('MY');
             ${'totalall'.$month} = (${'totalall'.$month} ?? 0) + $val->total;
