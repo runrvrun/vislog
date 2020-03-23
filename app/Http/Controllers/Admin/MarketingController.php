@@ -260,7 +260,7 @@ class MarketingController extends Controller
         });
         // sum all
         $totalmonth = [];        
-        if($query) foreach($query as $key=>$val){
+        foreach($query as $key=>$val){
             $cmonth = Carbon::parse($val->_id->isodate->toDateTime());
             $month = $cmonth->format('MY');
             ${'totalall'.$month} = (${'totalall'.$month} ?? 0) + $val->total;
