@@ -8,177 +8,261 @@
         <!-- BEGIN : Main Content-->
         <div class="main-content">
         <div class="content-wrapper">
-<div class="row">
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Market Share</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table">
-            <thead>
-            </thead>
-            <tbody>
-              @foreach($data['marketshare_channel'] as $key=>$val)
-              <tr>
-                <td>{{ $val['channel'] }}</td>
-                <td>{{ round($val['percentage']*100).'%' ?? '' }}</td>
-              </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6">
-  <div class="card">    
-      <div class="card-content">
-        <div class="card-body">          
-          <div class="marketshare-channel-chart ct-perfect-fifth"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-sm-12">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Market Share Per Month</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Month</th>
-                <th>All TV</th>
-                @foreach($data['channel'] as $key=>$val)
-                <th>{{ $val->channel }}</th>
-                @endforeach
-                @foreach($data['marketshare_channel_month'] as $key=>$val)
-                <tr>
-                <td>{{ $key ?? '' }}</td>
-                <td>{{ number_format($val['all'],0) ?? '' }}</td>
-                @foreach($data['channel'] as $k=>$v)
-                @if($k != 'all')
-                <td><?php  $p = $val[$v->channel]['percentage'] ?? 0;?>{{ round($p*100).'%' }}</td>
-                @endif
-                @endforeach                
-                </tr>
-                @endforeach
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Market Share Per Month</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-product-table">
-            <thead>
-            </thead>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-6">
-    <div class="card">
-      <div class="card-content">
-        <div class="card-body">
-          <div class="marketsharemonth-chart ct-major-twelfth"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-sm-12">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Top 10 Agency</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-product-table">
-            <thead>
-            </thead>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-sm-12">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Top 10 Advertiser</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-product-table">
-            <thead>
-            </thead>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-sm-12">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Top 10 Brand/Product</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-product-table">
-            <thead>
-            </thead>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row">
-  <div class="col-sm-12">
-    <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Top 10 Sector</h4>
-      </div>
-      <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-product-table">
-            <thead>
-            </thead>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Market Share</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard table-responsive">
+                    <table class="table">
+                      <thead>
+                      </thead>
+                      <tbody>
+                        @foreach($data['marketshare_channel'] as $key=>$val)
+                        <tr>
+                          <td>{{ $val['channel'] }}</td>
+                          <td style="text-align:right">{{ round($val['percentage']*100).'%' ?? '' }}</td>
+                        </tr>
+                        @endforeach
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-8">
+            <div class="card">    
+                <div class="card-content">
+                  <div class="card-body">          
+                    <div class="marketshare-channel-chart ct-perfect-fifth"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Market Share Per Month</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Month</th>
+                          <th>All TV</th>
+                          @foreach($data['channel'] as $key=>$val)
+                          <th>{{ $val->channel }}</th>
+                          @endforeach
+                          @foreach($data['marketshare_channel_month'] as $key=>$val)
+                          <tr>
+                          <td>{{ $key ?? '' }}</td>
+                          <td style="text-align:right">{{ number_format($val['all'],0) ?? '' }}</td>
+                          @foreach($data['channel'] as $k=>$v)
+                          <td style="text-align:right"><?php  $p = $val[$v->channel]['percentage'] ?? 0;?>{{ round($p*100).'%' }}</td>
+                          @endforeach                
+                          </tr>
+                          @endforeach
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Market Share Per Month</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Channel</th>
+                          @foreach($data['monthlist'] as $key=>$val)
+                          <th>{{ $val }}</th>
+                          @endforeach
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach($data['marketshare_month_channel'] as $key=>$val)
+                        <tr>
+                          <td>{{ $key }}</td>
+                          @foreach($data['monthlist'] as $k=>$v)
+                          <td style="text-align:right">{{ number_format($val[$v]['marketshare'] ?? 0) }}</td>
+                          @endforeach
+                        </tr>
+                        @endforeach
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-content">
+                  <div class="card-body">
+                    <div class="marketsharemonthchannel-chart ct-square"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Top 10 Agency</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Month</th>
+                          <th>All TV</th>
+                          @foreach($data['channel'] as $key=>$val)
+                          <th>{{ $val->channel }}</th>
+                          @endforeach
+                          @foreach($data['marketshare_channel_agency'] as $key=>$val)
+                          <tr>
+                          <td>{{ $key ?? '' }}</td>
+                          <td style="text-align:right">{{ number_format($val['all'],0) ?? '' }}</td>
+                          @foreach($data['channel'] as $k=>$v)
+                          <td style="text-align:right"><?php  $p = $val[$v->channel]['percentage'] ?? 0;?>{{ round($p*100).'%' }}</td>
+                          @endforeach                
+                          </tr>
+                          @endforeach
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Top 10 Advertiser</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Month</th>
+                          <th>All TV</th>
+                          @foreach($data['channel'] as $key=>$val)
+                          <th>{{ $val->channel }}</th>
+                          @endforeach
+                          @foreach($data['marketshare_channel_advertiser'] as $key=>$val)
+                          <tr>
+                          <td>{{ $key ?? '' }}</td>
+                          <td style="text-align:right">{{ number_format($val['all'],0) ?? '' }}</td>
+                          @foreach($data['channel'] as $k=>$v)
+                          <td style="text-align:right"><?php  $p = $val[$v->channel]['percentage'] ?? 0;?>{{ round($p*100).'%' }}</td>
+                          @endforeach                
+                          </tr>
+                          @endforeach
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Top 10 Brand/Product</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Month</th>
+                          <th>All TV</th>
+                          @foreach($data['channel'] as $key=>$val)
+                          <th>{{ $val->channel }}</th>
+                          @endforeach
+                          @foreach($data['marketshare_channel_product'] as $key=>$val)
+                          <tr>
+                          <td>{{ $key ?? '' }}</td>
+                          <td style="text-align:right">{{ number_format($val['all'],0) ?? '' }}</td>
+                          @foreach($data['channel'] as $k=>$v)
+                          <td style="text-align:right"><?php  $p = $val[$v->channel]['percentage'] ?? 0;?>{{ round($p*100).'%' }}</td>
+                          @endforeach                
+                          </tr>
+                          @endforeach
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Top 10 Sector</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Month</th>
+                          <th>All TV</th>
+                          @foreach($data['channel'] as $key=>$val)
+                          <th>{{ $val->channel }}</th>
+                          @endforeach
+                          @foreach($data['marketshare_channel_sector'] as $key=>$val)
+                          <tr>
+                          <td>{{ $key ?? '' }}</td>
+                          <td>{{ number_format($val['all'],0) ?? '' }}</td>
+                          @foreach($data['channel'] as $k=>$v)
+                          <td style="text-align:right"><?php  $p = $val[$v->channel]['percentage'] ?? 0;?>{{ round($p*100).'%' }}</td>
+                          @endforeach                
+                          </tr>
+                          @endforeach
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
 @endsection
 @section('pagecss')
-<link rel="stylesheet" type="text/css" href="{{ asset('app-assets') }}/vendors/css/tables/datatable/datatables.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/chartist.min.css">
 <style>
@@ -207,7 +291,6 @@ button.search-result{
 </style>
 @endsection
 @section('pagejs')
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
 <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -230,53 +313,21 @@ button.search-result{
 <script>
   var data = {
     labels: [
-          'Primetime ({{ $data["daypart"][3] }})',
-          'Non Primetime ({{ $data["daypart"][0]+$data["daypart"][1]+$data["daypart"][2]+$data["daypart"][4] }})',
-        ],
-    series: [
-        {{ $data["daypart"][3] }},
-        {{ $data["daypart"][0]+$data["daypart"][1]+$data["daypart"][2]+$data["daypart"][4] }}
-    ]
-  };
-  new Chartist.Pie('.spot-per-time-chart', data, {donut: true});
-</script>
-<script>
-  var data = {
-    labels: [
-          '00.00-06.00',
-          '06.00-12.00',
-          '12.00-17.30',
-          '17.30-22.00',
-          '22.00-00.00',
-        ],
-    series: [
-      [
-        {{ $data["daypart"][0] }},
-        {{ $data["daypart"][1] }},
-        {{ $data["daypart"][2] }},
-        {{ $data["daypart"][3] }},
-        {{ $data["daypart"][4] }},
-      ]
-    ]
-  };
-  new Chartist.Bar('.spot-per-daypart-chart', data);
-</script>
-<script>
-  var data = {
-    labels: [
-        @foreach($data['spot_per_date'] as $key=>$val)
-          '{{ $val->_id['date'] }}',
+        @foreach($data['marketshare_month_channel'] as $key=>$val)
+          '{{ $key }}',
         @endforeach
         ],
     series: [
-      [
-        @foreach($data['spot_per_date'] as $key=>$val)
-          {{ $val->total.',' }}
+        @foreach($data['marketshare_month_channel'] as $key=>$val)
+          [
+            @foreach($data['monthlist'] as $k=>$v)
+            {{ round($val[$v]['marketshare'] ?? 0) }},
+            @endforeach
+          ],
         @endforeach
-      ]
     ]
   };
-  new Chartist.Line('.spot-per-date-chart', data);
+  new Chartist.Line('.marketsharemonthchannel-chart', data);
 </script>
 <script type="text/javascript">
 $(function() {

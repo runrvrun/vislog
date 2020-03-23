@@ -221,14 +221,18 @@ class MarketingController extends Controller
         foreach($query as $key=>$val){
             $sum_marketshare_channel += $val->total;
         }
+        $sumtopchannel = 0;
         $data['marketshare_channel'] = [];
         foreach ($channel as $key=>$val){
             foreach($query as $k=>$v){
-                if($val->channel == $v->_id->channel){
+                if($v->_id->channel == $val->channel){
                     $data['marketshare_channel'][] = ['channel'=>$val->channel,'marketshare'=>$v->total,'percentage'=>$v->total/$sum_marketshare_channel];
+                    $sumtopchannel += $v->total;
                 }
             }
         }
+        $data['marketshare_channel'][] = ['channel'=>'OTHER','marketshare'=>($sum_marketshare_channel-$sumtopchannel),'percentage'=>($sum_marketshare_channel-$sumtopchannel)/$sum_marketshare_channel];
+        // market share per month
         $query = Adexnett::raw(function($collection) use ($filter,$nett)
         {
             $filter = [];
@@ -248,13 +252,12 @@ class MarketingController extends Controller
         });
         // sum all
         $totalmonth = [];
-        $totalall = 0;
         foreach($query as $key=>$val){
             $cmonth = Carbon::parse($val->_id->isodate->toDateTime());
-            $month = $cmonth->format('M Y');
+            $month = $cmonth->format('MY');
+            ${'totalall'.$month} = (${'totalall'.$month} ?? 0) + $val->total;
+            $totalmonth[$month]['all'] = ${'totalall'.$month};
             $totalmonth[$month][$val->_id->channel]['marketshare'] = $val->total;
-            $totalall += $val->total;
-            $totalmonth[$month]['all'] = $totalall;
         }
         foreach($totalmonth as $key=>$val){
             foreach($val as $k=>$v){
@@ -264,56 +267,173 @@ class MarketingController extends Controller
             }
         }
         $data['marketshare_channel_month'] = $totalmonth;
-        // dd($data['marketshare_channel_month']);
-        $query = Adexnett::raw(function($collection) use ($filter)
-        {
-            return $collection->aggregate(array_merge($filter,[
-                [
-                    '$group'    => [
-                        '_id'   => [
-                            'nadstype'=>'$nadstype'
-                        ],
-                        'total' => [
-                            '$sum'  => '$no_of_spots'
-                        ],
-                    ]
-                ]
-            ]));
-        });
-        // $spotpertype['LOOSE SPOT'] = 0;
-        $spotpertype['NON LOOSE SPOT'] = 0;
+        // market share per month
+        $totalmonth = [];
+        $monthlist = [];
         foreach($query as $key=>$val){
-            // group loose spot vs non loose spot (other)
-            if($val->id['nadstype'] == 'LOOSE SPOT'){
-                // $spotpertype['LOOSE SPOT'] = $val->total;
-            }else{
-                $spotpertype['NON LOOSE SPOT'] += $val->total;
-            }
+            $cmonth = Carbon::parse($val->_id->isodate->toDateTime());
+            $month = $cmonth->format('MY');
+            $monthlist[] = $month;
+            $totalmonth[$val->_id->channel][$month]['marketshare'] = $val->total;
         }
-        $data['spot_per_type'] = $spotpertype;
-        //calculate spot per daypart
-        $data['daypart'][0] = $adexnett->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
-        $data['daypart'][1] = $adexnett->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
-        $data['daypart'][2] = $adexnett->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
-        $data['daypart'][3] = $adexnett->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
-        $data['daypart'][4] = $adexnett->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
-
-        $data['spot_per_date'] = Adexnett::raw(function($collection) use($filter) 
+        $data['marketshare_month_channel'] = $totalmonth;
+        $data['monthlist'] = array_unique($monthlist);
+        // top 10 agency
+        $query = Adexnett::raw(function($collection) use ($filter,$nett)
         {
+            $filter = [];
             return $collection->aggregate(array_merge($filter,[
-                [ '$sort' => [ 'date' => 1 ] ],
                 [
                     '$group'    => [
                         '_id'   => [
-                            'date'=>'$date',
+                            'channel'=>'$channel',
+                            'agency'=>'$agency'
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => '$'.$nett
                         ]
                     ]
                 ]
             ]));
         });
+        // sum all
+        $totalagency = [];
+        foreach($query as $key=>$val){
+            $agency = $val->_id->agency;
+            $totalagency[$agency][$val->_id->channel]['marketshare'] = $val->total;
+            ${'totalall'.$agency} = (${'totalall'.$agency} ?? 0) + $val->total;
+            $totalagency[$agency]['all'] = ${'totalall'.$agency};
+        }
+        foreach($totalagency as $key=>$val){
+            foreach($val as $k=>$v){
+                if($k != 'all'){
+                    $totalagency[$key][$k]['percentage'] = $v['marketshare']/$val['all'];
+                }
+            }
+        }
+        uasort($totalagency, function($a, $b) {
+            return $b['all'] <=> $a['all'];
+        });
+        $data['marketshare_channel_agency'] = array_slice($totalagency, 0, 10, true);
+
+        //
+        $query = Adexnett::raw(function($collection) use ($filter,$nett)
+        {
+            $filter = [];
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'channel'=>'$channel',
+                            'nadvertiser'=>'$nadvertiser'
+                        ],
+                        'total' => [
+                            '$sum'  => '$'.$nett
+                        ]
+                    ]
+                ]
+            ]));
+        });
+        // sum all
+        $totaladvertiser = [];        
+        foreach($query as $key=>$val){
+            $advertiser = $val->_id->nadvertiser;
+            $totaladvertiser[$advertiser][$val->_id->channel]['marketshare'] = $val->total;
+            ${'totalall'.$advertiser} = (${'totalall'.$advertiser} ?? 0) + $val->total;
+            $totaladvertiser[$advertiser]['all'] = ${'totalall'.$advertiser};
+        }
+        foreach($totaladvertiser as $key=>$val){
+            foreach($val as $k=>$v){
+                if($k != 'all'){
+                    $totaladvertiser[$key][$k]['percentage'] = $v['marketshare']/$val['all'];
+                }
+            }
+        }
+        uasort($totaladvertiser, function($a, $b) {
+            return $b['all'] <=> $a['all'];
+        });
+        $data['marketshare_channel_advertiser'] = array_slice($totaladvertiser, 0, 10, true);
+        $query = Adexnett::raw(function($collection) use ($filter,$nett)
+        {
+            $filter = [];
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'channel'=>'$channel',
+                            'nproduct'=>'$nproduct'
+                        ],
+                        'total' => [
+                            '$sum'  => '$'.$nett
+                        ]
+                    ]
+                ],
+                [
+                    '$limit' => 10
+                ]
+            ]));
+        });
+        // sum all
+        $totalproduct = [];
+        foreach($query as $key=>$val){
+            $product = $val->_id->nproduct;
+            $totalproduct[$product][$val->_id->channel]['marketshare'] = $val->total;
+            ${'totalall'.$product} = (${'totalall'.$product} ?? 0) + $val->total;
+            $totalproduct[$product]['all'] = ${'totalall'.$product};
+        }
+        foreach($totalproduct as $key=>$val){
+            foreach($val as $k=>$v){
+                if($k != 'all'){
+                    $totalproduct[$key][$k]['percentage'] = $v['marketshare']/$val['all'];
+                }
+            }
+        }
+        uasort($totalproduct, function($a, $b) {
+            return $b['all'] <=> $a['all'];
+        });
+        $data['marketshare_channel_product'] = array_slice($totalproduct, 0, 10, true);
+        //
+        $query = Adexnett::raw(function($collection) use ($filter,$nett)
+        {
+            $filter = [];
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'channel'=>'$channel',
+                            'nsector'=>'$nsector'
+                        ],
+                        'total' => [
+                            '$sum'  => '$'.$nett
+                        ]
+                    ]
+                ],
+                [
+                    '$limit' => 10
+                ]
+            ]));
+        });
+        // sum all
+        $totalsector = [];
+        foreach($query as $key=>$val){
+            $sector = $val->_id->nsector;
+            $totalsector[$sector][$val->_id->channel]['marketshare'] = $val->total;
+            ${'totalall'.$sector} = (${'totalall'.$sector} ?? 0) + $val->total;
+            $totalsector[$sector]['all'] = ${'totalall'.$sector};
+        }
+        foreach($totalsector as $key=>$val){
+            foreach($val as $k=>$v){
+                if($k != 'all'){
+                    $totalsector[$key][$k]['percentage'] = $v['marketshare']/$val['all'];
+                }
+            }
+        }
+        uasort($totalsector, function($a, $b) {
+            return $b['all'] <=> $a['all'];
+        });
+        $data['marketshare_channel_sector'] = array_slice($totalsector, 0, 10, true);
+
+        //
         // populate dropdown
         $query = \App\Targetaudience::whereNotNull('targetaudience');
         if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
