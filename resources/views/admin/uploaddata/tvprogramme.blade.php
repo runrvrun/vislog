@@ -154,7 +154,7 @@ $(document).ready(function() {
             style:    'multi',
             selector: 'td:first-child'
         },
-        order: [[1, 'DESC']]
+        order: [[3, 'desc']]
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');
     $('.buttons-add').addClass('btn mr-1');

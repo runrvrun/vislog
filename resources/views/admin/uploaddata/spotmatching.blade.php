@@ -29,6 +29,7 @@
                           <thead>
                             <tr>
                               <th></th>                  
+                              <th class="date">@lang('Year')</th>
                               <th class="date">@lang('Date')</th>
                               <th class="total_records">@lang('Total Records')</th>
                             </tr>
@@ -102,6 +103,7 @@ $(document).ready(function() {
         columns: [
           { data: '_id.date', name: 'checkbox' },
           { data: '_id.date', name: '_id.date' },
+          { data: '_id.date', name: '_id.date' },
           { data: 'count', name: 'count' },
         ],
         dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
@@ -142,12 +144,18 @@ $(document).ready(function() {
             checkboxes: {
                 'selectRow': true
             }
-        }],
+        },{
+                "render": function ( data, type, row ) {
+                    return data.substr(data.length-4,data.length);
+                },
+                "targets": 1
+            }
+        ],
+        order: [[2, 'desc']],
         select: {
             style:    'multi',
             selector: 'td:first-child'
-        },
-        order: [[1, 'DESC']]
+        }
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');
     $('.buttons-add').addClass('btn mr-1');

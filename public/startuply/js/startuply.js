@@ -30,9 +30,10 @@ Startuply = {
         stickyMenuOffset: 500,
         smoothScroll: false,
         smoothScrollSpeed: 800,
-        ajaxedForm: true,
+        ajaxedForm: false,
         ajaxedFormSuccessMsg: 'Success',
         ajaxedFormErrorMsg: 'An error occured. Please try again later.',
+        // ajaxedFormErrorMsg: 'Success.',
         toastrPositionClass: 'toast-top-full-width'
     },
 
@@ -447,16 +448,16 @@ Startuply = {
                 else alert('Success');
 
             } else {
-                if ( typeof toastr != 'undefined' ) toastr.error('An error occured. Please try again later.');
-                else alert('An error occured. Please try again later.');
+                // if ( typeof toastr != 'undefined' ) toastr.error('An error occured. Please try again later.');
+                // else alert('An error occured. Please try again later.');
 
                 _this.log( 'Form message', msg );
             }
         };
 
         failHandler = function () {
-            if ( typeof toastr != 'undefined' ) toastr.error('An error occured. Please try again later.');
-            else alert('An error occured. Please try again later.');
+            // if ( typeof toastr != 'undefined' ) toastr.error('An error occured. Please try again later.');
+            // else alert('An error occured. Please try again later.');
         }
 
         if ( $('form').length ) {

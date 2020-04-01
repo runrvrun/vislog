@@ -78,7 +78,7 @@
                   <div class="fg-actions d-flex justify-content-between">
                     <div class="login-btn">
                       <button class="btn btn-outline-primary">
-                        <a href="login-page.html" class="text-decoration-none">Back To Login</a>
+                        <a href="{{ url('/login') }}" class="text-decoration-none">Back To Login</a>
                       </button>
                     </div>
                     <div class="recover-pass">

@@ -84,7 +84,32 @@
     </div>
   </div>
   <div class="col-md-6">
-    <video src="" controls id="playvideo"></video>
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="false">
+    <ol class="carousel-indicators">
+    @foreach($data['tvchighlight'] as $key=>$val)
+      <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}" class="{{ ($key == 0)? 'active':'' }}"></li>
+      @endforeach
+    </ol>
+    <div class="carousel-inner">
+      @foreach($data['tvchighlight'] as $key=>$val)
+      <div class="carousel-item {{ ($key == 0)? 'active':'' }}">
+        <video src="{{ url('/uploads/tvchighlight/'.($val->filename ?? '')) }}" controls id="playvideo"></video>
+        <div class="carousel-caption d-none d-md-block">
+          <h5>{{ $val->title ?? '' }}</h5>
+          <p>{{ $val->description ?? ''}}</p>
+        </div>
+      </div>
+      @endforeach
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>    
   </div>
 </div>
 <div class="row">
@@ -132,7 +157,7 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-sm-6">
+  <div class="col-sm-7">
     <div class="card" style="background-color:#2196f3">
       <div class="card-header">
         <h4 class="card-title white">Top Performance</h4>
@@ -172,7 +197,7 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-6">
+  <div class="col-sm-5">
    <div class="card">
       <div class="card-content" style="min-height: 286px;">
         <ul class="nav nav-tabs" id="myTab1" role="tablist">
@@ -183,7 +208,7 @@
             <a class="nav-link" id="videoupdate-tab" data-toggle="tab" href="#videoupdate" role="tab" aria-controls="program" aria-selected="false"><i class="ft-film"></i> Video Update</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="recentactivity-tab" data-toggle="tab" href="#recentactivity" role="tab" aria-controls="product" aria-selected="false"><i class="ft-bell"></i> Recent Activity</a>
+            <a class="nav-link" id="recentactivity-tab" data-toggle="tab" href="#recentactivity" role="tab" aria-controls="product" aria-selected="false"><i class="ft-bell"></i> Activity</a>
           </li>
         </ul>
         <div class="tab-content" id="myTabContent">
@@ -221,10 +246,22 @@
           </div>
         </div>
 @endsection
+@section('modal')
+<div class="modal fade text-left show" id="loading-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" style="display: none; padding-right: 17px;" aria-modal="true">
+  <div class="modal-dialog  modal-s" role="document">
+    <div class="modal-content">
+      <div class="modal-body" style="text-align:center">
+        Loading ... <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>        
+      </div>
+    </div>
+  </div>
+</div>
+@endsection
 @section('pagecss')
 <link rel="stylesheet" type="text/css" href="{{ asset('app-assets') }}/vendors/css/tables/datatable/datatables.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/chartist.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/chartist-plugin-tooltip.css">
 <style>
 .card-content{
   min-height: 100px;
@@ -243,7 +280,14 @@
 #filterersubmit{
   bottom: 10px;
   top: auto;
-  width: 95%;
+  width: 85%;
+}
+#filtererreset{
+  bottom: 10px;
+  top: auto;
+  width: 9%;
+  right: auto;
+  left: 10px;
 }
 button.search-result{
   min-width:100px;
@@ -281,25 +325,18 @@ button.search-result{
   background-color: white;
   margin: 15px;
 }
+.carousel-item{
+  text-align: center;
+}
 </style>
 @endsection
 @section('pagejs')
 <script src="{{ asset('app-assets') }}/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
-<script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+<script src="{{ asset('app-assets') }}/vendors/js/chartist.min.js"></script>
+<script src="{{ asset('app-assets') }}/vendors/js/chartist-plugin-tooltip.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{{ asset('/') }}app-assets/js/filterer.js" type="text/javascript"></script>
-<script>
-  var data = {
-    labels: [
-        ],
-    series: [
-      [
-      ]
-    ]
-  };
-  new Chartist.Bar('.spot-per-channel-chart', data);
-</script>
 <script>
 $(document).ready(function() {
     var resp = false;
@@ -327,20 +364,6 @@ $(document).ready(function() {
         order: [[1, 'DESC']]
     });
 
-    $.ajax({
-        url:"{{ url('/admin/video/generatevideo') }}",
-        data:{
-          id: '{{ $data['top_commercial']->_id ?? 0 }}',
-          page: window.location.href,
-        },
-        success:function(response) {
-          videopath = response;
-          $("#playvideo").attr('src',videopath);
-       },
-       error:function(){
-        console.log("error getting video path");
-       }
-    });
 });
 </script>
 <script>
@@ -402,65 +425,65 @@ $(document).ready(function() {
 <script>
   var data = {
     labels: [
-        ],
-    series: [
-    ]
-  };
-  new Chartist.Pie('.spot-per-type-chart', data, {donut: true});
-</script>
-<script>
-  var data = {
-    labels: [
-          ],
-    series: [
-    ]
-  };
-  new Chartist.Pie('.spot-per-time-chart', data, {donut: true});
-</script>
-<script>
-  var data = {
-    labels: [
-          '00.00-06.00',
-          '06.00-12.00',
-          '12.00-17.30',
-          '17.30-22.00',
-          '22.00-00.00',
+          '{{ $data['daypart'][0]['name'] ?? 0 }}',
+          '{{ $data['daypart'][1]['name'] ?? 0 }}',
+          '{{ $data['daypart'][2]['name'] ?? 0 }}',
+          '{{ $data['daypart'][3]['name'] ?? 0 }}',
+          '{{ $data['daypart'][4]['name'] ?? 0 }}',
         ],
     series: [
       [
-        {{ $data['daypart'][0] ?? 0 }},
-        {{ $data['daypart'][1] ?? 0 }},
-        {{ $data['daypart'][2] ?? 0 }},
-        {{ $data['daypart'][3] ?? 0 }},
-        {{ $data['daypart'][4] ?? 0 }},
+        {{ $data['daypart'][0]['value'] ?? 0 }},
+        {{ $data['daypart'][1]['value'] ?? 0 }},
+        {{ $data['daypart'][2]['value'] ?? 0 }},
+        {{ $data['daypart'][3]['value'] ?? 0 }},
+        {{ $data['daypart'][4]['value'] ?? 0 }},
       ]
     ]
   };
-  new Chartist.Bar('.spot-per-daypart-chart', data);
+  new Chartist.Bar('.spot-per-daypart-chart', data,{
+    plugins: [
+      Chartist.plugins.tooltip()
+    ]
+  });
 </script>
 <script>
   var data = {
     labels: [
         @foreach($data['spot_per_date'] as $key=>$val)
-          '{{ $val->_id['date'] }}',
+          '{{ $val['date'] }}',
         @endforeach
         ],
     series: [
       [
         @foreach($data['spot_per_date'] as $key=>$val)
-          {{ $val->total.',' }}
+          {{ $val['total'].',' }}
         @endforeach
       ]
     ]
   };
-  new Chartist.Line('.spot-per-date-chart', data);
+  new Chartist.Line('.spot-per-date-chart', data,{
+    plugins: [
+      Chartist.plugins.tooltip()
+    ]
+  });
 </script>
 <script type="text/javascript">
 $(function() {
+    @if(!empty($request->startdate))
+    var start = moment("{{$request->startdate}}");
+    $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
+    @else
     var start = moment().subtract(6, 'day');
     $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
+    @endif    
+    @if(!empty($request->enddate))
+    var end = moment("{{$request->enddate}}");
+    $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
+    @else
     var end = moment();
     $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
+    @endif
 
     function cb(start, end) {
         $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
@@ -561,7 +584,7 @@ $(document).ready(function(){
   if(window.innerWidth <= 800) resp=true;
   
   $("#filterersubmit").click(function() {
-  //
+    $("#loading-modal").modal();
   });
 
   $("select[name='filter-ntargetaudience']").addClass('selectpicker'); // dropdown search with bootstrap select
@@ -584,20 +607,39 @@ $(document).ready(function(){
       ],
       [
         @foreach($data['spot_per_channel'] as $key=>$val)
+          @if(isset($data['spot_per_channel_loose'][$key]))
           {{ ($val['total'] - $data['spot_per_channel_loose'][$key]['total']).',' }}
+          @endif
         @endforeach
       ]
     ]
   };
-  new Chartist.Bar('.spot-per-channel-chart', data,{stackBars:true});
+  new Chartist.Bar('.spot-per-channel-chart', data,{stackBars:true,
+    plugins: [
+      Chartist.plugins.tooltip()
+    ]
+  });
 </script>
 
+<script>
+  $(document).ready(function(){
+    $("#filtererreset").click(function(){
+      var start = moment().subtract(6, 'day');
+      $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
+      var start = moment();
+      $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
+      $("input[name^=filter-]").val('');
+      $("span[id^=filter-]").html('');
+    });
+  });
+</script>
 @endsection
 @section('filterer')
 <form method="GET" action="{{ url('admin/highlight') }}">
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
+<button id="filtererreset" class="btn btn-secondary pull-left filterer-close" style="color:#fff"><i class="ft-rotate-ccw"></i></button>
 <a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>

@@ -41,10 +41,20 @@
 				<div class="navigation-navbar collapsed">
 					<ul class="navigation-bar navigation-bar-left">
 						<li><a href="#hero">Home</a></li>
-						<li><a href="#feature">Feature</a></li>
-						<li><a href="#testimonials">Testimonials</a></li>
-						<li><a href="#technology">Technology</a></li>
-						<li><a href="#pricing">Pricing</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#feature">Features</a></li>
+						<li><a href="#pricing">Prices</a></li>
+						<li><a href="#feedback">Feedback</a></li>
+						<li><a href="#process">Process</a></li>
+						<li><a href="#contact">Contact</a></li>
+						<li id="menu-item-4742" class="dropdown"><a title="EXTRA" class="dropdown-toggle" href="#">Extra <span class="caret"></span></a>
+							<ul role="menu" class=" dropdown-menu" style="display: none;">
+								<li id="menu-item-4743" ><a href="http://med-in.id/" target="_blank">Med-In</a></li>																					
+								<li id="menu-item-4743" ><a href="https://bitplay.id/" target="_blank">Bitplay</a></li>																					
+								<li id="menu-item-4743" ><a href="http://hitek.co.id/" target="_blank">Hitek</a></li>																					
+								<li id="menu-item-4743" ><a href="http://csigroup.co.id/" target="_blank">CSI</a></li>																					
+							</ul>
+							</li>
 					</ul>
 					<ul class="navigation-bar navigation-bar-right">
 						<li><a href="{{ url('login') }}">Login</a></li>
@@ -54,12 +64,12 @@
 		</nav>
 	</header>
 
-	<div id="hero" class="bg bg1 static-header window-height light-text hero-section ytp-player-background clearfix" data-video="hln55FEspG0" data-property="{videoURL: 'https://www.youtube.com/watch?v=hln55FEspG0', containment: '#hero', autoPlay: true, realfullscreen: true, stopMovieOnBlur: false, addRaster: false, showControls: false, mute:true, startAt:0, opacity:1, gaTrack: false}">
+	<div id="hero" class="bg bg1 static-header window-height light-text hero-section ytp-player-background clearfix" data-video="xDQIfx8bB58" data-property="{videoURL: 'https://www.youtube.com/watch?v=xDQIfx8bB58', containment: '#hero', autoPlay: true, realfullscreen: true, stopMovieOnBlur: false, addRaster: false, showControls: false, mute:true, startAt:0, opacity:1, gaTrack: false}">
 		<div class="heading-bdlock align-center centered-block">
 			<div class="container">
-				<h1 class="editContent">Do not wait &mdash; <span class="highlight">launch</span> your startup now!</h1>
+				<h1 class="editContent">Do not wait &mdash; <span class="highlight">monitor</span> your ads now!</h1>
 				<h5 class="editContent">this tempate is flexible enough to suit any kind of startup or new business</h5>
-				<a href="#" class="btn btn-solid editContent">Get started</a> <a href="#" class="btn btn-outline editContent">Take tour</a>
+				<a href="{{ url('/admin') }}" class="btn btn-solid editContent">Login</a>
 			</div>
 		</div>
 	</div>
@@ -67,11 +77,10 @@
 	<div id="clients" class="clients-section align-center">
 		<div class="container">
 			<ul class="list-inline logos">
-				<li><img class="animated" data-animation="fadeInDown" data-duration="500" src="{{ asset('startuply') }}/img/logos/logo-1.png" alt="mashable" /></li>
-				<li><img class="animated" data-animation="fadeInUp" data-duration="500" data-delay="200" src="{{ asset('startuply') }}/img/logos/logo-2.png" alt="tnw" /></li>
-				<li><img class="animated" data-animation="fadeInDown" data-duration="500" data-delay="400" src="{{ asset('startuply') }}/img/logos/logo-3.png" alt="virgin" /></li>
-				<li><img class="animated" data-animation="fadeInUp" data-duration="500" data-delay="600" src="{{ asset('startuply') }}/img/logos/logo-4.png" alt="microsoft" /></li>
-				<li><img class="animated" data-animation="fadeInDown" data-duration="500" data-delay="800" src="{{ asset('startuply') }}/img/logos/logo-5.png" alt="forbes" /></li>
+				<li><a href="http://med-in.id/" target="_blank"><img class="animated" data-animation="fadeInDown" data-duration="500" height="80px" src="{{ asset('images/group') }}/medin.png" alt="mashable" /></a></li>
+				<li><a href="https://bitplay.id/" target="_blank"><img class="animated" data-animation="fadeInUp" data-duration="500" height="80px" data-delay="200" src="{{ asset('images/group') }}/bitplay.png" alt="tnw" /></a></li>
+				<li><a href="http://hitek.co.id/" target="_blank"><img class="animated" data-animation="fadeInDown" data-duration="500" height="80px" data-delay="400" src="{{ asset('images/group') }}/hitek.png" alt="virgin" /></a></li>
+				<li><a href="http://csigroup.co.id/" target="_blank"><img class="animated" data-animation="fadeInUp" data-duration="500" height="80px" data-delay="600" src="{{ asset('images/group') }}/csi.png" alt="microsoft" /></a></li>
 			</ul>
 		</div>
 	</div>
@@ -80,9 +89,9 @@
 		<div class="container">
 
 			<ul class="nav nav-tabs alt">
-				<li class="active"><a href="#first-tab-alt" data-toggle="tab">FIRST TAB</a></li>
-				<li><a href="#second-tab-alt" data-toggle="tab">SECOND TAB</a></li>
-				<li><a href="#third-tab-alt" data-toggle="tab">THIRD TAB</a></li>
+				<li class="active"><a href="#first-tab-alt" data-toggle="tab">USER</a></li>
+				<li><a href="#second-tab-alt" data-toggle="tab">TECHNOLOGY</a></li>
+				<li><a href="#third-tab-alt" data-toggle="tab">STEPS</a></li>
 			</ul>
 
 			<div class="tab-content alt">
@@ -98,8 +107,7 @@
 								<p class="sub-title">Lorem ipsum dolor sit atmet sit dolor greand fdanrh<br/> sdfs sit atmet sit dolor greand fdanrh sdfs</p>
 								<p>In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret. Sed virtutem ipsam inchoavit, nihil ampliusuma. Scien tiam pollicentur, quam non erat mirum sapientiae lorem cupido patria esse cariorem. Quae qui non vident, nihilamane umquam magnum ac cognitione.</p>
 								<br/>
-								<a href="#" class="btn btn-outline-color">Get template</a>
-								<a href="#" class="btn btn-outline-color">See elements</a>
+								<a href="#newsletter" class="btn btn-outline-color">Get Live Demo</a>
 							</article>
 						</div>
 					</div>
@@ -163,7 +171,7 @@
 
 	<hr class="no-margin" />
 
-	<section id="process" class="section process-section align-center dark-text">
+	<section id="feature" class="section process-section align-center dark-text">
 		<div class="container">
 			<div class="section-content row">
 				<div class="col-sm-6 pull-right animated" data-duration="500" data-animation="fadeInRight">
@@ -309,24 +317,26 @@
 		<div class="container align-center">
 			<div class="col-sm-12 col-lg-5 animated" data-animation="fadeInLeft" data-duration="500">
 				<article>
-					<h2>GET LIVE UPDATES</h2>
+					<h2>GET LIVE DEMO</h2>
 					 <p class="">No spam promise - only latest news and prices!</p>
 				</article>
 			</div>
 			<div class="col-sm-12 col-lg-7 animated" data-animation="fadeInRight" data-duration="500">
-				<form class="form mailchimp-form subscribe-form" style="padding-top: 10px;" action="<?=$_SERVER['PHP_SELF']; ?>" method="post">
+				<form class="form" style="padding-top: 10px;" action="{{ url('demorequest') }}" method="post">@csrf
 					<div class="form-group form-inline">
-						<input size="15" type="text" class="form-control required" name="FULLNAME" placeholder="Your name" />
-						<input size="25" type="email" class="form-control required" name="EMAIL" placeholder="your@email.com" />
-						<input type="submit" class="btn btn-outline" value="SUBSCRIBE" />
-						<span class="response"><? require_once('{{ asset('startuply') }}/mailchimp/inc/store-address.php'); if($_GET['submit']){ echo storeAddress(); } ?></span>
+						<input size="15" type="text" class="form-control required" name="name" placeholder="Your name" />
+						<input size="25" type="email" class="form-control required" name="email" placeholder="your@email.com" />
+						<input type="submit" class="btn btn-outline" value="REQUEST DEMO" />
+						@if(Session::has('message'))
+						<p>{{ ucfirst(Session::get('message')) }}</p>
+						@endif
 					</div>
 				</form>
 			</div>
 		</div>
 	</section>
 
-	<section id="product" class="section product-section align-center dark-text animated" data-animation="fadeInUp" data-duration="500">
+	<section id="pricing" class="section product-section align-center dark-text animated" data-animation="fadeInUp" data-duration="500">
 		<div class="container">
 			<div class="section-header">
 				<h2>PRODUCT <span class="highlight">PACKAGES</span></h2>
@@ -338,58 +348,58 @@
 			<div class="section-content row">
 
 				<div class="col-sm-4">
-					<div class="package-column disabled">
-						<div class="package-title">Individual</div>
+					<div class="package-column">
+						<div class="package-title">BASIC</div>
 						<div class="package-price">
-							<div class="price"><span class="currency">$</span>19</div>
+							<div class="price"><span class="currency">$</span>2k</div>
 							<div class="period">per month</div>
 						</div>
 						<div class="package-detail">
 							<ul class="list-unstyled">
-								<li><strong>Free</strong> Domain</li>
-								<li><strong>Unlimited</strong> Websites</li>
-								<li><strong>Unlimited</strong> Bandwidth</li>
-								<li><strong>Unlimited</strong> Disk Space</li>
+								<li><strong>1</strong> Product Type</li>
+								<li><strong>5</strong> User</li>
+								<li><strong>5</strong> HD Channel</li>
+								<li><strong>10</strong> SD Channel</li>
 							</ul>
-							<a href="#" class="btn btn-outline-color btn-block">Get started</a>
+							<a href="#contact" class="btn btn-outline-color btn-block">Contact Us</a>
 						</div>
 					</div>
 				</div>
 
 				<div class="col-sm-4">
 					<div class="package-column">
-						<div class="package-title">Studio</div>
+						<div class="package-title">STANDARD</div>
 						<div class="package-price">
-							<div class="price"><span class="currency">$</span>29</div>
-							<div class="period">subscription</div>
+							<div class="price"><span class="currency">$</span>3k</div>
+							<div class="period">per month</div>
 						</div>
 						<div class="package-detail">
 							<ul class="list-unstyled">
-								<li><strong>Free</strong> Domain</li>
-								<li><strong>Unlimited</strong> Websites</li>
-								<li><strong>Unlimited</strong> Bandwidth</li>
-								<li><strong>Unlimited</strong> Disk Space</li>
+								<li><strong>5</strong> Product Type</li>
+								<li><strong>10</strong> User</li>
+								<li><strong>5</strong> HD Channel</li>
+								<li><strong>15</strong> SD Channel</li>
 							</ul>
-							<a href="#" class="btn btn-outline-color btn-block">Get started</a>
+							<a href="#contact" class="btn btn-outline-color btn-block">Contact Us</a>
 						</div>
 					</div>
 				</div>
 
 				<div class="col-sm-4">
 					<div class="package-column">
-						<div class="package-title">Enterprise</div>
+						<div class="package-title">PREMIUM</div>
 						<div class="package-price">
-							<div class="price"><span class="currency">$</span>49</div>
+							<div class="price"><span class="currency">$</span>10k</div>
 							<div class="period">per month</div>
 						</div>
 						<div class="package-detail">
 							<ul class="list-unstyled">
-								<li><strong>Free</strong> Domain</li>
-								<li><strong>Unlimited</strong> Websites</li>
-								<li><strong>Unlimited</strong> Bandwidth</li>
-								<li><strong>Unlimited</strong> Disk Space</li>
+								<li><strong>50</strong> Product Type</li>
+								<li><strong>50</strong> User</li>
+								<li><strong>18</strong> HD Channel</li>
+								<li><strong>20</strong> SD Channel</li>
 							</ul>
-							<a href="#" class="btn btn-outline-color btn-block">Get started</a>
+							<a href="#contact" class="btn btn-outline-color btn-block">Contact Us</a>
 						</div>
 					</div>
 				</div>
@@ -400,19 +410,16 @@
 	<section id="awards" class="section awards-section align-center dark-text animated" data-animation="fadeInDown" data-duration="500">
 		<div class="container">
 			<div class="section-header">
-				<h2><span class="highlight">OUR</span> AWARDS</h2>
-				<p class="sub-header">
-					Lorem ipsum dolor sit atmet sit dolor greand fdanrh s
-					<br />dfs sit atmet sit dolor greand fdanrh sdfs
-				</p>
+				<h2><span class="highlight">OUR</span> CLIENTS</h2>				
 			</div>
 			<div class="section-content">
 				<ul class="list-inline logos">
-					<li><a href="#" target="_blank"><img src="{{ asset('startuply') }}/img/logos/award-5.jpg" alt="mashable" /></a></li>
-					<li><a href="#" target="_blank"><img src="{{ asset('startuply') }}/img/logos/award-3.jpg" alt="virgin" /></a></li>
-					<li><a href="#" target="_blank"><img src="{{ asset('startuply') }}/img/logos/award-4.jpg" alt="forbes" /></a></li>
-					<li><a href="#" target="_blank"><img src="{{ asset('startuply') }}/img/logos/award-1.jpg" alt="microsoft" /></a></li>
-				</ul>
+					<li><img height="30px" src="{{ asset('images/clients') }}/rcti.png" /></li>
+					<li><img height="30px" src="{{ asset('images/clients') }}/mnctv.png" /></li>
+					<li><img height="30px" src="{{ asset('images/clients') }}/gtv.png" /></li>
+					<li><img height="43px" src="{{ asset('images/clients') }}/sctv.png" /></li>
+					<li><img height="43px" src="{{ asset('images/clients') }}/indosiar.png" /></li>
+					<li><img height="30px" src="{{ asset('images/clients') }}/inews.png" /></li>
 			</div>
 		</div>
 	</section>
@@ -487,7 +494,7 @@
 		</div>
 	</section>
 
-	<section id="team" class="section team-section align-center dark-text">
+	<section id="process" class="section team-section align-center dark-text">
 		<div class="container">
 			<div class="section-header">
 				<h2>BEHIND <span class="highlight">THE</span> PROCESS</h2>
@@ -502,25 +509,17 @@
 					<div class="team-member">
 						<div class="photo-wrapper">
 							<div class="overlay-wrapper">
-								<img src="{{ asset('startuply') }}/img/people/team-1.jpg" alt="">
+								<img width="262px" src="{{ asset('images/process') }}/record.jpg" alt="">
 								<div class="overlay-content">
 									<div class="text-wrapper">
 										<div class="text-container">
-											<p>Mike has worked with CARE USA, for 12 years holding positions such as Deputy Country Director to Director of Programs and Information Systems.</p>
+											<p></p>
 										</div>
 									</div>
-									<ul class="socials-block">
-										<li><a href="#" class="email" title="Email"><i class="fa fa-envelope-o"></i></a></li>
-										<li><a href="#" class="twitter" title="Twitter" target="_blank"><i class="fa fa-twitter"></i></a></li>
-										<li><a href="#" class="facebook" title="Facebook" target="_blank"><i class="fa fa-facebook"></i></a></li>
-										<li><a href="#" class="skype" title="Skype"><i class="fa fa-skype"></i></a></li>
-										<li><a href="#" class="linked_in" title="Linkedin" target="_blank"><i class="fa fa-linkedin"></i></a></li>
-									</ul>
 								</div>
 							</div>
 						</div>
-						<h5 class="name">Mike Bolder</h5>
-						<p class="position">Developer</p>
+						<h5 class="name">RECORD</h5>
 					</div>
 				</div>
 
@@ -528,21 +527,16 @@
 					<div class="team-member">
 						<div class="photo-wrapper">
 							<div class="overlay-wrapper">
-								<img src="{{ asset('startuply') }}/img/people/team-2.jpg" alt="">
+								<img width="262px" src="{{ asset('images/process') }}/recognize.jpg" alt="">
 								<div class="overlay-content">
 									<div class="text-wrapper">
 										<div class="text-container">
-											<p>Mike has worked with CARE USA, for 12 years holding positions such as Deputy Country Director to Director of Programs and Information Systems.</p>
 										</div>
 									</div>
-									<ul class="socials-block align-center">
-										<li><a href="#" class="skype" title="Skype"><i class="fa fa-skype"></i></a></li>
-									</ul>
 								</div>
 							</div>
 						</div>
-						<h5 class="name">Mike Bolder</h5>
-						<p class="position">Developer</p>
+						<h5 class="name">RECOGNIZE</h5>
 					</div>
 				</div>
 
@@ -550,22 +544,16 @@
 					<div class="team-member">
 						<div class="photo-wrapper">
 							<div class="overlay-wrapper">
-								<img src="{{ asset('startuply') }}/img/people/team-3.jpg" alt="">
+								<img width="262px" src="{{ asset('images/process') }}/reanalysis.jpg" alt="">
 								<div class="overlay-content">
 									<div class="text-wrapper">
 										<div class="text-container">
-											<p>Ellen has over 13 years of experience in development projects as a senior consultant and project manager in the areas of project management, fund and board development, strategic & financial planning, monitoring & evaluation.</p>
 										</div>
 									</div>
-									<ul class="socials-block align-center">
-										<li><a href="#" class="email" title="Email"><i class="fa fa-envelope-o"></i></a></li>
-										<li><a href="#" class="twitter" title="Twitter" target="_blank"><i class="fa fa-twitter"></i></a></li>
-									</ul>
 								</div>
 							</div>
 						</div>
-						<h5 class="name">Mike Bolder</h5>
-						<p class="position">Developer</p>
+						<h5 class="name">REANALYSIS</h5>
 					</div>
 				</div>
 
@@ -573,38 +561,33 @@
 					<div class="team-member">
 						<div class="photo-wrapper">
 							<div class="overlay-wrapper">
-								<img src="{{ asset('startuply') }}/img/people/team-4.jpg" alt="">
+								<img width="262px" src="{{ asset('images/process') }}/report.jpg" alt="">
 								<div class="overlay-content">
 									<div class="text-wrapper">
 										<div class="text-container">
-											<p>Mike has worked with CARE USA for 12 years.</p>
 										</div>
 									</div>
-									<ul class="socials-block">
-										<li><a href="#" class="email" title="Email"><i class="fa fa-envelope-o"></i></a></li>
-										<li><a href="#" class="twitter" title="Twitter" target="_blank"><i class="fa fa-twitter"></i></a></li>
-										<li><a href="#" class="facebook" title="Facebook" target="_blank"><i class="fa fa-facebook"></i></a></li>
-										<li><a href="#" class="skype" title="Skype"><i class="fa fa-skype"></i></a></li>
-									</ul>
 								</div>
 							</div>
 						</div>
-						<h5 class="name">Mike Bolder</h5>
-						<p class="position">Developer</p>
+						<h5 class="name">REPORT</h5>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<section id="guarantee" class="long-block light-text guarantee-section">
+	<section id="contact" class="long-block light-text guarantee-section">
 		<div class="container">
-			<div class="col-md-12 col-lg-9">
+			<div class="col-md-9 col-lg-9">
 				<i class="icon icon-seo-icons-24 pull-left"></i>
 				<article class="pull-left">
 					<h2>MONITOR YOUR ADS NOW!</h2>
 					<p class="thin">In his igitur partibus duabus nihil erat, quod Zeno commuta rest gestiret.</p>
 				</article>
+			</div>
+			<div class="col-md-3 col-lg-3">
+				<a href="#newsletter" class="btn btn-outline">GET LIVE DEMO</a>
 			</div>
 		</div>
 	</section>
@@ -614,7 +597,7 @@
 			<div class="footer-content row">
 				<div class="col-sm-4 col-xs-12">
 					<div class="logo-wrapper">
-						<img width="130" height="31" src="{{ asset('startuply') }}/img/logo-white.png" alt="logo" />
+						<img height="31" src="{{ asset('images') }}/vislog_logo_white.png" alt="logo" /> <span style="font-size: 25px;vertical-align: bottom;margin-left: 4px;">VISLOG</span>
 					</div>
 					<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco. Qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco. Nisi ut aliquid ex ea commodi consequatur?</p>
 					<p><strong>John Doeson, Founder</strong>.</p>
@@ -625,7 +608,7 @@
 				<div class="col-sm-3 col-xs-12">
 					<strong class="heading">Our Contacts</strong>
 					<ul class="list-unstyled">
-						<li><span class="icon icon-chat-messages-14"></span><a href="mailto:info@startup.ly">info@startup.ly</a></li>
+						<li><span class="icon icon-chat-messages-14"></span><a href="mailto:info@vislog.id">info@vislog.id</a></li>
 						<li><span class="icon icon-seo-icons-34"></span>2901 Marmora road, Glassgow, Seattle, WA 98122-1090</li>
 						<li><span class="icon icon-seo-icons-17"></span>1 - 234-456-7980</li>
 					</ul>
@@ -654,6 +637,6 @@
 	<script type="text/javascript" src="{{ asset('startuply') }}/js/jquery.mb.YTPlayer.min.js"></script>
 	<script type="text/javascript" src="{{ asset('startuply') }}/js/jquery-ui-slider.min.js"></script>
 	<script type="text/javascript" src="{{ asset('startuply') }}/js/toastr.min.js"></script>
-	<script type="text/javascript" src="{{ asset('startuply') }}/js/startuply.js"></script>
+	<script type="text/javascript" src="{{ asset('startuply') }}/js/startuply.js?v=1"></script>
 </body>
 </html>

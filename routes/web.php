@@ -2,6 +2,7 @@
 Auth::routes();
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/demorequest', 'HomeController@demorequest');
 // Auth::routes(['register' => false]);
 Route::post('userlogin','Auth\\LoginController@authenticate')->name('userlogin');
 Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
@@ -21,13 +22,22 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/adsperformance/search-targetaudience-json', 'Admin\TargetaudienceController@searchjson');    
     Route::get('/adsperformance/search-channel-json', 'Admin\ChannelController@searchjson');    
     Route::get('/adsperformance/search-nprogramme-json', 'Admin\TvprogrammesearchController@searchnprogrammejson');    
-    Route::get('/adsperformance/search-nlevel1-json', 'Admin\TvprogrammesearchController@searchnlevel1json');    
-    Route::get('/adsperformance/search-nlevel2-json', 'Admin\TvprogrammesearchController@searchnlevel2json');    
+    Route::get('/adsperformance/search-iprogramme-json', 'Admin\TvprogrammesearchController@searchiprogrammejson');    
+    Route::get('/adsperformance/search-nlevel_1-json', 'Admin\TvprogrammesearchController@searchnlevel_1json');    
+    Route::get('/adsperformance/search-ilevel_1-json', 'Admin\TvprogrammesearchController@searchilevel_1json');    
+    Route::get('/adsperformance/search-nlevel_2-json', 'Admin\TvprogrammesearchController@searchnlevel_2json');    
+    Route::get('/adsperformance/search-ilevel_2-json', 'Admin\TvprogrammesearchController@searchilevel_2json');    
     Route::get('/adsperformance/search-nadstype-json', 'Admin\AdstypesearchController@searchnadstypejson'); 
+    Route::get('/adsperformance/search-iadstype-json', 'Admin\AdstypesearchController@searchiadstypejson'); 
+    Route::get('/adsperformance/search-tadstype-json', 'Admin\AdstypesearchController@searchtadstypejson'); 
     Route::get('/adsperformance/search-nadvertiser-json', 'Admin\CommercialsearchController@searchnadvertiserjson');    
+    Route::get('/adsperformance/search-iadvertiser-json', 'Admin\CommercialsearchController@searchiadvertiserjson');    
     Route::get('/adsperformance/search-nproduct-json', 'Admin\CommercialsearchController@searchnproductjson');    
+    Route::get('/adsperformance/search-iproduct-json', 'Admin\CommercialsearchController@searchiproductjson');    
     Route::get('/adsperformance/search-nsector-json', 'Admin\CommercialsearchController@searchnsectorjson');    
+    Route::get('/adsperformance/search-isector-json', 'Admin\CommercialsearchController@searchisectorjson');    
     Route::get('/adsperformance/search-ncategory-json', 'Admin\CommercialsearchController@searchncategoryjson');    
+    Route::get('/adsperformance/search-icategory-json', 'Admin\CommercialsearchController@searchicategoryjson');    
     Route::get('/adsperformance/search-ncopy-json', 'Admin\CommercialsearchController@searchncopyjson'); 
     Route::get('/tvads', 'Admin\VideoController@tvads');
     Route::post('/tvads/indexjson', 'Admin\VideoController@tvadsjson');
@@ -102,6 +112,10 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/targetaudience/indexjson','Admin\TargetaudienceController@indexjson');
     Route::get('/targetaudience/searchjson','Admin\TargetaudienceController@searchjson');
     Route::resource('/targetaudience', 'Admin\TargetaudienceController');
+    Route::get('/daypartsetting/indexjson','Admin\DaypartsettingController@indexjson');
+    Route::resource('/daypartsetting', 'Admin\DaypartsettingController');
+    Route::get('/tvchighlight/indexjson','Admin\TvchighlightController@indexjson');
+    Route::resource('/tvchighlight', 'Admin\TvchighlightController');
     Route::get('/channel/indexjson','Admin\ChannelController@indexjson');
     Route::get('/channel/searchjson','Admin\ChannelController@searchjson');
     Route::resource('/channel', 'Admin\ChannelController');
@@ -109,6 +123,7 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/notification/indexjson','Admin\NotificationController@indexjson');
     Route::post('/notification/store', 'Admin\NotificationController@store');
     Route::get('/notification/markallread', 'Admin\NotificationController@markallread');
+    Route::resource('/notification', 'Admin\NotificationController');
     Route::get('/user/indexjson','Admin\UserController@indexjson');
     Route::get('/user/csvall','Admin\UserController@csvall');
     Route::get('/user/destroymulti','Admin\UserController@destroymulti');
@@ -121,5 +136,9 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/role/privilegejson/{a}', 'Admin\RoleController@privilegejson');
     Route::patch('/role/privilegesave', 'Admin\RoleController@privilegesave');
     Route::get('/role', 'Admin\RoleController@edit');
+    
+    Route::get('/demorequest/indexjson','Admin\DemorequestController@indexjson');
+    Route::get('/demorequest/delete/{a}','Admin\DemorequestController@destroy');
+    Route::resource('/demorequest', 'Admin\DemorequestController');
     
 });

@@ -32,6 +32,33 @@ class AdstypesearchController extends Controller
         }
     }
 
+    public function searchiadstypejson(Request $request)
+    {
+        if(isset($request->term)){
+            $query = Adstypesearch::select('iadstype')->distinct()->where('iadstype','like','%'.$request->term.'%')->get();
+            if(!empty(Auth::user()->privileges['iadstype'])) $query->whereIn('iadstype',explode(',',Auth::user()->privileges['iadstype']));
+            return $query->get();
+        }else{
+            $query = Adstypesearch::select('iadstype')->take(50)->groupBy('iadstype');
+            if(!empty(Auth::user()->privileges['iadstype'])) $query->whereIn('iadstype',explode(',',Auth::user()->privileges['iadstype']));
+            return $query->get();
+        }
+    }
+
+    
+    public function searchtadstypejson(Request $request)
+    {
+        if(isset($request->term)){
+            $query = Adstypesearch::select('tadstype')->distinct()->where('tadstype','like','%'.$request->term.'%')->get();
+            if(!empty(Auth::user()->privileges['tadstype'])) $query->whereIn('tadstype',explode(',',Auth::user()->privileges['tadstype']));
+            return $query->get();
+        }else{
+            $query = Adstypesearch::select('tadstype')->take(50)->groupBy('tadstype');
+            if(!empty(Auth::user()->privileges['tadstype'])) $query->whereIn('tadstype',explode(',',Auth::user()->privileges['tadstype']));
+            return $query->get();
+        }
+    }
+
     public function destroymulti(Request $request)
     {
         $ids = explode(',',htmlentities($request->id));

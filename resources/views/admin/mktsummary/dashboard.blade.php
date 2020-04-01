@@ -261,6 +261,9 @@
           </div>
         </div>
         </div>
+<div id="loading">
+  Loading ... <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>
+</div>
 @endsection
 @section('pagecss')
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -280,10 +283,25 @@
 }
 </style>
 <style>
+#loading{
+  display: none;
+  position: absolute;
+  top: -16px;
+  left: 700px;
+  z-index: 900;
+  font-size: 22px;
+}
 #filterersubmit{
   bottom: 10px;
   top: auto;
-  width: 95%;
+  width: 85%;
+}
+#filtererreset{
+  bottom: 10px;
+  top: auto;
+  width: 9%;
+  right: auto;
+  left: 10px;
 }
 button.search-result{
   min-width:100px;
@@ -433,14 +451,19 @@ $(document).ready(function(){
 $(document).ready(function(){
   var resp = false;
   if(window.innerWidth <= 800) resp=true;
-  
+    
   $("#filterersubmit").click(function() {
-  //
+      $("#loading").show();
   });
 
   $("select[name='ntargetaudience']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='ntargetaudience']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='ntargetaudience']").attr('data-size','3'); // dropdown search with bootstrap select
+
+  $("#filtererreset").click(function(){
+    $("input[name^=filter-]").val('');
+    $("span[id^=filter-]").html('');
+  });
 });
 </script>
 @endsection
@@ -466,10 +489,10 @@ $(document).ready(function(){
         {{ Form::hidden('channel') }}
         <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> Programme</button>
         {{ Form::hidden('nprogramme') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel1"><span id="filter-nlevel1-count"></span> Level 1</button>
-        {{ Form::hidden('nlevel1') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel2"><span id="filter-nlevel2-count"></span> Level 2</button>
-        {{ Form::hidden('nlevel2') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_1"><span id="filter-nlevel_1-count"></span> Level 1</button>
+        {{ Form::hidden('nlevel_1') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_2"><span id="filter-nlevel_2-count"></span> Level 2</button>
+        {{ Form::hidden('nlevel_2') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
         <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> Advertiser</button>

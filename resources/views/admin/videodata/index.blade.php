@@ -69,22 +69,7 @@
           <div class="card-body">
             <form method="POST" action="{{ url('admin/videodata/updateconfigs') }}" class="form form-horizontal" >
               <div class="form-group row">
-                <p class="col-md-3 label-control" for="projectinput5">Video Library: </p>
-                <div class="col-md-7">
-                  @csrf
-                  {{ Form::hidden('key','video path') }}
-                  <input type="text" id="video_path" value="{{ $config['video_path'] }}" class="form-control" name="value">
-                </div>
-                <div class="col-md-2">
-                  <button type="submit" class="btn btn-raised btn-primary">
-                    <i class="fa fa-check-square-o"></i> Save
-                  </button>
-                </div>
-              </div>  
-            </form>
-            <form method="POST" action="{{ url('admin/videodata/updateconfigs') }}" class="form form-horizontal" >
-              <div class="form-group row">
-                <p class="col-md-3 label-control" for="projectinput5">Video Library (HD): </p>
+                <p class="col-md-3 label-control" for="projectinput5">Video HD: </p>
                 <div class="col-md-7">
                   @csrf
                   {{ Form::hidden('key','video path hd') }}
@@ -99,7 +84,22 @@
             </form>
             <form method="POST" action="{{ url('admin/videodata/updateconfigs') }}" class="form form-horizontal" >
               <div class="form-group row">
-                <p class="col-md-3 label-control" for="projectinput5">Bumper (seconds): </p>
+                <p class="col-md-3 label-control" for="projectinput5">Video SD: </p>
+                <div class="col-md-7">
+                  @csrf
+                  {{ Form::hidden('key','video path') }}
+                  <input type="text" id="video_path" value="{{ $config['video_path'] }}" class="form-control" name="value">
+                </div>
+                <div class="col-md-2">
+                  <button type="submit" class="btn btn-raised btn-primary">
+                    <i class="fa fa-check-square-o"></i> Save
+                  </button>
+                </div>
+              </div>  
+            </form>            
+            <form method="POST" action="{{ url('admin/videodata/updateconfigs') }}" class="form form-horizontal" >
+              <div class="form-group row">
+                <p class="col-md-3 label-control" for="projectinput5">Bumper (s): </p>
                 <div class="col-md-7">
                   @csrf
                   {{ Form::hidden('key','video bumper') }}

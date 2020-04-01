@@ -63,7 +63,7 @@
               </div>
               <div class="modal-footer">
                 <div class="modal-footer-processing-info" style="display:none">
-                Inserting data... Please wait <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>
+                Inserting data in background... You can close this window once the upload progress bar is full.<i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>
                 </div>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               </div>
@@ -150,11 +150,11 @@ $(document).ready(function() {
                 'selectRow': true
             }
         }],
+        order: [[3, 'desc']],
         select: {
             style:    'multi',
             selector: 'td:first-child'
         },
-        order: [[1, 'DESC']]
     });
     $('.buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel, .buttons-colvis, .buttons-csvall').addClass('btn btn-outline-primary mr-1');
     $('.buttons-add').addClass('btn mr-1');
@@ -176,29 +176,18 @@ $(document).ready(function() {
         } 
       }
     });
-    
-  // reload page after upload finishes
-  Dropzone.options.uploadDropzone = {
-      maxFilesize: 200, // Mb
-      init: function () {
-        this.on("processing", function (file) {
-            if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
-              location.reload();
-            }
-        });
-      }
-  };
-
 });
 </script>
 <script>
   // reload page after upload finishes
   Dropzone.options.uploadDropzone = {
+    maxFilesize: 900, // Mb
+    timeout: 900000, //ms
     init: function () {
         this.on("processing", function(file) { 
           $(".modal-footer-processing-info").show();
         });
-        this.on("success", function(file) { 
+        this.on("success", function(file) {           
           alert("Upload and insert finished."); 
           location.reload();
         });

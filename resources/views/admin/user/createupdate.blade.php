@@ -69,7 +69,7 @@
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="date">Target Audience: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[targetaudience]', old('privileges[targetaudience]',$item->privileges->targetaudience ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Target Audience', 'data-filter'=>'targetaudience')) }}
+                    {{ Form::text('privileges[targetaudience]', old('privileges[targetaudience]',$item->privileges->targetaudience ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Target Audience', 'data-filter'=>'targetaudience','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">
@@ -170,7 +170,7 @@
                 </div>
               </div>
               <div class="form-actions">
-                <a class="pull-right" href="{{ url('admin/videodata') }}"><button type="button" class="btn btn-raised btn-warning mr-1">
+                <a class="pull-right" href="{{ url('admin/user') }}"><button type="button" class="btn btn-raised btn-warning mr-1">
                   <i class="ft-x"></i> Cancel
                 </button></a>
                 <button type="submit" class="pull-left btn btn-raised btn-primary mr-3">
@@ -231,7 +231,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script type="text/javascript">
 $(function() {
-    var start = moment('2000-01-01');
+    var start = moment('2016-01-01');
     $('input[name="privileges[startdate]"]').val(start.format('YYYY-MM-DD'));
     var end = moment('2099-12-31'); 
     $('input[name="privileges[enddate]"]').val(end.format('YYYY-MM-DD'));

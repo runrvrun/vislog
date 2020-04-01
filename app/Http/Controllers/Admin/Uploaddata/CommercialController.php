@@ -9,6 +9,8 @@ use App\Log;
 use Auth;
 use \Carbon\Carbon;
 use Rap2hpoutre\FastExcel\FastExcel;
+use App\Jobs\InsertCommercial;
+use MongoDB\Client;
 
 class CommercialController extends Controller
 {
@@ -79,37 +81,94 @@ class CommercialController extends Controller
             // store file to temp folder
             $file->move($upload_path,$upload_filename);
 
+            // InsertCommercial::dispatch($upload_path,$upload_filename);
             // import to database
-            $imp = (new FastExcel)->configureCsv(';', '}', '\n', 'gbk')->import($upload_path.'/'.$upload_filename, function ($line) {
-                $insertData = [];
-                foreach($line as $key=>$val){
-                    $colname = strtolower($key);
-                    $colname = str_replace(' ','_',$colname);
-                    $colname = str_replace('.','',$colname);
-                    switch($colname){
-                        case 'date':
-                            // $date = Carbon::createFromFormat('d/m/Y H:i:s',$val.' 00:00:00')->toDateTimeString();
-                            $date = Carbon::createFromFormat('Y-m-d H:i:s',$val.' 00:00:00')->toDateTimeString();
-                            $insertData[$colname] = $val;
-                            $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-                            break;
-                        case 'start_time':
-                            $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$val)->timestamp;
-                            $insertData[$colname] = $val;
-                            $insertData['start_timestamp'] = $timestamp;
-                            break;
-                        case 'count':
-                            $insertData[$colname] = $val;
-                            break;
-                        default:
-                            $insertData[$colname] = $val;
-                    }
-                }
-                return Commercial::create($insertData);
-            });
+            // $imp = (new FastExcel)->configureCsv(';', '}', '\n', 'gbk')->import($upload_path.'/'.$upload_filename, function ($line) {
+            //     $insertData = [];
+            //     foreach($line as $key=>$val){
+            //         $colname = strtolower($key);
+            //         $colname = str_replace(' ','_',$colname);
+            //         $colname = str_replace('.','',$colname);
+            //         switch($colname){
+            //             case 'date':
+            //                 // $date = Carbon::createFromFormat('d/m/Y H:i:s',$val.' 00:00:00')->toDateTimeString();
+            //                 $date = Carbon::createFromFormat('Y-m-d H:i:s',$val.' 00:00:00')->toDateTimeString();
+            //                 $insertData[$colname] = $val;
+            //                 $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            //                 break;
+            //             case 'start_time':
+            //                 $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$val)->timestamp;
+            //                 $insertData[$colname] = $val;
+            //                 $insertData['start_timestamp'] = $timestamp;
+            //                 break;
+            //             case 'count':
+            //                 $insertData[$colname] = $val;
+            //                 break;
+            //             default:
+            //                 $insertData[$colname] = $val;
+            //         }
+            //     }
+            //     return Commercial::create($insertData);
+            // });
 
-            $data['rowCount'] = $imp->count();
+            // $data['rowCount'] = $imp->count();
             
+            $header = [];
+            $handle = fopen($upload_path.'/'.$upload_filename, 'r');
+            if ($handle) {
+                $i = 0;
+                $insert = [];
+                while ($line = fgetcsv($handle, null, '|')) {
+                    $insertData = [];
+                    if($i == 0){
+                        //header, save as column name
+                        $header = explode(";",$line[0]);
+                        $header = array_map('strtolower', $header);
+                        $header = str_replace(' ', '_', $header);
+                        $header = str_replace('.', '', $header);
+                    }else{
+                        $content = explode(";",$line[0]);// split line into columns
+                        foreach( $content as $key => $value ){
+                            switch($header[$key]){
+                                case 'date':
+                                    $insertData['date'] = $value;
+                                    $date = Carbon::createFromFormat('Y-m-d H:i:s',$value.' 00:00:00')->toDateTimeString();
+                                    $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+                                    break;
+                                case 'start_time':
+                                    $insertData['start_time'] = $value;
+                                    $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$value)->timestamp;
+                                    $insertData['start_timestamp'] = $timestamp;
+                                    break;
+                                case 'no_of_spots':
+                                case 'cost':                  
+                                    $insertData[$header[$key]] = (int) $value;
+                                    break;
+                                case (preg_match('/tvr.*/', $header[$key]) ? true : false) :                  
+                                    $insertData[$header[$key]] = (double) $value;
+                                    break;
+                                default:
+                                    $insertData[$header[$key]] = $value;
+                            }
+                        }
+                        array_push($insert, $insertData);
+                        if(count($insert) == 500){
+                            // Commercial::insertMany($insertData);// insert after 1000
+                            $mongoClient=new Client();
+                            $mongodata=$mongoClient->vislog->commercials;
+                            $mongodata->insertMany($insert);
+                            $insert = [];// reset
+                        }
+                    }
+                    $i = $i+1; //increment = no longer header
+                }
+                if(count($insert) > 0){                
+                    $mongoClient=new Client();
+                    $mongodata=$mongoClient->vislog->commercials;                            
+                    $mongodata->insertMany($insert);
+                }
+            } 
+            unset($handle);
             unlink($upload_path.'/'.$upload_filename);
 
             $return = [

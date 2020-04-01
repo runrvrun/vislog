@@ -31,29 +31,68 @@ class TvprogrammesearchController extends Controller
             return $query->get();
         }
     }
-
-    public function searchnlevel1json(Request $request)
+    
+    public function searchiprogrammejson(Request $request)
     {
         if(isset($request->term)){
-            $query = Tvprogrammesearch::select('nlevel1')->where('nlevel1','like','%'.$request->term.'%')->groupBy('nlevel1');
-            if(!empty(Auth::user()->privileges['nlevel1'])) $query->whereIn('nlevel1',explode(',',Auth::user()->privileges['nlevel1']));
+            $query = Tvprogrammesearch::select('iprogramme')->where('iprogramme','like','%'.$request->term.'%')->groupBy('iprogramme');
+            if(!empty(Auth::user()->privileges['iprogramme'])) $query->whereIn('iprogramme',explode(',',Auth::user()->privileges['iprogramme']));
             return $query->get();
         }else{
-            $query = Tvprogrammesearch::select('nlevel1')->take(50)->groupBy('nlevel1');
-            if(!empty(Auth::user()->privileges['nlevel1'])) $query->whereIn('nlevel1',explode(',',Auth::user()->privileges['nlevel1']));
+            $query = Tvprogrammesearch::select('iprogramme')->take(50)->groupBy('iprogramme');
+            if(!empty(Auth::user()->privileges['iprogramme'])) $query->whereIn('iprogramme',explode(',',Auth::user()->privileges['iprogramme']));
+            return $query->get();
+        }
+    }
+
+    public function searchnlevel_1json(Request $request)
+    {
+        if(isset($request->term)){
+            $query = Tvprogrammesearch::select('nlevel_1')->where('nlevel_1','like','%'.$request->term.'%')->groupBy('nlevel_1');
+            if(!empty(Auth::user()->privileges['nlevel_1'])) $query->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel_1']));
+            return $query->get();
+        }else{
+            $query = Tvprogrammesearch::select('nlevel_1')->take(50)->groupBy('nlevel_1');
+            if(!empty(Auth::user()->privileges['nlevel_1'])) $query->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel_1']));
             return $query->get();
         }
     }
     
-    public function searchnlevel2json(Request $request)
+    public function searchilevel_1json(Request $request)
     {
         if(isset($request->term)){
-            $query = Tvprogrammesearch::select('nlevel2')->where('nlevel2','like','%'.$request->term.'%')->groupBy('nlevel2');
-            if(!empty(Auth::user()->privileges['nlevel2'])) $query->whereIn('nlevel2',explode(',',Auth::user()->privileges['nlevel2']));
+            $query = Tvprogrammesearch::select('ilevel_1')->where('ilevel_1','like','%'.$request->term.'%')->groupBy('ilevel_1');
+            if(!empty(Auth::user()->privileges['ilevel_1'])) $query->whereIn('ilevel_1',explode(',',Auth::user()->privileges['ilevel_1']));
             return $query->get();
         }else{
-            $query = Tvprogrammesearch::select('nlevel2')->take(50)->groupBy('nlevel2');
-            if(!empty(Auth::user()->privileges['nlevel2'])) $query->whereIn('nlevel2',explode(',',Auth::user()->privileges['nlevel2']));
+            $query = Tvprogrammesearch::select('ilevel_1')->take(50)->groupBy('ilevel_1');
+            if(!empty(Auth::user()->privileges['ilevel_1'])) $query->whereIn('ilevel_1',explode(',',Auth::user()->privileges['ilevel_1']));
+            return $query->get();
+        }
+    }
+    
+    public function searchnlevel_2json(Request $request)
+    {
+        if(isset($request->term)){
+            $query = Tvprogrammesearch::select('nlevel_2')->where('nlevel_2','like','%'.$request->term.'%')->groupBy('nlevel_2');
+            if(!empty(Auth::user()->privileges['nlevel_2'])) $query->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel_2']));
+            return $query->get();
+        }else{
+            $query = Tvprogrammesearch::select('nlevel_2')->take(50)->groupBy('nlevel_2');
+            if(!empty(Auth::user()->privileges['nlevel_2'])) $query->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel_2']));
+            return $query->get();
+        }
+    }
+
+    public function searchilevel_2json(Request $request)
+    {
+        if(isset($request->term)){
+            $query = Tvprogrammesearch::select('ilevel_2')->where('ilevel_2','like','%'.$request->term.'%')->groupBy('ilevel_2');
+            if(!empty(Auth::user()->privileges['ilevel_2'])) $query->whereIn('ilevel_2',explode(',',Auth::user()->privileges['ilevel_2']));
+            return $query->get();
+        }else{
+            $query = Tvprogrammesearch::select('ilevel_2')->take(50)->groupBy('ilevel_2');
+            if(!empty(Auth::user()->privileges['ilevel_2'])) $query->whereIn('ilevel_2',explode(',',Auth::user()->privileges['ilevel_2']));
             return $query->get();
         }
     }

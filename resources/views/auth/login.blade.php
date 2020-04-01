@@ -57,7 +57,7 @@
                   <img src="{{ asset('app-assets') }}/img/gallery/login.png" alt="" class="img-fluid mt-5" width="400" height="230">
                 </div>
                 <div class="col-lg-6 col-md-12 bg-white px-4 pt-3">
-                  <h1 class="mb-2 card-title" style="text-align:center;font-size:35px;"><img style="display:block" width="32px" src="{{ asset('/images/vislog-logo.png') }}" /> VISLOG</h1>
+                  <h1 class="mb-2 card-title" style="text-align:center;font-size:35px;"><a href="{{ url('') }}"><img style="display:block" width="32px" src="{{ asset('/images/vislog-logo.png') }}" /> VISLOG</a></h1>
                   <p class="card-text mb-3">
                     Welcome back, please login to your account.
                   </p>

@@ -9,6 +9,8 @@ use App\Log;
 use App\Commercial;
 use App\Commercialsearch;
 use App\Adexnett;
+use App\Daypartsetting;
+use App\Tvchighlight;
 use Auth;
 
 class DashboardController extends Controller
@@ -90,14 +92,13 @@ class DashboardController extends Controller
             $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
             $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
-        }else{
-            $commercial->whereBetween('isodate',[Carbon::now()->subDays(1),Carbon::now()]);
-            $date = Carbon::now()->subDays(1)->toDateTimeString();
-            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
-            $date = Carbon::now()->toDateTimeString();
-            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );    
+        }
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            $commercial->whereBetween('start_timestamp',[$starttimestamp,$endtimestamp]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$gte' => $starttimestamp ] ] ]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
             $commercial->whereIn('channel',array_filter(explode(',',$request->channel)));
@@ -107,39 +108,75 @@ class DashboardController extends Controller
             $commercial->whereIn('nprogramme',array_filter(explode(',',$request->nprogramme)));
             array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
         }
+        if($request->iprogramme){
+            $commercial->whereIn('iprogramme',array_filter(explode(',',$request->iprogramme)));
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
         if($request->nlevel_1){
             $commercial->whereIn('nlevel_1',array_filter(explode(',',$request->nlevel_1)));
             array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            $commercial->whereIn('ilevel_1',array_filter(explode(',',$request->ilevel_1)));
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
             $commercial->whereIn('nlevel_2',array_filter(explode(',',$request->nlevel_2)));
             array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
         }
+        if($request->ilevel_2){
+            $commercial->whereIn('ilevel_2',array_filter(explode(',',$request->ilevel_2)));
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
         if($request->nadvertiser){
             $commercial->whereIn('nadvertiser',array_filter(explode(',',$request->nadvertiser)));
             array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            $commercial->whereIn('iadvertiser',array_filter(explode(',',$request->iadvertiser)));
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
             $commercial->whereIn('nproduct',array_filter(explode(',',$request->nproduct)));
             array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
         }
+        if($request->iproduct){
+            $commercial->whereIn('iproduct',array_filter(explode(',',$request->iproduct)));
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
         if($request->nsector){
             $commercial->whereIn('nsector',array_filter(explode(',',$request->nsector)));
             array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            $commercial->whereIn('isector',array_filter(explode(',',$request->isector)));
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
         }
         if($request->ncategory){
             $commercial->whereIn('ncategory',array_filter(explode(',',$request->ncategory)));
             array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
         }
+        if($request->icategory){
+            $commercial->whereIn('icategory',array_filter(explode(',',$request->icategory)));
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
         if($request->nadstype){
             $commercial->whereIn('nadstype',array_filter(explode(',',$request->nadstype)));
             array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            $commercial->whereIn('iadstype',array_filter(explode(',',$request->iadstype)));
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            $commercial->whereIn('tadstype',array_filter(explode(',',$request->tadstype)));
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             $commercial->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
         }
 
-        $data['number_of_spot'] = $commercial->sum('no_of_spots');        
+        $data['number_of_spot'] = $commercial->count();        
         $data['cost'] = $commercial->sum('cost')/1000000000;
         $data['grp'] = 0;
         if($request->ntargetaudience){
@@ -191,11 +228,38 @@ class DashboardController extends Controller
         }
         $data['spot_per_type'] = $spotpertype;
         //calculate spot per daypart
-        $data['daypart'][0] = $commercial->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
-        $data['daypart'][1] = $commercial->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
-        $data['daypart'][2] = $commercial->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
-        $data['daypart'][3] = $commercial->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
-        $data['daypart'][4] = $commercial->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
+        $daypart = Daypartsetting::all();
+        if($daypart){
+            foreach($daypart as $key=>$val){
+                $c = clone($commercial); 
+                $time   = explode(":", $val->start_time);
+                $hour   = $time[0] * 60 * 60 * 1000;
+                $minute = $time[1] * 60 * 1000;
+                $start_ms = $hour + $minute + 1;
+                $time   = explode(":", $val->end_time);
+                $hour   = $time[0] * 60 * 60 * 1000;
+                $minute = $time[1] * 60 * 1000;
+                $end_ms = $hour + $minute;
+                $data['daypart'][$key]['name'] = $val->daypart;
+                $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum('no_of_spots');//00.00-06.00
+            }
+        }else{
+            $c = clone($commercial); 
+            $data['daypart'][0]['name'] = "00.00-06.00";
+            $data['daypart'][0]['value'] = $c->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
+            $c = clone($commercial); 
+            $data['daypart'][1]['name'] = "06.00-12.00";
+            $data['daypart'][1]['value'] = $c->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
+            $c = clone($commercial); 
+            $data['daypart'][2]['name'] = "12.00-17.30";
+            $data['daypart'][2]['value'] = $c->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
+            $c = clone($commercial); 
+            $data['daypart'][3]['name'] = "17.30-22.00";
+            $data['daypart'][3]['value'] = $c->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
+            $c = clone($commercial); 
+            $data['daypart'][4]['name'] = "22.00-00.00";
+            $data['daypart'][4]['value'] = $c->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
+        }
 
         $data['spot_per_date'] = Commercial::raw(function($collection) use($filter) 
         {
@@ -211,17 +275,20 @@ class DashboardController extends Controller
                         ]
                     ]
                 ]
-            ]));
+                ])
+                ,['allowDiskUse' => true]
+                );
         });
         // populate dropdown
         $query = \App\Targetaudience::whereNotNull('targetaudience');
         if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
         $data['ddtargetaudience'] = $query->pluck('targetaudience','code');
 
-        return view('admin.dashboard',compact('data'));
+        return view('admin.dashboard',compact('request','data'));
     }
     public function highlight(Request $request)
     {    
+        $data['tvchighlight'] = Tvchighlight::orderBy('created_at')->take(10)->get();
         $filter = [];
         $commercial = Commercial::whereNotNull('_id');
         $adexnett = Adexnett::whereNotNull('_id');
@@ -263,31 +330,6 @@ class DashboardController extends Controller
         } else {
             // At least a billion
             $data['adex'] = number_format($data['adex'] / 1000000000, 2) . 'B';
-        }
-        
-        $query = Commercial::raw(function($collection) use ($filter)
-        {
-            return $collection->aggregate(array_merge($filter,[
-                [
-                    '$group'    => [
-                        '_id'   => [
-                            'nproduct'=>'$nproduct',
-                        ],
-                        'count' => [
-                            '$sum'  => 1
-                        ]
-                    ]
-                ],
-                [
-                    '$sort' => [
-                        "_id.yymmdd" => 1,
-                        "count" => -1
-                    ]
-                ],
-            ]));
-        });
-        if(count($query)){
-            $data['top_commercial'] = Commercial::where('nproduct',$query[0]->_id->nproduct)->orderBy('created_at','desc')->first();              
         }
         
         $c = clone($commercial);// clone object as so not copy by reference and got additional "where" clause
@@ -380,17 +422,38 @@ class DashboardController extends Controller
         $data['spot_per_channel'] = $oquery;
         
         //calculate spot per daypart
-        $c = clone($commercial); 
-        $data['daypart'][0] = $c->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
-        $c = clone($commercial); 
-        $data['daypart'][1] = $c->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
-        $c = clone($commercial); 
-        $data['daypart'][2] = $c->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
-        $c = clone($commercial); 
-        $data['daypart'][3] = $c->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
-        $c = clone($commercial); 
-        $data['daypart'][4] = $c->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
-
+        $daypart = Daypartsetting::all();
+        if($daypart){
+            foreach($daypart as $key=>$val){
+                $c = clone($commercial); 
+                $time   = explode(":", $val->start_time);
+                $hour   = $time[0] * 60 * 60 * 1000;
+                $minute = $time[1] * 60 * 1000;
+                $start_ms = $hour + $minute + 1;
+                $time   = explode(":", $val->end_time);
+                $hour   = $time[0] * 60 * 60 * 1000;
+                $minute = $time[1] * 60 * 1000;
+                $end_ms = $hour + $minute;
+                $data['daypart'][$key]['name'] = $val->daypart;
+                $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum('no_of_spots');//00.00-06.00
+            }
+        }else{
+            $c = clone($commercial); 
+            $data['daypart'][0]['name'] = "00.00-06.00";
+            $data['daypart'][0]['value'] = $c->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
+            $c = clone($commercial); 
+            $data['daypart'][1]['name'] = "06.00-12.00";
+            $data['daypart'][1]['value'] = $c->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
+            $c = clone($commercial); 
+            $data['daypart'][2]['name'] = "12.00-17.30";
+            $data['daypart'][2]['value'] = $c->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
+            $c = clone($commercial); 
+            $data['daypart'][3]['name'] = "17.30-22.00";
+            $data['daypart'][3]['value'] = $c->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
+            $c = clone($commercial); 
+            $data['daypart'][4]['name'] = "22.00-00.00";
+            $data['daypart'][4]['value'] = $c->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
+        }
         $query = Commercial::raw(function($collection) use($filter) 
         {
             return $collection->aggregate(array_merge($filter,[
@@ -468,10 +531,9 @@ class DashboardController extends Controller
         $l = clone($log);
         $data['video_update'] = $l->where('action','regexp','/video update/')->orderBy('created_at','DESC')->take(5)->get();
 
-        $data['spot_per_date'] = Commercial::raw(function($collection) use($filter) 
+        $spot_per_date = Commercial::raw(function($collection) use($filter) 
         {
             return $collection->aggregate(array_merge($filter,[
-                [ '$sort' => [ 'date' => 1 ] ],
                 [
                     '$group'    => [
                         '_id'   => [
@@ -482,10 +544,19 @@ class DashboardController extends Controller
                         ]
                     ]
                 ]
-            ]));
+                ])
+            ,['allowDiskUse' => true]
+            );
         });
-
-        return view('admin.highlight',compact('data'));
+        $data['spot_per_date'] = [];
+        foreach($spot_per_date as $key=>$val){
+            $data['spot_per_date'][$key]['date'] = $val->_id->date;
+            $data['spot_per_date'][$key]['total'] = $val->total;
+        }
+        usort($data['spot_per_date'], function($a, $b) {
+            return $a['date'] <=> $b['date'];
+        });
+        return view('admin.highlight',compact('data','request'));
     }
 
     public function spot_per_productjson()

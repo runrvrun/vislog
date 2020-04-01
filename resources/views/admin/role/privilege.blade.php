@@ -21,7 +21,7 @@
         <div class="card-content ">
         {{ Form::model('Role_privilege', ['url' => ['admin/role/privilegesave'], 'method' => 'patch']) }}
           <div class="card-body card-dashboard table-responsive">
-            <div class="form-group row">
+            <div class="row">
               <label class="col-md-3 label-control" for="role_id">@lang('Role'): </label>
               <div class="col-md-9">
               {{ Form::select('role_id', App\Role::pluck('role','_id'), $role_id ?? null, array('id'=>'role_id','class' => 'form-control')) }}
@@ -40,7 +40,36 @@
               </thead>
               @foreach($item->pages as $key=>$val)
               <tr>
-                <td>{{ $key }}</td>
+                <td><?php
+                switch($key){
+                  case 'admin/highlight':
+                    echo 'user/highlight';
+                    break;
+                  case 'admin/dashboard':
+                    echo 'user/dashboard';
+                    break;
+                  case 'admin/adsperformance':
+                    echo 'user/adsperformance';
+                    break;
+                  case 'admin/tvads':
+                    echo 'user/tvads';
+                    break;
+                  case 'admin/tvprogramme':
+                    echo 'user/tvprogramme';
+                    break;
+                  case 'admin/mktsummary':
+                    echo 'user/mktsummary';
+                    break;
+                  case 'admin/adexnett':
+                    echo 'user/adexnett';
+                    break;
+                  case 'admin/spotmatching':
+                    echo 'user/spotmatching';
+                    break;
+                  default:
+                    echo $key;
+                }
+                ?></td>
                 <td>{{ Form::checkbox($key.'[browse]',1, null, array('id'=>str_replace('/','_',$key).'_browse','class'=>'privchk form-control form-control-sm')) }}
                 <td>{{ Form::checkbox($key.'[add]',1, null, array('id'=>str_replace('/','_',$key).'_edit','class'=>'privchk form-control form-control-sm')) }}
                 <td>{{ Form::checkbox($key.'[edit]',1, null, array('id'=>str_replace('/','_',$key).'_add','class'=>'privchk form-control form-control-sm')) }}
@@ -50,9 +79,9 @@
             </table>
 
             <div class="form-actions">
-                <a class="pull-right" href="{{ url('/role') }}"><button type="button" class="btn btn-raised btn-warning mr-1">
+                <!-- <a class="pull-right" href="{{ url('/role') }}"><button type="button" class="btn btn-raised btn-warning mr-1">
                   <i class="ft-x"></i> Cancel
-                </button></a>
+                </button></a> -->
                 <button type="submit" class="pull-left btn btn-raised btn-primary">
                   <i class="fa fa-check-square-o"></i> Save
                 </button>

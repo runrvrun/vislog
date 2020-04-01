@@ -29,11 +29,11 @@
                           <thead>
                             <tr>
                               <th></th>                  
-                              <th>nLevel1</th>
-                              <th>nLevel2</th>
+                              <th>nLevel 1</th>
+                              <th>nLevel 2</th>
                               <th>nProgramme</th>
-                              <th>iLevel1</th>
-                              <th>iLevel2</th>
+                              <th>iLevel 1</th>
+                              <th>iLevel 2</th>
                               <th>iProgramme</th>
                             </tr>
                           </thead>
@@ -108,8 +108,8 @@ $(document).ready(function() {
         },
         columns: [
           { data: 'id', name: 'checkbox' },  
-          { data: 'nlevel1', name: 'nlevel1' },
-          { data: 'nlevel2', name: 'nlevel2' },
+          { data: 'nlevel_1', name: 'nlevel_1' },
+          { data: 'nlevel_2', name: 'nlevel_2' },
           { data: 'nprogramme', name: 'nprogramme' },
           { data: 'ilevel_1', name: 'ilevel_1' },
           { data: 'ilevel_2', name: 'ilevel_2' },
@@ -181,6 +181,7 @@ $(document).ready(function() {
     });
 });
 </script>
+
 <script>
   // reload page after upload finishes
   Dropzone.options.uploadDropzone = {

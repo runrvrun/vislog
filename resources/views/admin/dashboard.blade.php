@@ -208,10 +208,24 @@
           </div>
         </div>
 @endsection
+@section('modal')
+<div class="modal fade text-left show" id="loading-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" style="display: none; padding-right: 17px;" aria-modal="true">
+  <div class="modal-dialog  modal-s" role="document">
+    <div class="modal-content">
+      <div class="modal-body" style="text-align:center">
+        Loading ... <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>        
+      </div>
+    </div>
+  </div>
+</div>
+@endsection
 @section('pagecss')
 <link rel="stylesheet" type="text/css" href="{{ asset('app-assets') }}/vendors/css/tables/datatable/datatables.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/chartist.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/chartist-plugin-tooltip.css">
+<link href="{{ asset('css') }}/jquery.timepicker.min.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ asset('app-assets') }}/css/bootstrap-select.min.css">
 <style>
 .card-content{
   min-height: 100px;
@@ -230,7 +244,14 @@
 #filterersubmit{
   bottom: 10px;
   top: auto;
-  width: 95%;
+  width: 85%;
+}
+#filtererreset{
+  bottom: 10px;
+  top: auto;
+  width: 9%;
+  right: auto;
+  left: 10px;
 }
 button.search-result{
   min-width:100px;
@@ -239,10 +260,20 @@ button.search-result{
 @endsection
 @section('pagejs')
 <script src="{{ asset('app-assets') }}/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
-<script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+<script src="{{ asset('app-assets') }}/vendors/js/chartist.min.js"></script>
+<script src="{{ asset('app-assets') }}/vendors/js/chartist-plugin-tooltip.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{{ asset('/') }}app-assets/js/filterer.js" type="text/javascript"></script>
+<script src="{{ asset('js') }}/jquery.timepicker.min.js"></script>
+<script src="{{ asset('app-assets') }}/js/bootstrap-select.min.js"></script>
+<script>
+  $(document).ready(function(){
+    var options = { 'timeFormat': 'H:i:s','step':60 };
+    $('#starttime').timepicker(options);
+    $('#endtime').timepicker(options);
+  });
+</script>
 <script>
   var data = {
     labels: [
@@ -258,12 +289,20 @@ button.search-result{
       ]
     ]
   };
-  new Chartist.Bar('.spot-per-channel-chart', data);
+  new Chartist.Bar('.spot-per-channel-chart', data,{
+    plugins: [
+      Chartist.plugins.tooltip()
+    ]
+  });
 </script>
 <script>
 $(document).ready(function() {
     var resp = false;
     if(window.innerWidth <= 800) resp=true;
+
+    $("#filterersubmit").click(function() {
+      $("#loading-modal").modal();
+    });
 
     var table = $('.spot-per-product-table').DataTable({
         responsive: resp,
@@ -357,41 +396,66 @@ $(document).ready(function() {
         @endforeach
     ]
   };
-  new Chartist.Pie('.spot-per-type-chart', data, {donut: true});
+  new Chartist.Pie('.spot-per-type-chart', data, {donut: true,
+    plugins: [
+      Chartist.plugins.tooltip()
+    ]
+  });
 </script>
 <script>
   var data = {
     labels: [
-          'Primetime ({{ $data["daypart"][3] }})',
-          'Non Primetime ({{ $data["daypart"][0]+$data["daypart"][1]+$data["daypart"][2]+$data["daypart"][4] }})',
+          'Primetime',
+          'Non Primetime',
         ],
     series: [
-        {{ $data["daypart"][3] }},
-        {{ $data["daypart"][0]+$data["daypart"][1]+$data["daypart"][2]+$data["daypart"][4] }}
+        @foreach($data["daypart"] as $key=>$val)
+          @if($val['name'] == 'Primetime')
+            {{ $val['value'] }}
+          @endif
+        @endforeach
+        ,
+        <?php
+        $nonprime = 0;
+        foreach($data["daypart"] as $key=>$val):
+          if($val['name'] != 'Primetime'):
+             $nonprime = $nonprime + $val['value'];
+          endif;
+        endforeach;
+        ?>
+        {{ $nonprime }}
     ]
   };
-  new Chartist.Pie('.spot-per-time-chart', data, {donut: true});
+  new Chartist.Pie('.spot-per-time-chart', data, {donut: true,
+    plugins: [
+      Chartist.plugins.tooltip()
+    ]
+  });
 </script>
 <script>
   var data = {
     labels: [
-          '00.00-06.00',
-          '06.00-12.00',
-          '12.00-17.30',
-          '17.30-22.00',
-          '22.00-00.00',
+          '{{ $data['daypart'][0]['name'] ?? 0 }}',
+          '{{ $data['daypart'][1]['name'] ?? 0 }}',
+          '{{ $data['daypart'][2]['name'] ?? 0 }}',
+          '{{ $data['daypart'][3]['name'] ?? 0 }}',
+          '{{ $data['daypart'][4]['name'] ?? 0 }}',
         ],
     series: [
       [
-        {{ $data["daypart"][0] }},
-        {{ $data["daypart"][1] }},
-        {{ $data["daypart"][2] }},
-        {{ $data["daypart"][3] }},
-        {{ $data["daypart"][4] }},
+        {{ $data['daypart'][0]['value'] ?? 0 }},
+        {{ $data['daypart'][1]['value'] ?? 0 }},
+        {{ $data['daypart'][2]['value'] ?? 0 }},
+        {{ $data['daypart'][3]['value'] ?? 0 }},
+        {{ $data['daypart'][4]['value'] ?? 0 }},
       ]
     ]
   };
-  new Chartist.Bar('.spot-per-daypart-chart', data);
+  new Chartist.Bar('.spot-per-daypart-chart', data,{
+    plugins: [
+      Chartist.plugins.tooltip()
+    ]
+  });
 </script>
 <script>
   var data = {
@@ -408,14 +472,28 @@ $(document).ready(function() {
       ]
     ]
   };
-  new Chartist.Line('.spot-per-date-chart', data);
+  new Chartist.Line('.spot-per-date-chart', data,{
+    plugins: [
+      Chartist.plugins.tooltip()
+    ]
+  });
 </script>
 <script type="text/javascript">
 $(function() {
-    var start = moment().subtract(1, 'day');
+    @if(!empty($request->startdate))
+    var start = moment("{{$request->startdate}}");
     $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
+    @else
+    var start = moment().subtract(6, 'day');
+    $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
+    @endif    
+    @if(!empty($request->enddate))
+    var end = moment("{{$request->enddate}}");
+    $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
+    @else
     var end = moment();
     $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
+    @endif
 
     function cb(start, end) {
         $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
@@ -455,7 +533,6 @@ $(document).ready(function(){
     // show existing filter in modal footer
     $("#filter-selected").html('');
     $("#filter-selected").html($("input[name="+filter+"]").val());
-    // if filter by channel, load directly
     $("#search-button").click();
   });
   $('#search-term').keypress(function(event){
@@ -515,21 +592,32 @@ $(document).ready(function(){
   var resp = false;
   if(window.innerWidth <= 800) resp=true;
   
-  $("#filterersubmit").click(function() {
-  //
-  });
-
   $("select[name='ntargetaudience']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='ntargetaudience']").attr('data-live-search','true'); // dropdown search with bootstrap select
-  $("select[name='ntargetaudience']").attr('data-size','3'); // dropdown search with bootstrap select
+  $("select[name='ntargetaudience']").attr('data-size','5'); // dropdown search with bootstrap select
+  $("select[name='ntargetaudience']").selectpicker();
 });
 </script>
+<script>
+  $(document).ready(function(){
+    $("#filtererreset").click(function(){
+      var start = moment().subtract(6, 'day');
+      $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
+      var start = moment();
+      $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
+      $("input[name^=filter-]").val('');
+      $("span[id^=filter-]").html('');
+    });
+});
+  
+</script>
 @endsection
-@section('filterer')
+@section('filterer'){}
 <form method="GET" action="{{ url('admin/dashboard') }}">
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button type="submit" id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
+<button id="filtererreset" class="btn btn-secondary pull-left filterer-close" style="color:#fff"><i class="ft-rotate-ccw"></i></button>
 <a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
@@ -541,43 +629,88 @@ $(document).ready(function(){
               {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
               {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
           </div>
+          <div class="row">
+            <div class="col-5">
+              {{ Form::text('starttime', $request->starttime ?? '00:00:00', array('id'=>'starttime','class' => 'form-control','required','autocomplete'=>'off')) }}
+            </div>
+            <div class="col-1" style="top:8px">to</div>
+            <div class="col-5">
+              {{ Form::text('endtime',  $request->endtime ?? '23:59:59', array('id'=>'endtime','class' => 'form-control','required','autocomplete'=>'off')) }}
+            </div>
+          </div>
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Channel</h6>
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
-        {{ Form::hidden('channel') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> Programme</button>
-        {{ Form::hidden('nprogramme') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel1"><span id="filter-nlevel1-count"></span> Level 1</button>
-        {{ Form::hidden('nlevel1') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel2"><span id="filter-nlevel2-count"></span> Level 2</button>
-        {{ Form::hidden('nlevel2') }}
+        <button type="button" class="btn btn-primary col-10 filter-button" data-filter="channel">
+        <span id="filter-channel-count">{{ ($request->channel)? count(explode(',',$request->channel))-1:'' }}</span> Channel</button>
+        {{ Form::hidden('channel', $request->channel ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nprogramme">
+        <span id="filter-nprogramme-count">{{ ($request->nprogramme)? count(explode(',',$request->nprogramme))-1:'' }}</span> nProgramme</button>
+        {{ Form::hidden('nprogramme', $request->nprogramme ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iprogramme">
+        <span id="filter-iprogramme-count">{{ ($request->iprogramme)? count(explode(',',$request->iprogramme))-1:'' }}</span> iProgramme</button>
+        {{ Form::hidden('iprogramme', $request->iprogramme ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_1">
+        <span id="filter-nlevel_1-count">{{ ($request->nlevel_1)? count(explode(',',$request->nlevel_1))-1:'' }}</span> nLevel 1</button>
+        {{ Form::hidden('nlevel_1', $request->nlevel_1 ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_1">
+        <span id="filter-ilevel_1-count">{{ ($request->ilevel_1)? count(explode(',',$request->ilevel_1))-1:'' }}</span> iLevel 1</button>
+        {{ Form::hidden('ilevel_1', $request->ilevel_1 ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_2">
+        <span id="filter-nlevel_2-count">{{ ($request->nlevel_2)? count(explode(',',$request->nlevel_2))-1:'' }}</span> nLevel 2</button>
+        {{ Form::hidden('nlevel_2', $request->nlevel_2 ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_2">
+        <span id="filter-ilevel_2-count">{{ ($request->ilevel_2)? count(explode(',',$request->ilevel_2))-1:'' }}</span> iLevel 2</button>
+        {{ Form::hidden('ilevel_2', $request->ilevel_2 ?? null) }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
-        <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> Advertiser</button>
-        {{ Form::hidden('nadvertiser') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> Product</button>
-        {{ Form::hidden('nproduct') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> Sector</button>
-        {{ Form::hidden('nsector') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> Category</button>
-        {{ Form::hidden('ncategory') }}
-        <button class="btn btn-primary col-10 filter-button" data-filter="nadstype"><span id="filter-nadstype-count"></span> Ads Type</button>
-        {{ Form::hidden('nadstype') }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nadvertiser">
+        <span id="filter-nadvertiser-count">{{ ($request->nadvertiser)? count(explode(',',$request->nadvertiser))-1:'' }}</span> nAdvertiser</button>
+        {{ Form::hidden('nadvertiser', $request->nadvertiser ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadvertiser">
+        <span id="filter-iadvertiser-count">{{ ($request->iadvertiser)? count(explode(',',$request->iadvertiser))-1:'' }}</span> iAdvertiser</button>
+        {{ Form::hidden('iadvertiser', $request->iadvertiser ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nproduct">
+        <span id="filter-nproduct-count">{{ ($request->nproduct)? count(explode(',',$request->nproduct))-1:'' }}</span> nProduct</button>
+        {{ Form::hidden('nproduct', $request->nproduct ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iproduct">
+        <span id="filter-iproduct-count">{{ ($request->iproduct)? count(explode(',',$request->iproduct))-1:'' }}</span> iProduct</button>
+        {{ Form::hidden('iproduct', $request->iproduct ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nsector">
+        <span id="filter-nsector-count">{{ ($request->nsector)? count(explode(',',$request->nsector))-1:'' }}</span> nSector</button>
+        {{ Form::hidden('nsector', $request->nsector ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="isector">
+        <span id="filter-isector-count">{{ ($request->isector)? count(explode(',',$request->isector))-1:'' }}</span> iSector</button>
+        {{ Form::hidden('isector', $request->isector ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ncategory">
+        <span id="filter-ncategory-count">{{ ($request->ncategory)? count(explode(',',$request->ncategory))-1:'' }}</span> nCategory</button>
+        {{ Form::hidden('ncategory', $request->ncategory ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="icategory">
+        <span id="filter-icategory-count">{{ ($request->icategory)? count(explode(',',$request->icategory))-1:'' }}</span> iCategory</button>
+        {{ Form::hidden('icategory', $request->icategory ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nadstype">
+        <span id="filter-nadstype-count">{{ ($request->nadstype)? count(explode(',',$request->nadstype))-1:'' }}</span> nAds Type</button>
+        {{ Form::hidden('nadstype', $request->nadstype ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadstype">
+        <span id="filter-iadstype-count">{{ ($request->iadstype)? count(explode(',',$request->iadstype))-1:'' }}</span> iAds Type</button>
+        {{ Form::hidden('iadstype', $request->iadstype ?? null) }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="tadstype">
+        <span id="filter-tadstype-count">{{ ($request->tadstype)? count(explode(',',$request->tadstype))-1:'' }}</span> tAds Type</button>
+        {{ Form::hidden('tadstype', $request->tadstype ?? null) }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>
-        {{ Form::select('ntargetaudience',$data['ddtargetaudience'],null,['class'=>'form-control']) }}
+        {{ Form::select('ntargetaudience',$data['ddtargetaudience'], ($request->ntargetaudience ?? '') ,['class'=>'form-control']) }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Other</h6>
         <div class="form-group">
         <select name="ncommercialdata" class="form-control col-10">
-          <option value="ungrouped" selected>Ungrouped</option>
-          <option value="grouped">Grouped</option>
+          <option value="ungrouped" {{ ($request->ncommercialdata == 'ungrouped') ? 'selected':''}}>Ungrouped</option>
+          <option value="grouped" {{ ($request->ncommercialdata == 'grouped') ? 'selected':''}}>Grouped</option>
         </select>
         </div>
         <div class="form-group">
         <select name="ncommercialtype" class="form-control col-10">
-          <option value="allads">All Ads</option>
-          <option value="commercialonly" selected>Commercial Only</option>
+          <option value="commercialonly"  {{ ($request->ncommercialdata == 'commercialonly') ? 'selected':''}}>Commercial Only</option>
+          <option value="allads" {{ ($request->ncommercialdata == 'allads') ? 'selected':''}}>All Ads</option>
         </select>
         </div>
         <hr>

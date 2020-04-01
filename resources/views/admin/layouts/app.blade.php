@@ -30,7 +30,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/prism.min.css">
     <!-- END VENDOR CSS-->
     <!-- BEGIN APEX CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/css/app.css?v=2">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/css/app.css?v=4">
     <!-- END APEX CSS-->
     <!-- BEGIN Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}css/style.css?v=1">
@@ -67,13 +67,16 @@
                   @if(session('privilege')['admin/tvprogramme']['browse'] ?? 0)<li><a href="{{ url('/admin/tvprogramme') }}" class="menu-item"><i class="ft-play-circle"></i>TV Programme</a></li>@endif
                 </ul>
               </li>
+              @if((session('privilege')['admin/mktsummary']['browse'] ?? 0) || (session('privilege')['admin/adexnett']['browse'] ?? 0) || (session('privilege')['admin/spotmatching']['browse'] ?? 0))
               <li class="has-sub nav-item" id="marketingtools"><a href="#"><i class="ft-phone-call"></i><span data-i18n="" class="menu-title">Marketing Tools</span></a>
                 <ul class="menu-content">
-                @if(session('privilege')['admin/mktsummary']['browse'] ?? 0)<li><a href="{{ url('/admin/mktsummary') }}" class="menu-item"><i class="ft-aperture"></i>Summary</a></li>@endif
+                  @if(session('privilege')['admin/mktsummary']['browse'] ?? 0)<li><a href="{{ url('/admin/mktsummary') }}" class="menu-item"><i class="ft-aperture"></i>Summary</a></li>@endif
                   @if(session('privilege')['admin/adexnett']['browse'] ?? 0)<li><a href="{{ url('/admin/adexnett') }}" class="menu-item"><i class="ft-target"></i>Adex Nett</a></li>@endif
                   @if(session('privilege')['admin/spotmatching']['browse'] ?? 0)<li><a href="{{ url('/admin/spotmatching') }}" class="menu-item"><i class="ft-check-circle"></i>Spot Matching</a></li>@endif
                 </ul>
               </li>
+              @endif
+              @if((session('privilege')['admin/uploaddata/commercial']['browse'] ?? 0) || (session('privilege')['admin/uploadsearch/commercial']['browse'] ?? 0) || (session('privilege')['admin/spotpairing']['browse'] ?? 0) || (session('privilege')['admin/notification']['browse'] ?? 0))
               <li class="has-sub nav-item" id="administrator"><a href="#"><i class="ft-aperture"></i><span data-i18n="" class="menu-title">Administrator</span></a>
                 <ul class="menu-content">
                   <li class="has-sub nav-item" id="administrator"><a href="#"><i class="ft-upload-cloud"></i><span data-i18n="" class="menu-title">Upload Data</span></a>
@@ -95,16 +98,20 @@
                   @if(session('privilege')['admin/spotpairing']['browse'] ?? 0)<li><a href="{{ url('/admin/spotpairing') }}" class="menu-item"><i class="ft-voicemail"></i>Spot Pairing</a></li>@endif
                   @if(session('privilege')['admin/videodata']['browse'] ?? 0)<li><a href="{{ url('/admin/videodata') }}" class="menu-item"><i class="ft-video"></i>Video Data</a></li>@endif
                   @if(session('privilege')['admin/targetaudience']['browse'] ?? 0)<li><a href="{{ url('/admin/targetaudience') }}" class="menu-item"><i class="ft-star"></i>Target Audience</a></li>@endif
+                  @if(session('privilege')['admin/daypartsetting']['browse'] ?? 0)<li><a href="{{ url('/admin/daypartsetting') }}" class="menu-item"><i class="ft-sun"></i>Daypart Setting</a></li>@endif
+                  @if(session('privilege')['admin/tvchighlight']['browse'] ?? 0)<li><a href="{{ url('/admin/tvchighlight') }}" class="menu-item"><i class="ft-tv"></i>TVC Highlight</a></li>@endif
                   @if(session('privilege')['admin/channel']['browse'] ?? 0)<li><a href="{{ url('/admin/channel') }}" class="menu-item"><i class="ft-tv"></i>Channel</a></li>@endif
                   @if(session('privilege')['admin/notification']['browse'] ?? 0)<li><a href="{{ url('/admin/notification') }}" class="menu-item"><i class="ft-bell"></i>Notification</a></li>@endif
                 </ul>
               </li>
+              @endif
               <li class="has-sub nav-item" id="usermgt"><a href="#"><i class="ft-user-check"></i><span data-i18n="" class="menu-title">User Management</span></a>
                 <ul class="menu-content">
                   @if(session('privilege')['admin/user']['browse'] ?? 0)<li><a href="{{ url('/admin/user') }}" class="menu-item"><i class="ft-user"></i>User</a></li>@endif
                   @if(session('privilege')['admin/role']['browse'] ?? 0)<li><a href="{{ url('/admin/role') }}" class="menu-item"><i class="ft-users"></i>Role</a></li>@endif
                 </ul>
               </li>
+              @if(session('privilege')['admin/demorequest']['browse'] ?? 0)<li class=" nav-item"><a href="{{ url('/admin/demorequest') }}"><i class="ft-phone-incoming"></i><span data-i18n="" class="menu-title">Demo Request</span></a></li>@endif
             </ul>
           </div>
         </div>
@@ -126,9 +133,12 @@
           <div class="navbar-container">
             <div id="navbarSupportedContent" class="collapse navbar-collapse">
               <ul class="navbar-nav">
+                <li class="nav-item mr-2 d-none d-lg-block"><a id="navbar-fullscreen" href="javascript:;" class="nav-link apptogglefullscreen"><i class="ft-maximize font-medium-3 blue-grey darken-4"></i>
+                    <p class="d-none">fullscreen</p></a></li>
                 <li class="dropdown nav-item"><a id="ddnotif" href="#" data-toggle="dropdown" class="nav-link position-relative dropdown-toggle"><i class="ft-bell font-medium-3 blue-grey darken-4"></i>
                 <?php
-                $notif = App\Notification::where('user_to_notify',Auth::user()->id)->whereNull('read')->get();
+                // $notif = App\Notification::where('user_to_notify',Auth::user()->id)->get();
+                $notif = App\Notification::get();
                 ?>
                 <span class="notification badge badge-pill badge-danger">{{ ($notif->count()>0)? $notif->count():'' }}</span>
                   <p class="d-none">Notifications</p></a>
@@ -328,11 +338,12 @@
     <script src="{{ asset('/') }}app-assets/vendors/js/pace/pace.min.js" type="text/javascript"></script>
     <!-- BEGIN VENDOR JS-->
     <!-- BEGIN PAGE VENDOR JS-->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@rc/dist/js.cookie.min.js"></script>
     <!-- END PAGE VENDOR JS-->
     <!-- BEGIN APEX JS-->
     <script src="{{ asset('/') }}app-assets/js/app-sidebar.js" type="text/javascript"></script>
     <script src="{{ asset('/') }}app-assets/js/notification-sidebar.js" type="text/javascript"></script>
-    <script src="{{ asset('/') }}app-assets/js/customizer.js" type="text/javascript"></script>
+    <script src="{{ asset('/') }}app-assets/js/customizer.js?v=9" type="text/javascript"></script>
     <!-- END APEX JS-->
     <!-- BEGIN PAGE LEVEL JS-->
     <script>
@@ -356,6 +367,67 @@
       $('#ddnotif').click(function(){
         $.ajax( "{{ url('admin/notification/markallread') }}" );
       });
+    </script>
+    <script>
+    $(document).ready(function(){
+      $("#ll-switch").on("click", function() {
+        getstyle();
+      });
+      $("#dl-switch").on("click", function() {
+        getstyle();
+      });
+      $("#tl-switch").on("click", function() {
+        getstyle();        
+      });
+      $(".customizer").on("click", function() {
+        getstyle();        
+      });
+      $(".cz-tl-bg-image").on("click", function() {
+        getstyle();        
+      });
+      $(".customizer-content").on("click", function() {
+        getstyle();        
+      });
+      $(".cz-bg-color").on("click", function() {
+        getstyle();        
+      });
+      $(".cz-bg-image").on("click", function() {
+        getstyle();        
+      });
+      $(".cz-bg-image-display").on("click", function() {
+        getstyle();        
+      });
+      $(".cz-compact-menu").on("click", function() {
+        getstyle();        
+      });
+      $(".cz-sidebar-width").on("change", function() {
+        getstyle();        
+      });
+      $("#sidebar-bg-img").on("click", function() {
+        getstyle();        
+      });
+  
+      setstyle();
+    });
+    function getstyle(){
+      var bgColor = $(".app-sidebar").attr("data-background-color");
+      Cookies.set('bgColor',bgColor);
+      console.log(bgColor);
+      var src = $(".app-sidebar").css("background-image");
+      Cookies.set('src',src);        
+      var bodyclass = $("body").attr("class");
+      Cookies.set('bodyclass',bodyclass);        
+      var src = $(".app-sidebar").css("background-image");
+      Cookies.set('src',src);        
+      var src2 = $(".sidebar-background").css("background-image");
+      Cookies.set('src2',src2);        
+    }
+    function setstyle(){
+      $(".app-sidebar").attr("data-background-color",Cookies.get('bgColor'));
+      $(".app-sidebar").css("background-image",Cookies.get('src'));
+      $("body").attr("class",Cookies.get('bodyclass'));
+      $(".sidebar-background").css("background-image",Cookies.get('src2'));
+    }
     </script>
     @yield('pagejs')
     <!-- END PAGE LEVEL JS-->

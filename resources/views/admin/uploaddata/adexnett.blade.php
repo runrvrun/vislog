@@ -62,7 +62,7 @@
               </div>
               <div class="modal-footer">
                 <div class="modal-footer-processing-info" style="display:none">
-                Inserting data... Please wait <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>
+                Inserting data in background... You can close this window once the upload progress bar is full.<i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>
                 </div>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               </div>

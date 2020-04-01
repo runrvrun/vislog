@@ -83,11 +83,16 @@ class UserController extends Controller
 
         $requestData = $request->all();
         $date = Carbon::createFromFormat('d/m/Y H:i:s',$requestData['expired_at'].' 00:00:00')->toDateTimeString();
-        $requestData['isoexpired_at'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+        $requestData['expired_at'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
         if(!empty($requestData['password'])){
             $requestData['password'] = Hash::make($requestData['password']);
         }else{
             unset($requestData['password']);
+        }
+        if($requestData['status'] = "on"){
+            $requestData['status'] = 1;
+        }else{
+            $requestData['status'] = 0;
         }
         User::create($requestData);
         Session::flash('message', 'User ditambahkan'); 

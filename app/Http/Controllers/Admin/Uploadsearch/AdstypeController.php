@@ -34,7 +34,7 @@ class AdstypeController extends Controller
 
     public function indexjson()
     {
-        $query = Adstypesearch::all();
+        $query = Adstypesearch::orderBy('nadstype','ASC')->get();
         return datatables($query
         )
         ->toJson();
