@@ -257,6 +257,7 @@ class DashboardController extends Controller
                 ]
             ]));
         });
+        $spotpertype['LOOSE SPOT'] = 0;
         $spotpertype['NON LOOSE SPOT'] = 0;
         foreach($query as $key=>$val){
             // group loose spot vs non loose spot (other)

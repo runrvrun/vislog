@@ -51,7 +51,7 @@ $(document).ready(function() {
     $("#ll-switch").on("click", function() {
       $(".sidebar-background").css(
         "background-image",
-        "app-assets/img/sidebar-bg/01.jpg"
+        "/app-assets/img/sidebar-bg/01.jpg"
       );
     });
   }
@@ -172,7 +172,7 @@ $(document).ready(function() {
       $("body").addClass("layout-dark");
       $(".sidebar-background").css(
         "background-image",
-        "url(app-assets/img/sidebar-bg/01.jpg)"
+        "url(/app-assets/img/sidebar-bg/01.jpg)"
       );
       $(".app-sidebar").attr("data-background-color", "black");
     } else {

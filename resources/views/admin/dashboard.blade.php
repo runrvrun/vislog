@@ -343,6 +343,9 @@ table{
   width: 9%;
   right: auto;
   left: 10px;
+  position: absolute;
+  padding: 7px;
+  z-index: 10;
 }
 button.search-result{
   min-width:100px;
@@ -1023,10 +1026,15 @@ $(document).ready(function(){
     $("#filtererreset").click(function(){
       var start = moment().subtract(6, 'day');
       $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
-      var start = moment();
+      var end = moment();
+      $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
       $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
-      $("input[name^=filter-]").val('');
+      $('input[name=starttime]').val('00:00:00');
+      $('input[name=endtime]').val('23:59:59');
+      $(".filterer").find('input[type=hidden]').val('');
+      $(".filterer").find('select').prop("selectedIndex", 0);
       $("span[id^=filter-]").html('');
+      $("select[name='ntargetaudience']").selectpicker("refresh");
     });
 });
   
@@ -1050,7 +1058,7 @@ $(document).ready(function(){
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button type="submit" id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
-<button id="filtererreset" class="btn btn-secondary pull-left filterer-close" style="color:#fff"><i class="ft-rotate-ccw"></i></button>
+<a id="filtererreset" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
 <a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
