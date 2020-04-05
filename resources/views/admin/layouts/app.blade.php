@@ -4,8 +4,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta name="description" content="Nujeks cargo management application.">
-    <meta name="keywords" content="cargo, package, delivery, truck">
+    <meta name="description" content="Vislog">
+    <meta name="keywords" content="advertising">
     <meta name="author" content="ArfianAgus">
     @if (trim($__env->yieldContent('pagetitle')))
     <h1>@yield('pagetitle')</h1>
@@ -50,7 +50,7 @@
         <!-- Sidebar Header starts-->
         <div class="sidebar-header">
           <div class="logo clearfix"><a href="{{ url('/admin/') }}" class="logo-text float-left">
-              <div class="logo-img"><img src="{{ asset('images/vislog_logo_white.png') }}" width="32px" /></div><span class="text align-middle"> VISLOG</span></a><a id="sidebarToggle" href="javascript:;" class="nav-toggle d-none d-sm-none d-md-none d-lg-block"><i data-toggle="expanded" class="toggle-icon ft-toggle-right"></i></a><a id="sidebarClose" href="javascript:;" class="nav-close d-block d-md-block d-lg-none d-xl-none"><i class="ft-x"></i></a></div>
+              <div class="logo-img"><img src="{{ asset('images/vislog-logo-white.png') }}" width="32px" /></div><span class="text align-middle"> VISLOG</span></a><a id="sidebarToggle" href="javascript:;" class="nav-toggle d-none d-sm-none d-md-none d-lg-block"><i data-toggle="expanded" class="toggle-icon ft-toggle-right"></i></a><a id="sidebarClose" href="javascript:;" class="nav-close d-block d-md-block d-lg-none d-xl-none"><i class="ft-x"></i></a></div>
         </div>
         <!-- Sidebar Header Ends-->
         <!-- / main menu header-->
@@ -325,6 +325,7 @@
         <!-- Sidebar Width Ends-->
       <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;"><div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps-scrollbar-y-rail" style="top: 0px; height: 610px; right: 3px;"><div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 463px;"></div></div></div>
     </div>
+    @yield('modal')
     <!-- ////////////////////////////////////////////////////////////////////////////-->
 
     <!-- BEGIN VENDOR JS-->
@@ -343,7 +344,7 @@
     <!-- BEGIN APEX JS-->
     <script src="{{ asset('/') }}app-assets/js/app-sidebar.js" type="text/javascript"></script>
     <script src="{{ asset('/') }}app-assets/js/notification-sidebar.js" type="text/javascript"></script>
-    <script src="{{ asset('/') }}app-assets/js/customizer.js?v=9" type="text/javascript"></script>
+    <script src="{{ asset('/') }}app-assets/js/customizer.js?v=11" type="text/javascript"></script>
     <!-- END APEX JS-->
     <!-- BEGIN PAGE LEVEL JS-->
     <script>
@@ -412,7 +413,6 @@
     function getstyle(){
       var bgColor = $(".app-sidebar").attr("data-background-color");
       Cookies.set('bgColor',bgColor);
-      console.log(bgColor);
       var src = $(".app-sidebar").css("background-image");
       Cookies.set('src',src);        
       var bodyclass = $("body").attr("class");
@@ -431,6 +431,5 @@
     </script>
     @yield('pagejs')
     <!-- END PAGE LEVEL JS-->
-    @yield('modal')
   </body>
 </html>

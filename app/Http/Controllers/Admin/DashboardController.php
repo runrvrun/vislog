@@ -11,7 +11,9 @@ use App\Commercialsearch;
 use App\Adexnett;
 use App\Daypartsetting;
 use App\Tvchighlight;
+use App\Channel;
 use Auth;
+use PDF;
 
 class DashboardController extends Controller
 {
@@ -29,8 +31,18 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function dashboard(Request $request)
+    public function dashboard(Request $request, $action = null)
     {
+        $channel = Channel::orderBy('order')->get();
+        // populate dropdown
+        $query = \App\Targetaudience::whereNotNull('targetaudience');
+        if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
+        $data['ddtargetaudience'] = $query->pluck('targetaudience','code');
+
+        if(empty($request->startdate)){
+            // load empty on start
+            return view('admin.dashboard',compact('data','request'));
+        }
         if(!empty($request->commercialdata) && $request->commercialdata == 'grouped'){
             $commercial = Commercialgrouped::whereNotNull('_id');
         }else{
@@ -84,6 +96,23 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
         }
         // apply filter
+        if($request->ntargetaudience){
+            $ta = $request->ntargetaudience;
+        }else{
+            $ta ='01';
+        }
+        $variable = 'spot';
+        $variabled = '$spot';
+        $divider = 1;
+        if($request->variable == 'COST'){
+            $variable = 'cost';
+            $variabled = '$cost';
+            $divider = 1000000;
+        }
+        if($request->variable == 'GRP'){
+            $variable = 'tvr'.$ta;
+            $variabled = '$tvr'.$ta;
+        }
         if($request->startdate){
             $commercial->whereBetween('isodate',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
             $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
@@ -177,15 +206,9 @@ class DashboardController extends Controller
         }
 
         $data['number_of_spot'] = $commercial->count();        
-        $data['cost'] = $commercial->sum('cost')/1000000000;
-        $data['grp'] = 0;
-        if($request->ntargetaudience){
-            $ta = $request->ntargetaudience;
-        }else{
-            $ta ='01';
-        }
+        $data['cost'] = $commercial->sum('cost')/1000000;
         $data['grp'] = $commercial->sum('tvr'.$ta);        
-        $query = Commercial::raw(function($collection) use ($filter)
+        $query = Commercial::raw(function($collection) use ($filter,$variabled,$divider)
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -194,14 +217,30 @@ class DashboardController extends Controller
                             'channel'=>'$channel'
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
                         ]
                     ]
                 ]
             ]));
         });
-        $data['spot_per_channel'] = $query;
-        $query = Commercial::raw(function($collection) use ($filter)
+        $oquery = [];
+        $cquery = [];
+        foreach($query as $key=>$val){
+            $oquery[$val->_id->channel] = ['channel'=>$val->_id->channel,'total'=>$val->total];
+        }
+        foreach($channel as $k=>$v){
+            if(isset($oquery[$v->channel])){
+                $cquery[$k] = ['channel'=>$oquery[$v->channel]['channel'], 'total'=>$oquery[$v->channel]['total']];
+                if($request->variable == 'COST'){
+                    $cquery[$k]['total'] = number_format($cquery[$k]['total'],2,'.','');
+                }
+            }
+        }
+        $data['spot_per_channel'] = $cquery;
+        
+        $query = Commercial::raw(function($collection) use ($filter,$variabled,$divider)
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -210,58 +249,58 @@ class DashboardController extends Controller
                             'nadstype'=>'$nadstype'
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
                         ],
                     ]
                 ]
             ]));
         });
-        // $spotpertype['LOOSE SPOT'] = 0;
         $spotpertype['NON LOOSE SPOT'] = 0;
         foreach($query as $key=>$val){
             // group loose spot vs non loose spot (other)
             if($val->id['nadstype'] == 'LOOSE SPOT'){
-                // $spotpertype['LOOSE SPOT'] = $val->total;
+                $spotpertype['LOOSE SPOT'] = $val->total;
             }else{
                 $spotpertype['NON LOOSE SPOT'] += $val->total;
             }
         }
+        if($request->variable == 'COST'){
+            $spotpertype['LOOSE SPOT'] = number_format($spotpertype['LOOSE SPOT'],2,'.','');
+            $spotpertype['NON LOOSE SPOT'] = number_format($spotpertype['NON LOOSE SPOT'],2,'.','');
+        }
         $data['spot_per_type'] = $spotpertype;
         //calculate spot per daypart
-        $daypart = Daypartsetting::all();
+        $daypart = Daypartsetting::orderBy('start_time')->get();
         if($daypart){
             foreach($daypart as $key=>$val){
                 $c = clone($commercial); 
                 $time   = explode(":", $val->start_time);
-                $hour   = $time[0] * 60 * 60 * 1000;
-                $minute = $time[1] * 60 * 1000;
-                $start_ms = $hour + $minute + 1;
+                $hour   = $time[0] * 60 * 60;
+                $minute = $time[1] * 60;
+                $start_ms = $hour + $minute;
                 $time   = explode(":", $val->end_time);
-                $hour   = $time[0] * 60 * 60 * 1000;
-                $minute = $time[1] * 60 * 1000;
-                $end_ms = $hour + $minute;
+                if($time[0] == 0){ // end at midnight
+                    $hour   = 24 * 60 * 60;
+                }else{
+                    $hour   = $time[0] * 60 * 60;
+                }
+                $minute = $time[1] * 60;
+                $end_ms = $hour + $minute - 1;
                 $data['daypart'][$key]['name'] = $val->daypart;
-                $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum('no_of_spots');//00.00-06.00
+                if($request->variable == 'SPOT'){
+                    $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->count();
+                }elseif($request->variable == 'COST'){
+                    $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum($variable);
+                    $data['daypart'][$key]['value'] = number_format($data['daypart'][$key]['value']/$divider,2,'.','');
+                }else{
+                    $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum($variable);
+                }
             }
-        }else{
-            $c = clone($commercial); 
-            $data['daypart'][0]['name'] = "00.00-06.00";
-            $data['daypart'][0]['value'] = $c->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
-            $c = clone($commercial); 
-            $data['daypart'][1]['name'] = "06.00-12.00";
-            $data['daypart'][1]['value'] = $c->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
-            $c = clone($commercial); 
-            $data['daypart'][2]['name'] = "12.00-17.30";
-            $data['daypart'][2]['value'] = $c->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
-            $c = clone($commercial); 
-            $data['daypart'][3]['name'] = "17.30-22.00";
-            $data['daypart'][3]['value'] = $c->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
-            $c = clone($commercial); 
-            $data['daypart'][4]['name'] = "22.00-00.00";
-            $data['daypart'][4]['value'] = $c->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
         }
 
-        $data['spot_per_date'] = Commercial::raw(function($collection) use($filter) 
+        $spot_per_date = Commercial::raw(function($collection) use($filter,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [ '$sort' => [ 'date' => 1 ] ],
@@ -271,7 +310,9 @@ class DashboardController extends Controller
                             'date'=>'$date',
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
                         ]
                     ]
                 ]
@@ -279,15 +320,30 @@ class DashboardController extends Controller
                 ,['allowDiskUse' => true]
                 );
         });
-        // populate dropdown
-        $query = \App\Targetaudience::whereNotNull('targetaudience');
-        if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
-        $data['ddtargetaudience'] = $query->pluck('targetaudience','code');
+        $data['spot_per_date'] = [];
+        foreach($spot_per_date as $key=>$val){
+            $data['spot_per_date'][$key]['date'] = $val->_id->date;            
+            $data['spot_per_date'][$key]['total'] = $val->total;
+            if($request->variable == 'COST'){
+                $data['spot_per_date'][$key]['total'] = number_format($data['spot_per_date'][$key]['total'],2,'.','');
+            }
+        }
+        usort($data['spot_per_date'], function($a, $b) {
+            return $a['date'] <=> $b['date'];
+        });
 
-        return view('admin.dashboard',compact('request','data'));
+        if($action == 'pdf'){
+            $pdf = PDF::loadView('admin.dashboardpdf',compact('request','data'));
+            return $pdf->download('vislog_dashboard.pdf');
+        }if($action == 'print'){
+            return view('admin.dashboardprint',compact('request','data'));
+        }else{
+            return view('admin.dashboard',compact('request','data'));
+        }
     }
-    public function highlight(Request $request)
+    public function highlight(Request $request, $action = null)
     {    
+        $channel = Channel::orderBy('order')->get();
         $data['tvchighlight'] = Tvchighlight::orderBy('created_at')->take(10)->get();
         $filter = [];
         $commercial = Commercial::whereNotNull('_id');
@@ -319,22 +375,21 @@ class DashboardController extends Controller
         $data['advertiser'] = count($data['advertiser']);
         $data['product'] = $commercial->distinct('nproduct')->get();
         $data['product'] = count($data['product']);
-        $data['number_of_spot'] = $commercial->sum('no_of_spots');        
-        $data['adex'] = $adexnett->sum('gross');
-        if ($data['adex'] < 1000000) {
+        $data['number_of_spot'] = $commercial->count();        
+        $data['adex'] = $commercial->sum('cost');
+        if ($data['adex'] < 1000) { // cost is already per 1000
             // Anything less than a million
-            $data['adex'] = number_format($data['adex']);
-        } else if ($data['adex'] < 1000000000) {
+            $data['adex'] = number_format($data['adex'],0);
+        } else if ($data['adex'] < 1000000) {
             // Anything less than a billion
-            $data['adex'] = number_format($data['adex'] / 1000000, 2) . 'M';
+            $data['adex'] = number_format($data['adex'] / 1000, 0) . 'M';
         } else {
             // At least a billion
-            $data['adex'] = number_format($data['adex'] / 1000000000, 2) . 'B';
+            $data['adex'] = number_format($data['adex'] / 1000000, 0) . 'B';
         }
         
         $c = clone($commercial);// clone object as so not copy by reference and got additional "where" clause
-        $data['adstype_loose_spot'] = $c->where('nadstype','LOOSE SPOT')->get();
-        $data['adstype_loose_spot'] = count($data['adstype_loose_spot']);
+        $data['adstype_loose_spot'] = $c->where('nadstype','LOOSE SPOT')->count();
         if ($data['adstype_loose_spot'] < 1000000) {
             //
         } else if ($data['adstype_loose_spot'] < 1000000000) {
@@ -344,8 +399,7 @@ class DashboardController extends Controller
         }
 
         $c = clone($commercial);// clone object as so not copy by reference
-        $data['adstype_virtual_ads'] = $c->where('nadstype','VIRTUAL ADS')->get();
-        $data['adstype_virtual_ads'] = count($data['adstype_virtual_ads']);
+        $data['adstype_virtual_ads'] = $c->where('nadstype','VIRTUAL ADS')->count();
         if ($data['adstype_virtual_ads'] < 1000000) {
             //
         } else if ($data['adstype_virtual_ads'] < 1000000000) {
@@ -355,8 +409,7 @@ class DashboardController extends Controller
         }
 
         $c = clone($commercial);// clone object as so not copy by reference
-        $data['adstype_squeeze_frames'] = $c->where('nadstype','SQUEEZE FRAMES')->get();
-        $data['adstype_squeeze_frames'] = count($data['adstype_squeeze_frames']);
+        $data['adstype_squeeze_frames'] = $c->where('nadstype','BUILT IN SEGMEN')->count();
         if ($data['adstype_squeeze_frames'] < 1000000) {
             //
         } else if ($data['adstype_squeeze_frames'] < 1000000000) {
@@ -366,8 +419,7 @@ class DashboardController extends Controller
         }
 
         $c = clone($commercial);// clone object as so not copy by reference
-        $data['adstype_quiz'] = $c->where('nadstype','QUIZ')->get();
-        $data['adstype_quiz'] = count($data['adstype_quiz']);
+        $data['adstype_quiz'] = $c->where('nadstype','KUIS')->count();
         if ($data['adstype_quiz'] < 1000000) {
             //
         } else if ($data['adstype_quiz'] < 1000000000) {
@@ -386,18 +438,23 @@ class DashboardController extends Controller
                             'channel'=>'$channel'
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => 1
                         ]
                     ]
                 ]
             ]));
         });
         $oquery = [];
+        $cquery = [];
         foreach($query as $key=>$val){
             $oquery[$val->_id->channel] = ['channel'=>$val->_id->channel,'total'=>$val->total];
         }
-        asort($oquery);
-        $data['spot_per_channel_loose'] = $oquery;
+        foreach($channel as $k=>$v){
+            if(isset($oquery[$v->channel])){
+                $cquery[$k] = ['channel'=>$oquery[$v->channel]['channel'], 'total'=>$oquery[$v->channel]['total']];
+            }
+        }
+        $data['spot_per_channel_loose'] = $cquery;
         //
         $query = Commercial::raw(function($collection) use ($filter)
         {
@@ -408,51 +465,60 @@ class DashboardController extends Controller
                             'channel'=>'$channel'
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => 1
                         ]
                     ]
                 ]
             ]));
         });
         $oquery = [];
+        $cquery = [];
         foreach($query as $key=>$val){
             $oquery[$val->_id->channel] = ['channel'=>$val->_id->channel,'total'=>$val->total];
         }
-        asort($oquery);
-        $data['spot_per_channel'] = $oquery;
+        foreach($channel as $k=>$v){
+            if(isset($oquery[$v->channel])){
+                $cquery[$k] = ['channel'=>$oquery[$v->channel]['channel'], 'total'=>$oquery[$v->channel]['total']];
+            }
+        }
+        $data['spot_per_channel'] = $cquery;
         
         //calculate spot per daypart
-        $daypart = Daypartsetting::all();
+        $daypart = Daypartsetting::orderBy('start_time')->get();
         if($daypart){
             foreach($daypart as $key=>$val){
                 $c = clone($commercial); 
                 $time   = explode(":", $val->start_time);
-                $hour   = $time[0] * 60 * 60 * 1000;
-                $minute = $time[1] * 60 * 1000;
-                $start_ms = $hour + $minute + 1;
+                $hour   = $time[0] * 60 * 60;
+                $minute = $time[1] * 60;
+                $start_ms = $hour + $minute;
                 $time   = explode(":", $val->end_time);
-                $hour   = $time[0] * 60 * 60 * 1000;
-                $minute = $time[1] * 60 * 1000;
-                $end_ms = $hour + $minute;
+                if($time[0] == 0){ // end at midnight
+                    $hour   = 24 * 60 * 60;
+                }else{
+                    $hour   = $time[0] * 60 * 60;
+                }
+                $minute = $time[1] * 60;
+                $end_ms = $hour + $minute - 1;
                 $data['daypart'][$key]['name'] = $val->daypart;
-                $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum('no_of_spots');//00.00-06.00
+                $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->count();
             }
         }else{
             $c = clone($commercial); 
             $data['daypart'][0]['name'] = "00.00-06.00";
-            $data['daypart'][0]['value'] = $c->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
+            $data['daypart'][0]['value'] = $c->whereBetween('start_timestamp',[0,21600])->count();//00.00-06.00
             $c = clone($commercial); 
             $data['daypart'][1]['name'] = "06.00-12.00";
-            $data['daypart'][1]['value'] = $c->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
+            $data['daypart'][1]['value'] = $c->whereBetween('start_timestamp',[21601,43200])->count();//06.00-12.00
             $c = clone($commercial); 
             $data['daypart'][2]['name'] = "12.00-17.30";
-            $data['daypart'][2]['value'] = $c->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
+            $data['daypart'][2]['value'] = $c->whereBetween('start_timestamp',[43201,63000])->count();//12.00-17.30
             $c = clone($commercial); 
             $data['daypart'][3]['name'] = "17.30-22.00";
-            $data['daypart'][3]['value'] = $c->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
+            $data['daypart'][3]['value'] = $c->whereBetween('start_timestamp',[63001,79200])->count();//17.30-22.00
             $c = clone($commercial); 
             $data['daypart'][4]['name'] = "22.00-00.00";
-            $data['daypart'][4]['value'] = $c->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
+            $data['daypart'][4]['value'] = $c->whereBetween('start_timestamp',[79201,86400])->count();//22.00-00.00
         }
         $query = Commercial::raw(function($collection) use($filter) 
         {
@@ -464,6 +530,9 @@ class DashboardController extends Controller
                         ],
                         'count' => [
                             '$sum'  => 1
+                        ],
+                        'adex' => [
+                            '$sum'  => '$cost'
                         ]
                     ]
                 ],
@@ -473,11 +542,19 @@ class DashboardController extends Controller
                     ]
                 ],
                 [
-                    '$limit' => 5
+                    '$limit' => 10
                 ],
             ]));
         });
-        $data['top_channel'] = $query;
+        if($query){
+            $topchannel = [];
+            foreach($query as $key=>$val){
+                $topchannel[$key]['channel'] = $val->_id->channel;
+                $topchannel[$key]['spot'] = $val->count;
+                $topchannel[$key]['adex'] = $val->adex/1000000;
+            }
+            $data['top_channel'] = $topchannel;
+        }
         $query = Commercial::raw(function($collection) use($filter) 
         {
             return $collection->aggregate(array_merge($filter,[
@@ -488,6 +565,9 @@ class DashboardController extends Controller
                         ],
                         'count' => [
                             '$sum'  => 1
+                        ],
+                        'adex' => [
+                            '$sum'  => '$cost'
                         ]
                     ]
                 ],
@@ -497,11 +577,19 @@ class DashboardController extends Controller
                     ]
                 ],
                 [
-                    '$limit' => 5
+                    '$limit' => 10
                 ],
             ]));
-        });
-        $data['top_programme'] = $query;
+        });        
+        if($query){
+            $topprogramme = [];
+            foreach($query as $key=>$val){
+                $topprogramme[$key]['programme'] = $val->_id->nprogramme;
+                $topprogramme[$key]['spot'] = $val->count;
+                $topprogramme[$key]['adex'] = $val->adex/1000000;
+            }
+            $data['top_programme'] = $topprogramme;
+        }
         $query = Commercial::raw(function($collection) use($filter) 
         {
             return $collection->aggregate(array_merge($filter,[
@@ -512,6 +600,9 @@ class DashboardController extends Controller
                         ],
                         'count' => [
                             '$sum'  => 1
+                        ],
+                        'adex' => [
+                            '$sum'  => '$cost'
                         ]
                     ]
                 ],
@@ -521,11 +612,19 @@ class DashboardController extends Controller
                     ]
                 ],
                 [
-                    '$limit' => 5
+                    '$limit' => 10
                 ],
             ]));
-        });
-        $data['top_product'] = $query;
+        });           
+        if($query){
+            $topproduct = [];
+            foreach($query as $key=>$val){
+                $topproduct[$key]['product'] = $val->_id->nproduct;
+                $topproduct[$key]['spot'] = $val->count;
+                $topproduct[$key]['adex'] = $val->adex/1000000;
+            }
+            $data['top_product'] = $topproduct;
+        }
         $l = clone($log);
         $data['data_update'] = $l->where('action','regexp','/data update/')->orderBy('created_at','DESC')->take(5)->get();
         $l = clone($log);
@@ -540,7 +639,7 @@ class DashboardController extends Controller
                             'date'=>'$date',
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => 1
                         ]
                     ]
                 ]
@@ -556,11 +655,36 @@ class DashboardController extends Controller
         usort($data['spot_per_date'], function($a, $b) {
             return $a['date'] <=> $b['date'];
         });
-        return view('admin.highlight',compact('data','request'));
+
+        if($action == 'pdf'){
+            $pdf = PDF::loadView('admin.highlightpdf',compact('request','data'));
+            return $pdf->download('vislog_highlight.pdf');
+        }if($action == 'print'){
+            return view('admin.highlightprint',compact('request','data'));
+        }else{
+            return view('admin.highlight',compact('data','request'));
+        }
     }
 
-    public function spot_per_productjson()
-    {
+    public function spot_per_productjson(Request $request)
+    {        
+        if($request->ntargetaudience){
+            $ta = $request->ntargetaudience;
+        }else{
+            $ta ='01';
+        }
+        $variable = 'cost';
+        $variabled = '$cost';
+        $divider = 1;
+        if($request->variable == 'COST'){
+            $variable = 'cost';
+            $variabled = '$cost';
+            $divider = 1000000;
+        }
+        if($request->variable == 'GRP'){
+            $variable = 'tvr'.$ta;
+            $variabled = '$tvr'.$ta;
+        }
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
@@ -597,17 +721,98 @@ class DashboardController extends Controller
         if(!empty(Auth::user()->privileges['nprogramme'])) {
             array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
         }
+        // apply filter
+        if($request->startdate){
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }else{
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$gte' => $starttimestamp ] ] ]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
+        }
+        if($request->channel){
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+        }
+        if($request->nprogramme){
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+        }
+        if($request->iprogramme){
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
+        if($request->nlevel_1){
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+        }
+        if($request->nlevel_2){
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+        }
+        if($request->ilevel_2){
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
+        if($request->nadvertiser){
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+        }
+        if($request->nproduct){
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+        }
+        if($request->iproduct){
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
+        if($request->nsector){
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+        }
+        if($request->ncategory){
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+        }
+        if($request->icategory){
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
+        if($request->nadstype){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+        }
+        if($request->ncommercialtype == "commercialonly"){
+            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+        }
 
-        $query = Commercial::raw(function($collection) use($filter) 
+        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
                     '$group'    => [
                         '_id'   => [
-                            'nproduct'=>'$nproduct'
+                            'nproduct'=>'$nproduct',
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
                         ]
                     ]
                 ]
@@ -617,8 +822,25 @@ class DashboardController extends Controller
         )
         ->toJson();
     }
-    public function spot_per_programmejson()
-    {
+    public function spot_per_advertiserjson(Request $request)
+    {        
+        if($request->ntargetaudience){
+            $ta = $request->ntargetaudience;
+        }else{
+            $ta ='01';
+        }
+        $variable = 'cost';
+        $variabled = '$cost';
+        $divider = 1;
+        if($request->variable == 'COST'){
+            $variable = 'cost';
+            $variabled = '$cost';
+            $divider = 1000000;
+        }
+        if($request->variable == 'GRP'){
+            $variable = 'tvr'.$ta;
+            $variabled = '$tvr'.$ta;
+        }
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
@@ -655,8 +877,557 @@ class DashboardController extends Controller
         if(!empty(Auth::user()->privileges['nprogramme'])) {
             array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
         }
+        // apply filter
+        if($request->startdate){
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }else{
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$gte' => $starttimestamp ] ] ]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
+        }
+        if($request->channel){
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+        }
+        if($request->nprogramme){
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+        }
+        if($request->iprogramme){
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
+        if($request->nlevel_1){
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+        }
+        if($request->nlevel_2){
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+        }
+        if($request->ilevel_2){
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
+        if($request->nadvertiser){
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+        }
+        if($request->nproduct){
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+        }
+        if($request->iproduct){
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
+        if($request->nsector){
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+        }
+        if($request->ncategory){
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+        }
+        if($request->icategory){
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
+        if($request->nadstype){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+        }
+        if($request->ncommercialtype == "commercialonly"){
+            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+        }
 
-        $query = Commercial::raw(function($collection) use($filter) 
+        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        {
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'nadvertiser'=>'$nadvertiser',
+                        ],
+                        'total' => [
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
+                        ]
+                    ]
+                ]
+            ]));
+        });
+        return datatables($query
+        )
+        ->toJson();
+    }
+    public function spot_per_sectorjson(Request $request)
+    {        
+        if($request->ntargetaudience){
+            $ta = $request->ntargetaudience;
+        }else{
+            $ta ='01';
+        }
+        $variable = 'cost';
+        $variabled = '$cost';
+        $divider = 1;
+        if($request->variable == 'COST'){
+            $variable = 'cost';
+            $variabled = '$cost';
+            $divider = 1000000;
+        }
+        if($request->variable == 'GRP'){
+            $variable = 'tvr'.$ta;
+            $variabled = '$tvr'.$ta;
+        }
+        $filter = [];
+        // apply privileges
+        if(!empty(Auth::user()->privileges['startdate'])){
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+        } 
+        if(!empty(Auth::user()->privileges['nsector'])) {
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncategory'])) {
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['nproduct'])) {
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['nadvertiser'])) {
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncopy'])) {
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nadstype'])) {
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['channel']))  {
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_1'])) {
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_2'])) {
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nprogramme'])) {
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        // apply filter
+        if($request->startdate){
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }else{
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$gte' => $starttimestamp ] ] ]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
+        }
+        if($request->channel){
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+        }
+        if($request->nprogramme){
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+        }
+        if($request->iprogramme){
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
+        if($request->nlevel_1){
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+        }
+        if($request->nlevel_2){
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+        }
+        if($request->ilevel_2){
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
+        if($request->nadvertiser){
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+        }
+        if($request->nproduct){
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+        }
+        if($request->iproduct){
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
+        if($request->nsector){
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+        }
+        if($request->ncategory){
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+        }
+        if($request->icategory){
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
+        if($request->nadstype){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+        }
+        if($request->ncommercialtype == "commercialonly"){
+            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+        }
+
+        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        {
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'nsector'=>'$nsector',
+                        ],
+                        'total' => [
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
+                        ]
+                    ]
+                ]
+            ]));
+        });
+        return datatables($query
+        )
+        ->toJson();
+    }
+    public function spot_per_categoryjson(Request $request)
+    {        
+        if($request->ntargetaudience){
+            $ta = $request->ntargetaudience;
+        }else{
+            $ta ='01';
+        }
+        $variable = 'cost';
+        $variabled = '$cost';
+        $divider = 1;
+        if($request->variable == 'COST'){
+            $variable = 'cost';
+            $variabled = '$cost';
+            $divider = 1000000;
+        }
+        if($request->variable == 'GRP'){
+            $variable = 'tvr'.$ta;
+            $variabled = '$tvr'.$ta;
+        }
+        $filter = [];
+        // apply privileges
+        if(!empty(Auth::user()->privileges['startdate'])){
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+        } 
+        if(!empty(Auth::user()->privileges['nsector'])) {
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncategory'])) {
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['nproduct'])) {
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['nadvertiser'])) {
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncopy'])) {
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nadstype'])) {
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['channel']))  {
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_1'])) {
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_2'])) {
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nprogramme'])) {
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        // apply filter
+        if($request->startdate){
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }else{
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$gte' => $starttimestamp ] ] ]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
+        }
+        if($request->channel){
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+        }
+        if($request->nprogramme){
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+        }
+        if($request->iprogramme){
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
+        if($request->nlevel_1){
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+        }
+        if($request->nlevel_2){
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+        }
+        if($request->ilevel_2){
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
+        if($request->nadvertiser){
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+        }
+        if($request->nproduct){
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+        }
+        if($request->iproduct){
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
+        if($request->nsector){
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+        }
+        if($request->ncategory){
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+        }
+        if($request->icategory){
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
+        if($request->nadstype){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+        }
+        if($request->ncommercialtype == "commercialonly"){
+            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+        }
+
+        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        {
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'ncategory'=>'$ncategory',
+                        ],
+                        'total' => [
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
+                        ]
+                    ]
+                ]
+            ]));
+        });
+        return datatables($query
+        )
+        ->toJson();
+    }
+    
+    public function spot_per_programmejson(Request $request)
+    {        
+        if($request->ntargetaudience){
+            $ta = $request->ntargetaudience;
+        }else{
+            $ta ='01';
+        }
+        $variable = 'cost';
+        $variabled = '$cost';
+        $divider = 1;
+        if($request->variable == 'COST'){
+            $variable = 'cost';
+            $variabled = '$cost';
+            $divider = 1000000;
+        }
+        if($request->variable == 'GRP'){
+            $variable = 'tvr'.$ta;
+            $variabled = '$tvr'.$ta;
+        }
+        $filter = [];
+        // apply privileges
+        if(!empty(Auth::user()->privileges['startdate'])){
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+        } 
+        if(!empty(Auth::user()->privileges['nsector'])) {
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncategory'])) {
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['nproduct'])) {
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['nadvertiser'])) {
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncopy'])) {
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nadstype'])) {
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['channel']))  {
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_1'])) {
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_2'])) {
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nprogramme'])) {
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        // apply filter
+        if($request->startdate){
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }else{
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$gte' => $starttimestamp ] ] ]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
+        }
+        if($request->channel){
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+        }
+        if($request->nprogramme){
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+        }
+        if($request->iprogramme){
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
+        if($request->nlevel_1){
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+        }
+        if($request->nlevel_2){
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+        }
+        if($request->ilevel_2){
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
+        if($request->nadvertiser){
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+        }
+        if($request->nproduct){
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+        }
+        if($request->iproduct){
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
+        if($request->nsector){
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+        }
+        if($request->ncategory){
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+        }
+        if($request->icategory){
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
+        if($request->nadstype){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+        }
+        if($request->ncommercialtype == "commercialonly"){
+            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+        }
+
+
+        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -665,7 +1436,9 @@ class DashboardController extends Controller
                             'nprogramme'=>'$nprogramme'
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]
                         ]
                     ]
                 ]
@@ -675,8 +1448,25 @@ class DashboardController extends Controller
         )
         ->toJson();
     }
-    public function spot_per_adstypejson()
-    {
+    public function spot_per_level1json(Request $request)
+    {        
+        if($request->ntargetaudience){
+            $ta = $request->ntargetaudience;
+        }else{
+            $ta ='01';
+        }
+        $variable = 'cost';
+        $variabled = '$cost';
+        $divider = 1;
+        if($request->variable == 'COST'){
+            $variable = 'cost';
+            $variabled = '$cost';
+            $divider = 1000000;
+        }
+        if($request->variable == 'GRP'){
+            $variable = 'tvr'.$ta;
+            $variabled = '$tvr'.$ta;
+        }
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
@@ -713,8 +1503,403 @@ class DashboardController extends Controller
         if(!empty(Auth::user()->privileges['nprogramme'])) {
             array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
         }
+        // apply filter
+        if($request->startdate){
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }else{
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$gte' => $starttimestamp ] ] ]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
+        }
+        if($request->channel){
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+        }
+        if($request->nprogramme){
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+        }
+        if($request->iprogramme){
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
+        if($request->nlevel_1){
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+        }
+        if($request->nlevel_2){
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+        }
+        if($request->ilevel_2){
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
+        if($request->nadvertiser){
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+        }
+        if($request->nproduct){
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+        }
+        if($request->iproduct){
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
+        if($request->nsector){
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+        }
+        if($request->ncategory){
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+        }
+        if($request->icategory){
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
+        if($request->nadstype){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+        }
+        if($request->ncommercialtype == "commercialonly"){
+            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+        }
 
-        $query = Commercial::raw(function($collection) use($filter) 
+
+        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        {
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'nlevel_1'=>'$nlevel_1',
+                        ],
+                        'total' => [
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
+                        ]
+                    ]
+                ]
+            ]));
+        });
+        return datatables($query
+        )
+        ->toJson();
+    }
+    public function spot_per_level2json(Request $request)
+    {        
+        if($request->ntargetaudience){
+            $ta = $request->ntargetaudience;
+        }else{
+            $ta ='01';
+        }
+        $variable = 'cost';
+        $variabled = '$cost';
+        $divider = 1;
+        if($request->variable == 'COST'){
+            $variable = 'cost';
+            $variabled = '$cost';
+            $divider = 1000000;
+        }
+        if($request->variable == 'GRP'){
+            $variable = 'tvr'.$ta;
+            $variabled = '$tvr'.$ta;
+        }
+        $filter = [];
+        // apply privileges
+        if(!empty(Auth::user()->privileges['startdate'])){
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+        } 
+        if(!empty(Auth::user()->privileges['nsector'])) {
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncategory'])) {
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['nproduct'])) {
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['nadvertiser'])) {
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncopy'])) {
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nadstype'])) {
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['channel']))  {
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_1'])) {
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_2'])) {
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nprogramme'])) {
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        // apply filter
+        if($request->startdate){
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }else{
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$gte' => $starttimestamp ] ] ]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
+        }
+        if($request->channel){
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+        }
+        if($request->nprogramme){
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+        }
+        if($request->iprogramme){
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
+        if($request->nlevel_1){
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+        }
+        if($request->nlevel_2){
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+        }
+        if($request->ilevel_2){
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
+        if($request->nadvertiser){
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+        }
+        if($request->nproduct){
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+        }
+        if($request->iproduct){
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
+        if($request->nsector){
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+        }
+        if($request->ncategory){
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+        }
+        if($request->icategory){
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
+        if($request->nadstype){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+        }
+        if($request->ncommercialtype == "commercialonly"){
+            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+        }
+
+
+        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        {
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'nlevel_2'=>'$nlevel_2',
+                        ],
+                        'total' => [
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
+                        ]
+                    ]
+                ]
+            ]));
+        });
+        return datatables($query
+        )
+        ->toJson();
+    }
+
+    public function spot_per_adstypejson(Request $request)
+    {        
+        if($request->ntargetaudience){
+            $ta = $request->ntargetaudience;
+        }else{
+            $ta ='01'; 
+        }
+        $variable = 'cost';
+        $variabled = '$cost';
+        $divider = 1;
+        if($request->variable == 'COST'){
+            $variable = 'cost';
+            $variabled = '$cost';
+            $divider = 1000000;
+        }
+        if($request->variable == 'GRP'){
+            $variable = 'tvr'.$ta;
+            $variabled = '$tvr'.$ta;
+        }
+        $filter = [];
+        // apply privileges
+        if(!empty(Auth::user()->privileges['startdate'])){
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+        } 
+        if(!empty(Auth::user()->privileges['nsector'])) {
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncategory'])) {
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['nproduct'])) {
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['nadvertiser'])) {
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ncopy'])) {
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nadstype'])) {
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['channel']))  {
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_1'])) {
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nlevel_2'])) {
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['nprogramme'])) {
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        // apply filter
+        if($request->startdate){
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }else{
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 00:00:00')->toDateTimeString();
+            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
+        }
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$gte' => $starttimestamp ] ] ]);
+            array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
+        }
+        if($request->channel){
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+        }
+        if($request->nprogramme){
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+        }
+        if($request->iprogramme){
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
+        if($request->nlevel_1){
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+        }
+        if($request->nlevel_2){
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+        }
+        if($request->ilevel_2){
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
+        if($request->nadvertiser){
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+        }
+        if($request->nproduct){
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+        }
+        if($request->iproduct){
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
+        if($request->nsector){
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+        }
+        if($request->ncategory){
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+        }
+        if($request->icategory){
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
+        if($request->nadstype){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+        }
+        if($request->ncommercialtype == "commercialonly"){
+            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+        }
+
+
+        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -723,7 +1908,15 @@ class DashboardController extends Controller
                             'nadstype'=>'$nadstype'
                         ],
                         'total' => [
-                            '$sum'  => '$no_of_spots'
+                            '$sum'  => [
+                                '$divide' => [$variabled,$divider]
+                            ]                        
+                        ],
+                        'cost' => [
+                            '$sum'  => '$cost'
+                        ],
+                        'grp' => [
+                            '$sum'  => '$tvr'.$ta        
                         ]
                     ]
                 ]

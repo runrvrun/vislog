@@ -15,8 +15,8 @@
         <div class="card-body pt-2 pb-0">
           <div class="media">
             <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">{{ $data['number_of_spot'] }}</h3>
-              <span>Number of Spot</span>
+              <h3 class="font-large-1 mb-0">{{ number_format(($data['number_of_spot'] ?? 0),0) }}</h3>
+              <span>Spots</span>
             </div>
             <div class="media-right white text-right">
               <i class="ft-monitor font-large-1"></i>
@@ -32,8 +32,8 @@
         <div class="card-body pt-2 pb-0">
           <div class="media">
             <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">{{ number_format($data['cost'],2) }}</h3>
-              <span>Cost (IDR Billions)</span>
+              <h3 class="font-large-1 mb-0">{{ number_format(($data['cost'] ?? 0),0) }}</h3>
+              <span>Cost (B)</span>
             </div>
             <div class="media-right white text-right">
               <i class="ft-credit-card font-large-1"></i>
@@ -49,7 +49,7 @@
         <div class="card-body pt-2 pb-0">
           <div class="media">
             <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">{{ number_format($data['grp'],2) }}</h3>
+              <h3 class="font-large-1 mb-0">{{ number_format(($data['grp'] ?? 0),0) }}</h3>
               <span>GRP</span>
             </div>
             <div class="media-right white text-right">
@@ -66,8 +66,8 @@
         <div class="card-body pt-2 pb-0">
           <div class="media">
             <div class="media-body white text-left">
-              <h3 class="font-large-1 mb-0">{{ ($data['grp'] > 0)? number_format($data['cost']*1000/$data['grp'],2) : '0.00' }}</h3>
-              <span>CPRP (IDR Millions)</span>
+              <h3 class="font-large-1 mb-0">{{ (($data['grp'] ?? 0) > 0)? number_format(($data['cost'] ?? 0)*1000/($data['grp'] ?? 0),0) : 0 }}</h3>
+              <span>CPRP (M)</span>
             </div>
             <div class="media-right white text-right">
               <i class="ft-target font-large-1"></i>
@@ -82,7 +82,7 @@
   <div class="col-sm-12">
     <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Channel</h4>
+        <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Channel</h4>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -95,38 +95,134 @@
 <div class="row">
   <div class="col-sm-6">
     <div class="card">
-      <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Product</h4>
-      </div>
       <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-product-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Spot</th>
-              </tr>
-            </thead>
-          </table>
-        </div>
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="product-tab" data-toggle="tab" href="#product" role="tab" aria-controls="product" aria-selected="true">Product</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="advertiser-tab" data-toggle="tab" href="#advertiser" role="tab" aria-controls="advertiser" aria-selected="false">Advertiser</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="sector-tab" data-toggle="tab" href="#sector" role="tab" aria-controls="sector" aria-selected="false">Sector</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="category-tab" data-toggle="tab" href="#category" role="tab" aria-controls="category" aria-selected="false">Category</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="product" role="tabpanel" aria-labelledby="product-tab">
+              <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Product</h4>
+              <div class="card-body card-dashboard table-responsive">
+                <table class="table spot-per-product-table">
+                  <thead>
+                    <tr>
+                      <th>PRODUCT</th>
+                      <th>{{ $request->variable ?? 'SPOT'}}</th>                
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="advertiser" role="tabpanel" aria-labelledby="advertiser-tab">
+            <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Advertiser</h4>
+              <div class="card-body card-dashboard table-responsive">
+                <table class="table spot-per-advertiser-table">
+                  <thead>
+                    <tr>
+                      <th>ADVERTISER</th>
+                      <th>{{ $request->variable ?? 'SPOT'}}</th>                
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="sector" role="tabpanel" aria-labelledby="sector-tab">
+            <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Sector</h4>
+              <div class="card-body card-dashboard table-responsive">
+                <table class="table spot-per-sector-table">
+                  <thead>
+                    <tr>
+                      <th>SECTOR</th>
+                      <th>{{ $request->variable ?? 'SPOT'}}</th>                
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="category" role="tabpanel" aria-labelledby="category-tab">
+            <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Category</h4>
+              <div class="card-body card-dashboard table-responsive">
+                <table class="table spot-per-category-table">
+                  <thead>
+                    <tr>
+                      <th>CATEGORY</th>
+                      <th>{{ $request->variable ?? 'SPOT'}}</th>                
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+          </div>
       </div>
     </div>
   </div>
   <div class="col-sm-6">
   <div class="card">
-    <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Program</h4>
-      </div>
       <div class="card-content">
-        <div class="card-body card-dashboard table-responsive">
-          <table class="table spot-per-programme-table">
-            <thead>
-              <tr>
-                <th>Program</th>
-                <th>Spot</th>
-              </tr>
-            </thead>
-          </table>
+      <div class="whitebox">
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="program-tab" data-toggle="tab" href="#program" role="tab" aria-controls="program" aria-selected="true">Program</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="level1-tab" data-toggle="tab" href="#level1" role="tab" aria-controls="level1" aria-selected="false">Level1</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="level2-tab" data-toggle="tab" href="#level2" role="tab" aria-controls="level2" aria-selected="false">Level2</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="program" role="tabpanel" aria-labelledby="program-tab">
+              <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Program</h4>
+              <div class="card-body card-dashboard table-responsive">
+                <table class="table spot-per-programme-table">
+                  <thead>
+                    <tr>
+                      <th>PROGRAM</th>
+                      <th>{{ $request->variable ?? 'SPOT'}}</th>                
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="level1" role="tabpanel" aria-labelledby="level1-tab">
+            <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Level1</h4>
+              <div class="card-body card-dashboard table-responsive">
+                <table class="table spot-per-level1-table">
+                  <thead>
+                    <tr>
+                      <th>LEVEL1</th>
+                      <th>{{ $request->variable ?? 'SPOT'}}</th>                
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="level2" role="tabpanel" aria-labelledby="level2-tab">
+            <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Level2</h4>
+              <div class="card-body card-dashboard table-responsive">
+                <table class="table spot-per-level2-table">
+                  <thead>
+                    <tr>
+                      <th>LEVEL2</th>
+                      <th>{{ $request->variable ?? 'SPOT'}}</th>                
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -136,7 +232,7 @@
   <div class="col-sm-6">
     <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Type</h4>
+        <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Type</h4>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -148,15 +244,15 @@
   <div class="col-sm-6">
   <div class="card">
     <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Ads Type</h4>
+        <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Ads Type</h4>
       </div>
       <div class="card-content">
         <div class="card-body card-dashboard table-responsive">
           <table class="table spot-per-adstype-table">
             <thead>
               <tr>
-                <th>Ads Type</th>
-                <th>Spot</th>
+                <th>ADS TYPE</th>
+                <th>{{ $request->variable ?? 'SPOT'}}</th>
               </tr>
             </thead>
           </table>
@@ -169,7 +265,7 @@
   <div class="col-sm-6">
     <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Time Period</h4>
+        <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Time Period</h4>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -181,7 +277,7 @@
   <div class="col-sm-6">
   <div class="card">
     <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Daypart</h4>
+        <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Daypart</h4>
       </div>
       <div class="card-content">
         <div class="card-body card-dashboard table-responsive">
@@ -195,7 +291,7 @@
   <div class="col-sm-12">
     <div class="card">
       <div class="card-header">
-        <h4 class="card-title">Total Spot for Each Date</h4>
+        <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Date</h4>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -207,17 +303,6 @@
 </div>
           </div>
         </div>
-@endsection
-@section('modal')
-<div class="modal fade text-left show" id="loading-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" style="display: none; padding-right: 17px;" aria-modal="true">
-  <div class="modal-dialog  modal-s" role="document">
-    <div class="modal-content">
-      <div class="modal-body" style="text-align:center">
-        Loading ... <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>        
-      </div>
-    </div>
-  </div>
-</div>
 @endsection
 @section('pagecss')
 <link rel="stylesheet" type="text/css" href="{{ asset('app-assets') }}/vendors/css/tables/datatable/datatables.min.css">
@@ -239,6 +324,12 @@
 .ct-series-c .ct-bar, .ct-series-c .ct-line, .ct-series-c .ct-point, .ct-series-c .ct-slice-donut {
     stroke: #F6C41C;
 }
+table{
+  min-width:100%;
+}
+.dt-body-right{
+  text-align: right;
+}
 </style>
 <style>
 #filterersubmit{
@@ -255,6 +346,18 @@
 }
 button.search-result{
   min-width:100px;
+}
+#rtl-icon2{
+  position: fixed;
+  right: -1px;
+  top: 42%;
+  width: 54px;
+  height: 50px;
+  text-align: center;
+  cursor: pointer;
+  line-height: 50px;
+  margin-top: 50px;
+  z-index:3;
 }
 </style>
 @endsection
@@ -277,15 +380,19 @@ button.search-result{
 <script>
   var data = {
     labels: [
+        @if(isset($data['spot_per_channel'])) 
         @foreach($data['spot_per_channel'] as $key=>$val)
-          '{{ $val->_id['channel'] }}',
-        @endforeach
+          '{{ $val['channel'] }}',
+        @endforeach 
+        @endif
         ],
     series: [
       [
+        @if(isset($data['spot_per_channel'])) 
         @foreach($data['spot_per_channel'] as $key=>$val)
-          {{ $val->total.',' }}
+          {{ $val['total'].',' }}
         @endforeach
+        @endif
       ]
     ]
   };
@@ -304,6 +411,7 @@ $(document).ready(function() {
       $("#loading-modal").modal();
     });
 
+    $.fn.dataTable.ext.errMode = 'none'; // suppress datatables error warning
     var table = $('.spot-per-product-table').DataTable({
         responsive: resp,
         processing: true,
@@ -314,17 +422,177 @@ $(document).ready(function() {
           headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
-          type: 'POST'
+          type: 'POST',
+          data: {            
+            @forelse($request->all() as $key=>$val)
+            '{{ $key }}': '{{ $val }}',
+            @empty
+            @endforelse
+          }
         },
         columns: [
           { data: '_id.nproduct', name: '_id.nproduct' },
           { data: 'total', name: 'total' },
         ],
-        dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+        columnDefs: [
+          {
+              targets: 1,
+              className: 'dt-body-right',
+                render: $.fn.dataTable.render.number( ',', '.', {{ ($request->variable == 'SPOT')? 0:2}}, '' )
+          }
+        ],
+        dom: "<'row'<'col-sm-12 col-md-6'l>>" +
             "<'row'<'col-sm-12'tr>>" +
-            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-        order: [[1, 'DESC']]
+            "<'row'<'col-sm-10'p>>",
+        buttons: [        
+            { extend: 'colvis', text: '<i class="ft-layout"></i>' }
+        ],
+        order: [[1, 'DESC']],
+        "oLanguage": {
+          "oPaginate": {
+          "sFirst": "|<",
+          "sPrevious": "&laquo;",
+          "sNext": "&raquo;",
+          "sLast": ">|"
+          }
+        }
     });
+    var table = $('.spot-per-advertiser-table').DataTable({
+        responsive: resp,
+        processing: true,
+        serverSide: true,
+        bLengthChange: false,
+        ajax:{
+          url: '{!! url('admin/dashboard/spot_per_advertiserjson') !!}',
+          headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          type: 'POST',
+          data: {            
+            @forelse($request->all() as $key=>$val)
+            '{{ $key }}': '{{ $val }}',
+            @empty
+            @endforelse
+          }
+        },
+        columns: [
+          { data: '_id.nadvertiser', name: '_id.nadvertiser' },
+          { data: 'total', name: 'total' },
+        ],
+        columnDefs: [
+          {
+              targets: 1,
+              className: 'dt-body-right',
+                render: $.fn.dataTable.render.number( ',', '.', {{ ($request->variable == 'SPOT')? 0:2}}, '' )
+          }
+        ],
+        dom: "<'row'<'col-sm-12 col-md-6'l>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-10'p>>",
+        buttons: [        
+            { extend: 'colvis', text: '<i class="ft-layout"></i>' }
+        ],
+        order: [[1, 'DESC']],
+        "oLanguage": {
+          "oPaginate": {
+          "sFirst": "|<",
+          "sPrevious": "&laquo;",
+          "sNext": "&raquo;",
+          "sLast": ">|"
+          }
+        }
+    });
+    var table = $('.spot-per-sector-table').DataTable({
+        responsive: resp,
+        processing: true,
+        serverSide: true,
+        bLengthChange: false,
+        ajax:{
+          url: '{!! url('admin/dashboard/spot_per_sectorjson') !!}',
+          headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          type: 'POST',
+          data: {            
+            @forelse($request->all() as $key=>$val)
+            '{{ $key }}': '{{ $val }}',
+            @empty
+            @endforelse
+          }
+        },
+        columns: [
+          { data: '_id.nsector', name: '_id.nsector' },
+          { data: 'total', name: 'total' },
+        ],
+        columnDefs: [
+          {
+              targets: 1,
+              className: 'dt-body-right',
+                render: $.fn.dataTable.render.number( ',', '.', {{ ($request->variable == 'SPOT')? 0:2}}, '' )
+          }
+        ],
+        dom: "<'row'<'col-sm-12 col-md-6'l>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-10'p>>",
+        buttons: [        
+            { extend: 'colvis', text: '<i class="ft-layout"></i>' }
+        ],
+        order: [[1, 'DESC']],
+        "oLanguage": {
+          "oPaginate": {
+          "sFirst": "|<",
+          "sPrevious": "&laquo;",
+          "sNext": "&raquo;",
+          "sLast": ">|"
+          }
+        }
+    });
+    var table = $('.spot-per-category-table').DataTable({
+        responsive: resp,
+        processing: true,
+        serverSide: true,
+        bLengthChange: false,
+        ajax:{
+          url: '{!! url('admin/dashboard/spot_per_categoryjson') !!}',
+          headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          type: 'POST',
+          data: {            
+            @forelse($request->all() as $key=>$val)
+            '{{ $key }}': '{{ $val }}',
+            @empty
+            @endforelse
+          }
+        },
+        columns: [
+          { data: '_id.ncategory', name: '_id.ncategory' },
+          { data: 'total', name: 'total' },
+        ],
+        columnDefs: [
+          {
+              targets: 1,
+              className: 'dt-body-right',
+                render: $.fn.dataTable.render.number( ',', '.', {{ ($request->variable == 'SPOT')? 0:2}}, '' )
+          }
+        ],
+        dom: "<'row'<'col-sm-12 col-md-6'l>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-10'p>>",
+        buttons: [        
+            { extend: 'colvis', text: '<i class="ft-layout"></i>' }
+        ],
+        order: [[1, 'DESC']],
+        "oLanguage": {
+          "oPaginate": {
+          "sFirst": "|<",
+          "sPrevious": "&laquo;",
+          "sNext": "&raquo;",
+          "sLast": ">|"
+          }
+        }
+    });
+    $('.buttons-colvis').addClass('btn btn-outline-primary mr-1');
 });
 </script>
 <script>
@@ -342,17 +610,132 @@ $(document).ready(function() {
           headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
-          type: 'POST'
+          type: 'POST',
+          data: {
+            @forelse($request->all() as $key=>$val)
+            '{{ $key }}': '{{ $val }}',
+            @empty
+            @endforelse
+          }
         },
         columns: [
           { data: '_id.nprogramme', name: '_id.nprogramme' },
           { data: 'total', name: 'total' },
         ],
-        dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+        columnDefs: [
+          {
+              targets: 1,
+              className: 'dt-body-right',
+                render: $.fn.dataTable.render.number( ',', '.', {{ ($request->variable == 'SPOT')? 0:2}}, '' )
+          }
+        ],
+        dom: "<'row'<'col-sm-12 col-md-6'l>>" +
             "<'row'<'col-sm-12'tr>>" +
-            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-        order: [[1, 'DESC']]
+            "<'row'<'col-sm-10'p>>",
+        buttons: [        
+            { extend: 'colvis', text: '<i class="ft-layout"></i>' }
+        ],
+        order: [[1, 'DESC']],
+        "oLanguage": {
+          "oPaginate": {
+          "sFirst": "|<",
+          "sPrevious": "&laquo;",
+          "sNext": "&raquo;",
+          "sLast": ">|"
+          }
+        }
     });
+    var table = $('.spot-per-level1-table').DataTable({
+        responsive: resp,
+        processing: true,
+        serverSide: true,
+        bLengthChange: false,
+        ajax:{
+          url: '{!! url('admin/dashboard/spot_per_level1json') !!}',
+          headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          type: 'POST',
+          data: {
+            @forelse($request->all() as $key=>$val)
+            '{{ $key }}': '{{ $val }}',
+            @empty
+            @endforelse
+          }
+        },
+        columns: [
+          { data: '_id.nlevel_1', name: '_id.nlevel_1' },
+          { data: 'total', name: 'total' },
+        ],
+        columnDefs: [
+          {
+              targets: 1,
+              className: 'dt-body-right',
+                render: $.fn.dataTable.render.number( ',', '.', {{ ($request->variable == 'SPOT')? 0:2}}, '' )
+          }
+        ],
+        dom: "<'row'<'col-sm-12 col-md-6'l>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-10'p>>",
+        buttons: [        
+            { extend: 'colvis', text: '<i class="ft-layout"></i>' }
+        ],
+        order: [[1, 'DESC']],
+        "oLanguage": {
+          "oPaginate": {
+          "sFirst": "|<",
+          "sPrevious": "&laquo;",
+          "sNext": "&raquo;",
+          "sLast": ">|"
+          }
+        }
+    });
+    var table = $('.spot-per-level2-table').DataTable({
+        responsive: resp,
+        processing: true,
+        serverSide: true,
+        bLengthChange: false,
+        ajax:{
+          url: '{!! url('admin/dashboard/spot_per_level2json') !!}',
+          headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          type: 'POST',
+          data: {
+            @forelse($request->all() as $key=>$val)
+            '{{ $key }}': '{{ $val }}',
+            @empty
+            @endforelse
+          }
+        },
+        columns: [
+          { data: '_id.nlevel_2', name: '_id.nlevel_2' },
+          { data: 'total', name: 'total' },
+        ],
+        columnDefs: [
+          {
+              targets: 1,
+              className: 'dt-body-right',
+                render: $.fn.dataTable.render.number( ',', '.', {{ ($request->variable == 'SPOT')? 0:2}}, '' )
+          }
+        ],
+        dom: "<'row'<'col-sm-12 col-md-6'l>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-10'p>>",
+        buttons: [        
+            { extend: 'colvis', text: '<i class="ft-layout"></i>' }
+        ],
+        order: [[1, 'DESC']],
+        "oLanguage": {
+          "oPaginate": {
+          "sFirst": "|<",
+          "sPrevious": "&laquo;",
+          "sNext": "&raquo;",
+          "sLast": ">|"
+          }
+        }
+    });
+    $('.buttons-colvis').addClass('btn btn-outline-primary mr-1');
 });
 </script>
 <script>
@@ -370,30 +753,59 @@ $(document).ready(function() {
           headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
-          type: 'POST'
+          type: 'POST',
+          data: {
+            @forelse($request->all() as $key=>$val)
+            '{{ $key }}': '{{ $val }}',
+            @empty
+            @endforelse
+          }
         },
         columns: [
           { data: '_id.nadstype', name: '_id.nadstype' },
           { data: 'total', name: 'total' },
         ],
-        dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+        columnDefs: [ 
+            {
+                targets: 1,
+                className: 'dt-body-right',
+                render: $.fn.dataTable.render.number( ',', '.', {{ ($request->variable == 'SPOT')? 0:2}}, '' )
+            }
+        ],
+        dom: "<'row'<'col-sm-12 col-md-6'l>>" +
             "<'row'<'col-sm-12'tr>>" +
-            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-        order: [[1, 'DESC']]
+            "<'row'<'col-sm-10'p>>",
+        buttons: [        
+            { extend: 'colvis', text: '<i class="ft-layout"></i>' }
+        ],
+        order: [[1, 'DESC']],
+        "oLanguage": {
+          "oPaginate": {
+          "sFirst": "|<",
+          "sPrevious": "&laquo;",
+          "sNext": "&raquo;",
+          "sLast": ">|"
+          }
+        }
     });
+    $('.buttons-colvis').addClass('btn btn-outline-primary mr-1');
 });
 </script>
 <script>
   var data = {
     labels: [
+        @if(isset($data['spot_per_type'])) 
         @foreach($data['spot_per_type'] as $key=>$val)
           '{{ $key }} ({{ $val }})',
         @endforeach
+        @endif
         ],
     series: [
+        @if(isset($data['spot_per_type'])) 
         @foreach($data['spot_per_type'] as $key=>$val)
           {{ $val }},
         @endforeach
+        @endif
     ]
   };
   new Chartist.Pie('.spot-per-type-chart', data, {donut: true,
@@ -409,19 +821,23 @@ $(document).ready(function() {
           'Non Primetime',
         ],
     series: [
+        @if(isset($data["daypart"])) 
         @foreach($data["daypart"] as $key=>$val)
-          @if($val['name'] == 'Primetime')
+          @if(strtolower($val['name']) == 'primetime' || strtolower($val['name']) == 'prime time')
             {{ $val['value'] }}
           @endif
         @endforeach
+        @endif
         ,
         <?php
         $nonprime = 0;
+        if(isset($data["daypart"])):
         foreach($data["daypart"] as $key=>$val):
-          if($val['name'] != 'Primetime'):
+          if(strtolower($val['name']) != 'primetime' && strtolower($val['name']) != 'prime time'):
              $nonprime = $nonprime + $val['value'];
           endif;
         endforeach;
+        endif;
         ?>
         {{ $nonprime }}
     ]
@@ -460,15 +876,19 @@ $(document).ready(function() {
 <script>
   var data = {
     labels: [
+        @if(isset($data['spot_per_date'])) 
         @foreach($data['spot_per_date'] as $key=>$val)
-          '{{ $val->_id['date'] }}',
+          '{{ $val['date'] }}',
         @endforeach
+        @endif
         ],
     series: [
       [
+        @if(isset($data['spot_per_date'])) 
         @foreach($data['spot_per_date'] as $key=>$val)
-          {{ $val->total.',' }}
+          {{ $val['total'].',' }}
         @endforeach
+        @endif
       ]
     ]
   };
@@ -611,9 +1031,22 @@ $(document).ready(function(){
 });
   
 </script>
+<script>
+$(document).ready(function(){
+  $("#rtl-icon2").click(function(){
+    var oriaction = $("#filterer-form").attr('action');
+    $("#filterer-form").attr('action','{{ url('admin/dashboard/print') }}');
+    $("#filterer-form").attr('target','_blank');
+    $("#filterer-form").submit();
+    $("#filterer-form").attr('action',oriaction);
+    $("#filterer-form").attr('target','');
+  });
+});
+</script>
 @endsection
-@section('filterer'){}
-<form method="GET" action="{{ url('admin/dashboard') }}">
+@section('filterer')
+<a id="rtl-icon2" class="bg-secondary"><i class="ft-printer font-medium-4 white fa align-middle"></i></a>
+<form method="GET" id="filterer-form" action="{{ url('admin/dashboard') }}">
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button type="submit" id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
@@ -621,6 +1054,13 @@ $(document).ready(function(){
 <a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
+        <hr>
+        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Variabel</h6>
+        <select name="variable" class="form-control">
+          <option value="SPOT" {{ ($request->variable == 'SPOT') ? 'selected':''}}>SPOT</option>
+          <option value="COST" {{ ($request->variable == 'COST') ? 'selected':''}}>COST</option>
+          <option value="GRP" {{ ($request->variable == 'GRP') ? 'selected':''}}>GRP</option>
+        </select>
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Period & Time</h6>
           <div id="daterange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
@@ -709,8 +1149,8 @@ $(document).ready(function(){
         </div>
         <div class="form-group">
         <select name="ncommercialtype" class="form-control col-10">
-          <option value="commercialonly"  {{ ($request->ncommercialdata == 'commercialonly') ? 'selected':''}}>Commercial Only</option>
-          <option value="allads" {{ ($request->ncommercialdata == 'allads') ? 'selected':''}}>All Ads</option>
+          <option value="commercialonly"  {{ ($request->ncommercialtype == 'commercialonly') ? 'selected':''}}>Commercial Only</option>
+          <option value="allads" {{ ($request->ncommercialtype == 'allads') ? 'selected':''}}>All Ads</option>
         </select>
         </div>
         <hr>
@@ -726,6 +1166,15 @@ $(document).ready(function(){
 </form>
 @endsection
 @section('modal')
+<div class="modal fade text-left show" id="loading-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" style="display: none; padding-right: 17px;" aria-modal="true">
+  <div class="modal-dialog  modal-s" role="document">
+    <div class="modal-content">
+      <div class="modal-body" style="text-align:center">
+        Loading ... <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i>        
+      </div>
+    </div>
+  </div>
+</div>
 <div class="modal fade text-left show" id="filter-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" style="display: none; padding-right: 17px;" aria-modal="true">
   <div class="modal-dialog  modal-xl" role="document">
     <div class="modal-content">

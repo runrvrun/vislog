@@ -13,9 +13,16 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/myprofile', 'Admin\UserController@myprofile');
     Route::post('/updateprofile', 'Admin\UserController@updateprofile');
     Route::get('/highlight', 'Admin\DashboardController@highlight');
+    Route::get('/highlight/{a}', 'Admin\DashboardController@highlight');
     Route::get('/dashboard', 'Admin\DashboardController@dashboard');
+    Route::get('/dashboard/{a}', 'Admin\DashboardController@dashboard');
     Route::post('/dashboard/spot_per_productjson', 'Admin\DashboardController@spot_per_productjson');
+    Route::post('/dashboard/spot_per_advertiserjson', 'Admin\DashboardController@spot_per_advertiserjson');
+    Route::post('/dashboard/spot_per_sectorjson', 'Admin\DashboardController@spot_per_sectorjson');
+    Route::post('/dashboard/spot_per_categoryjson', 'Admin\DashboardController@spot_per_categoryjson');
     Route::post('/dashboard/spot_per_programmejson', 'Admin\DashboardController@spot_per_programmejson');
+    Route::post('/dashboard/spot_per_level1json', 'Admin\DashboardController@spot_per_level1json');
+    Route::post('/dashboard/spot_per_level2json', 'Admin\DashboardController@spot_per_level2json');
     Route::post('/dashboard/spot_per_adstypejson', 'Admin\DashboardController@spot_per_adstypejson');
     Route::get('/adsperformance', 'Admin\AdsperformanceController@index');
     Route::post('/adsperformance/indexjson', 'Admin\AdsperformanceController@indexjson');

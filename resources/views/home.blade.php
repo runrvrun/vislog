@@ -597,7 +597,7 @@
 			<div class="footer-content row">
 				<div class="col-sm-4 col-xs-12">
 					<div class="logo-wrapper">
-						<img height="31" src="{{ asset('images') }}/vislog_logo_white.png" alt="logo" /> <span style="font-size: 25px;vertical-align: bottom;margin-left: 4px;">VISLOG</span>
+						<img height="31" src="{{ asset('images') }}/vislog-logo-white.png" alt="logo" /> <span style="font-size: 25px;vertical-align: bottom;margin-left: 4px;">VISLOG</span>
 					</div>
 					<p>Ut enim ad minim veniam, quis nostrud exercitation ullamco. Qui officia deserunt mollit anim id est laborum. Ut enim ad minim veniam, quis nostrud exercitation ullamco. Nisi ut aliquid ex ea commodi consequatur?</p>
 					<p><strong>John Doeson, Founder</strong>.</p>
