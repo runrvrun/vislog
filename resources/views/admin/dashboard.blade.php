@@ -1161,6 +1161,13 @@ $(document).ready(function(){
           <option value="allads" {{ ($request->ncommercialtype == 'allads') ? 'selected':''}}>All Ads</option>
         </select>
         </div>
+        <div class="form-group">
+        <select name="xadstype" class="form-control col-10">
+          <option value="alladsype"  {{ ($request->xadstype == 'alladstype') ? 'selected':''}}>All Ads Type</option>
+          <option value="loosespot" {{ ($request->xadstype == 'loosespot') ? 'selected':''}}>Loose Spot</option>
+          <option value="nonloosespot" {{ ($request->xadstype == 'nonloosespot') ? 'selected':''}}>Non Loose Spot</option>
+        </select>
+        </div>
         <hr>
         <hr>
         <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">

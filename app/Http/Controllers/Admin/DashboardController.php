@@ -101,8 +101,8 @@ class DashboardController extends Controller
         }else{
             $ta ='01';
         }
-        $variable = 'spot';
-        $variabled = '$spot';
+        $variable = 'no_of_spots';
+        $variabled = '$no_of_spots';
         $divider = 1;
         if($request->variable == 'COST'){
             $variable = 'cost';
@@ -204,8 +204,14 @@ class DashboardController extends Controller
         if($request->ncommercialtype == "commercialonly"){
             $commercial->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
         }
+        if($request->xadstype == "loosespot"){
+            $commercial->where('nadstype','=','LOOSE SPOT');
+        }
+        if($request->xadstype == "nonloosespot"){
+            $commercial->where('nadstype','<>','LOOSE SPOT');
+        }
 
-        $data['number_of_spot'] = $commercial->count();        
+        $data['number_of_spot'] = $commercial->sum('no_of_spots');        
         $data['cost'] = $commercial->sum('cost')/1000000;
         $data['grp'] = $commercial->sum('tvr'.$ta);        
         $query = Commercial::raw(function($collection) use ($filter,$variabled,$divider)
@@ -674,8 +680,8 @@ class DashboardController extends Controller
         }else{
             $ta ='01';
         }
-        $variable = 'cost';
-        $variabled = '$cost';
+        $variable = 'no_of_spots';
+        $variabled = '$no_of_spots';
         $divider = 1;
         if($request->variable == 'COST'){
             $variable = 'cost';
@@ -799,7 +805,13 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
-            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+            array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
+        }
+        if($request->xadstype == "loosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => ['LOOSE SPOT']]]]);  
+        }
+        if($request->xadstype == "nonloosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
         $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
@@ -830,8 +842,8 @@ class DashboardController extends Controller
         }else{
             $ta ='01';
         }
-        $variable = 'cost';
-        $variabled = '$cost';
+        $variable = 'no_of_spots';
+        $variabled = '$no_of_spots';
         $divider = 1;
         if($request->variable == 'COST'){
             $variable = 'cost';
@@ -955,7 +967,13 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
-            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+            array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
+        }
+        if($request->xadstype == "loosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => ['LOOSE SPOT']]]]);  
+        }
+        if($request->xadstype == "nonloosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
         $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
@@ -986,8 +1004,8 @@ class DashboardController extends Controller
         }else{
             $ta ='01';
         }
-        $variable = 'cost';
-        $variabled = '$cost';
+        $variable = 'no_of_spots';
+        $variabled = '$no_of_spots';
         $divider = 1;
         if($request->variable == 'COST'){
             $variable = 'cost';
@@ -1111,7 +1129,13 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
-            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+            array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
+        }
+        if($request->xadstype == "loosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => ['LOOSE SPOT']]]]);  
+        }
+        if($request->xadstype == "nonloosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
         $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
@@ -1142,8 +1166,8 @@ class DashboardController extends Controller
         }else{
             $ta ='01';
         }
-        $variable = 'cost';
-        $variabled = '$cost';
+        $variable = 'no_of_spots';
+        $variabled = '$no_of_spots';
         $divider = 1;
         if($request->variable == 'COST'){
             $variable = 'cost';
@@ -1267,7 +1291,13 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
-            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+            array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
+        }
+        if($request->xadstype == "loosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => ['LOOSE SPOT']]]]);  
+        }
+        if($request->xadstype == "nonloosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
         $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
@@ -1299,8 +1329,8 @@ class DashboardController extends Controller
         }else{
             $ta ='01';
         }
-        $variable = 'cost';
-        $variabled = '$cost';
+        $variable = 'no_of_spots';
+        $variabled = '$no_of_spots';
         $divider = 1;
         if($request->variable == 'COST'){
             $variable = 'cost';
@@ -1424,7 +1454,13 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
-            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+            array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
+        }
+        if($request->xadstype == "loosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => ['LOOSE SPOT']]]]);  
+        }
+        if($request->xadstype == "nonloosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
 
@@ -1456,8 +1492,8 @@ class DashboardController extends Controller
         }else{
             $ta ='01';
         }
-        $variable = 'cost';
-        $variabled = '$cost';
+        $variable = 'no_of_spots';
+        $variabled = '$no_of_spots';
         $divider = 1;
         if($request->variable == 'COST'){
             $variable = 'cost';
@@ -1581,7 +1617,13 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
-            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+            array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
+        }
+        if($request->xadstype == "loosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => ['LOOSE SPOT']]]]);  
+        }
+        if($request->xadstype == "nonloosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
 
@@ -1613,8 +1655,8 @@ class DashboardController extends Controller
         }else{
             $ta ='01';
         }
-        $variable = 'cost';
-        $variabled = '$cost';
+        $variable = 'no_of_spots';
+        $variabled = '$no_of_spots';
         $divider = 1;
         if($request->variable == 'COST'){
             $variable = 'cost';
@@ -1738,7 +1780,13 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
-            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+            array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
+        }
+        if($request->xadstype == "loosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => ['LOOSE SPOT']]]]);  
+        }
+        if($request->xadstype == "nonloosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
 
@@ -1771,8 +1819,8 @@ class DashboardController extends Controller
         }else{
             $ta ='01'; 
         }
-        $variable = 'cost';
-        $variabled = '$cost';
+        $variable = 'no_of_spots';
+        $variabled = '$no_of_spots';
         $divider = 1;
         if($request->variable == 'COST'){
             $variable = 'cost';
@@ -1896,7 +1944,13 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
-            // TODO : array_push('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+            array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
+        }
+        if($request->xadstype == "loosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => ['LOOSE SPOT']]]]);  
+        }
+        if($request->xadstype == "nonloosespot"){
+            array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
 
