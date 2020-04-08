@@ -110,7 +110,6 @@
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
-<link href="{{ asset('css') }}/jquery.timepicker.min.css" rel="stylesheet" type="text/css">
 <style>
 #filterersubmit{
   bottom: 10px;
@@ -146,7 +145,6 @@ button.search-result{
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{{ asset('/') }}app-assets/js/filterer.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-<script src="{{ asset('js') }}/jquery.timepicker.min.js"></script>
 <script type="text/javascript">
 $(function() {
     var start = moment().subtract(1, 'day');
@@ -178,10 +176,6 @@ $(function() {
       $('#startdate').val(daterange.startDate.format('YYYY-MM-DD'));
       $('#enddate').val(daterange.endDate.format('YYYY-MM-DD'));
     });
-    
-    var options = { 'timeFormat': 'H:i:s','step':60 };
-    $('#starttime').timepicker(options);
-    $('#endtime').timepicker(options);
 });
 </script>
 <script type="text/javascript">
@@ -300,8 +294,6 @@ $(document).ready(function(){
         data : function(d){
             d.startdate = $('#startdate').val();
             d.enddate = $('#enddate').val();
-            d.starttime = $('#starttime').val();
-            d.endtime = $('#endtime').val();
             d.filterchannel = $("input[name=filter-channel]").val();
             d.filternprogramme = $("input[name=filter-nprogramme]").val();
             d.filteriprogramme = $("input[name=filter-iprogramme]").val();
@@ -379,8 +371,6 @@ $(document).ready(function(){
       var end = moment();
       $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));      
       $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
-      $('input[name=starttime]').val('00:00:00');
-      $('input[name=endtime]').val('23:59:59');
       $(".filterer").find('input[type=hidden]').val('');
       $(".filterer").find('select').prop("selectedIndex", 0);
       $("span[id^=filter-]").html('');
@@ -407,22 +397,13 @@ $(document).ready(function(){
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
         <hr>
-        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Period & Time</h6>
+        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Period</h6>
           <div id="daterange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
               <i class="fa fa-calendar"></i>&nbsp;
               <span></span> <i class="fa fa-caret-down"></i>
               {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
               {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
-          </div>
-          <div class="row">
-            <div class="col-5">
-              {{ Form::text('starttime', $request->starttime ?? '00:00:00', array('id'=>'starttime','class' => 'form-control','required','autocomplete'=>'off')) }}
-            </div>
-            <div class="col-1" style="top:8px">to</div>
-            <div class="col-5">
-              {{ Form::text('endtime',  $request->endtime ?? '23:59:59', array('id'=>'endtime','class' => 'form-control','required','autocomplete'=>'off')) }}
-            </div>
-          </div>
+          </div>          
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Channel</h6>
         <button type="button" class="btn btn-primary col-10 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>

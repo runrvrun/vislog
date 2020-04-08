@@ -30,13 +30,39 @@
                             <tr>
                               <th></th>                  
                               <th></th>                  
-                              <th>Date</th>                  
-                              <th>Channel</th>                  
-                              <th>Programme</th>                  
-                              <th>Product</th>                  
-                              <th>Ads Type</th>                  
-                              <th>Start Time</th>                  
-                              <th>Duration</th>                  
+                              <th>Date</th>
+                              <th>Channel</th>
+                              <th>nProgramme</th>
+                              <th>nLevel 1</th>
+                              <th>nLevel 2</th>
+                              <th>nSector</th>
+                              <th>nCategory</th>
+                              <th>nAdvertiser</th>
+                              <th>nProduct</th>
+                              <th>nCopy</th>
+                              <th>nAdstype</th>
+                              <th>iProgramme</th>
+                              <th>iLevel 1</th>
+                              <th>iLevel 2</th>
+                              <th>iSector</th>
+                              <th>iCategory</th>
+                              <th>iAdvertiser</th>
+                              <th>iAdvertiser Group</th>
+                              <th>iProduct</th>
+                              <th>iCopy</th>
+                              <th>iAdstype</th>
+                              <th>tAdstype</th>
+                              <th>Size</th>
+                              <th>Title</th>
+                              <th>SB Time</th>
+                              <th>SB No.</th>
+                              <th>Tot. Spots in Break</th>
+                              <th>Position</th>
+                              <th>Pos. in Break</th>
+                              <th>Start Time</th>
+                              <th>End Time</th>
+                              <th>Duration</th>
+                              <th>Break Type</th>                 
                             </tr>
                           </thead>
                         </table>
@@ -325,13 +351,39 @@ $(document).ready(function(){
       columns: [
         { data: 'id', name: 'checkbox' },              
         { data: 'action', name: 'action' },              
-        { data: 'date', name: 'date' },              
-        { data: 'channel', name: 'channel' },              
-        { data: 'iprogramme', name: 'iprogramme' },              
-        { data: 'iproduct', name: 'iproduct' },              
-        { data: 'iadstype', name: 'iadstype' },              
-        { data: 'start_time', name: 'start_time' },              
-        { data: 'duration', name: 'duration' },              
+        { data: 'date', name: 'date' },
+        { data: 'channel', name: 'channel' },
+        { data: 'nprogramme', name: 'nprogramme' },
+        { data: 'nlevel_1', name: 'nlevel_1' },
+        { data: 'nlevel_2', name: 'nlevel_2' },
+        { data: 'nsector', name: 'nsector' },
+        { data: 'ncategory', name: 'ncategory' },
+        { data: 'nadvertiser', name: 'nadvertiser' },
+        { data: 'nproduct', name: 'nproduct' },
+        { data: 'ncopy', name: 'ncopy' },
+        { data: 'nadstype', name: 'nadstype' },
+        { data: 'iprogramme', name: 'iprogramme' },
+        { data: 'ilevel_1', name: 'ilevel_1' },
+        { data: 'ilevel_2', name: 'ilevel_2' },
+        { data: 'isector', name: 'isector' },
+        { data: 'icategory', name: 'icategory' },
+        { data: 'iadvertiser', name: 'iadvertiser' },
+        { data: 'iadvertiser_group', name: 'iadvertiser_group' },
+        { data: 'iproduct', name: 'iproduct' },
+        { data: 'icopy', name: 'icopy' },
+        { data: 'iadstype', name: 'iadstype' },
+        { data: 'tadstype', name: 'tadstype' },
+        { data: 'size', name: 'size' },
+        { data: 'title', name: 'title' },
+        { data: 'sb_time', name: 'sb_time' },
+        { data: 'sb_no', name: 'sb_no' },
+        { data: 'tot_spots_in_break', name: 'tot_spots_in_break' },
+        { data: 'position', name: 'position' },
+        { data: 'pos_in_break', name: 'pos_in_break' },
+        { data: 'start_time', name: 'start_time' },
+        { data: 'end_time', name: 'end_time' },
+        { data: 'duration', name: 'duration' },
+        { data: 'break_type', name: 'break_type' },           
       ],
       dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
           "<'row'<'col-sm-12'B>>"+
@@ -365,6 +417,9 @@ $(document).ready(function(){
       },{
           targets: [0,1],
           sortable: false,
+      },{
+          targets: [4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,23,24,25,26,27,28,29,30,32,34,36],
+          visible: false,
       } ],
       select: {
           style:    'multi',
@@ -476,9 +531,15 @@ $(document).ready(function(){
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Other</h6>
         <div class="form-group">
         <select name="filter-ncommercialtype" class="form-control col-10">
-          <option value="" selected disabled>- Commercial Type -</option>
           <option value="allads">All Ads</option>
-          <option value="commercialonly">Commercial Only</option>
+          <option value="commercialonly" selected>Commercial Only</option>
+        </select>
+        </div>
+        <div class="form-group">
+        <select name="xadstype" class="form-control col-10">
+          <option value="alladsype"  selected>All Ads Type</option>
+          <option value="loosespot">Loose Spot</option>
+          <option value="nonloosespot">Non Loose Spot</option>
         </select>
         </div>
         <hr>

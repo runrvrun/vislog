@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use \Carbon\Carbon;
 use App\Adexnett;
+use App\Spotmatching;
 use App\Channel;
 use Auth;
 
@@ -497,12 +498,19 @@ class MarketingController extends Controller
         $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate);
         $filterchannel = array_filter(explode(',',$request->filterchannel));
         $filternprogramme = array_filter(explode(',',$request->filternprogramme));
+        $filteriprogramme = array_filter(explode(',',$request->filteriprogramme));
         $filternlevel_1 = array_filter(explode(',',$request->filternlevel_1));
+        $filterilevel_1 = array_filter(explode(',',$request->filterilevel_1));
         $filternlevel_2 = array_filter(explode(',',$request->filternlevel_2));
+        $filterilevel_2 = array_filter(explode(',',$request->filterilevel_2));
         $filternadvertiser = array_filter(explode(',',$request->filternadvertiser));
+        $filteriadvertiser = array_filter(explode(',',$request->filteriadvertiser));
         $filternproduct = array_filter(explode(',',$request->filternproduct));
+        $filteriproduct = array_filter(explode(',',$request->filteriproduct));
         $filternsector = array_filter(explode(',',$request->filternsector));
+        $filterisector = array_filter(explode(',',$request->filterisector));
         $filterncategory = array_filter(explode(',',$request->filterncategory));
+        $filtericategory = array_filter(explode(',',$request->filtericategory));
         
         $query = Adexnett::select('month', 'year','channel','iprogramme','iproduct','spots',
         'grp','gross','nett1','nett2','nett3');
@@ -517,23 +525,44 @@ class MarketingController extends Controller
         if(count($filternprogramme)){
             $query->whereIn('nprogramme',$filternprogramme);
         } 
+        if(count($filteriprogramme)){
+            $query->whereIn('iprogramme',$filteriprogramme);
+        } 
         if(count($filternlevel_1)){
             $query->whereIn('nlevel_1',$filternlevel_1);
+        } 
+        if(count($filterilevel_1)){
+            $query->whereIn('ilevel_1',$filterilevel_1);
         } 
         if(count($filternlevel_2)){
             $query->whereIn('nlevel_2',$filternlevel_2);
         } 
+        if(count($filterilevel_2)){
+            $query->whereIn('ilevel_2',$filterilevel_2);
+        } 
         if(count($filternadvertiser)){
             $query->whereIn('nadvertiser',$filternadvertiser);
+        } 
+        if(count($filteriadvertiser)){
+            $query->whereIn('iadvertiser',$filteriadvertiser);
         } 
         if(count($filternproduct)){
             $query->whereIn('nproduct',$filternproduct);
         } 
+        if(count($filteriproduct)){
+            $query->whereIn('iproduct',$filteriproduct);
+        } 
         if(count($filternsector)){
             $query->whereIn('nsector',$filternsector);
         } 
+        if(count($filterisector)){
+            $query->whereIn('isector',$filterisector);
+        } 
         if(count($filterncategory)){
             $query->whereIn('ncategory',$filterncategory);
+        } 
+        if(count($filtericategory)){
+            $query->whereIn('icategory',$filtericategory);
         } 
         // dd($query->toSql());
         return datatables($query->get())
@@ -556,17 +585,26 @@ class MarketingController extends Controller
         $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate);
         $filterchannel = array_filter(explode(',',$request->filterchannel));
         $filternprogramme = array_filter(explode(',',$request->filternprogramme));
+        $filteriprogramme = array_filter(explode(',',$request->filteriprogramme));
         $filternlevel_1 = array_filter(explode(',',$request->filternlevel_1));
+        $filterilevel_1 = array_filter(explode(',',$request->filterilevel_1));
         $filternlevel_2 = array_filter(explode(',',$request->filternlevel_2));
+        $filterilevel_2 = array_filter(explode(',',$request->filterilevel_2));
         $filternadvertiser = array_filter(explode(',',$request->filternadvertiser));
+        $filteriadvertiser = array_filter(explode(',',$request->filteriadvertiser));
         $filternproduct = array_filter(explode(',',$request->filternproduct));
+        $filteriproduct = array_filter(explode(',',$request->filteriproduct));
         $filternsector = array_filter(explode(',',$request->filternsector));
+        $filterisector = array_filter(explode(',',$request->filterisector));
         $filterncategory = array_filter(explode(',',$request->filterncategory));
+        $filtericategory = array_filter(explode(',',$request->filtericategory));
         $filternadstype = array_filter(explode(',',$request->filternadstype));
+        $filteriadstype = array_filter(explode(',',$request->filteriadstype));
+        $filtertadstype = array_filter(explode(',',$request->filtertadstype));
         $filterntargetaudience = $request->filterntargetaudience ?? '01';
         
-        $query = Spotmatching::select('date','channel','programme','product_name','copy','start_time',
-        'duration\target','cost'); //di spec ada TVR, tapi di table ga ada kolom itu
+        $query = Spotmatching::select('date','channel','iprogramme','iproduct','icopy','start_time',
+        'duration','cost','tvr'.$filterntargetaudience);
     
         if($request->startdate && $request->enddate){
             $query->whereBetween('isodate',[$startdate,$enddate]);
@@ -577,26 +615,53 @@ class MarketingController extends Controller
         if(count($filternprogramme)){
             $query->whereIn('nprogramme',$filternprogramme);
         } 
+        if(count($filteriprogramme)){
+            $query->whereIn('iprogramme',$filteriprogramme);
+        } 
         if(count($filternlevel_1)){
             $query->whereIn('nlevel_1',$filternlevel_1);
+        } 
+        if(count($filterilevel_1)){
+            $query->whereIn('ilevel_1',$filterilevel_1);
         } 
         if(count($filternlevel_2)){
             $query->whereIn('nlevel_2',$filternlevel_2);
         } 
+        if(count($filterilevel_2)){
+            $query->whereIn('ilevel_2',$filterilevel_2);
+        } 
         if(count($filternadvertiser)){
             $query->whereIn('nadvertiser',$filternadvertiser);
+        } 
+        if(count($filteriadvertiser)){
+            $query->whereIn('iadvertiser',$filteriadvertiser);
         } 
         if(count($filternproduct)){
             $query->whereIn('nproduct',$filternproduct);
         } 
+        if(count($filteriproduct)){
+            $query->whereIn('iproduct',$filteriproduct);
+        } 
         if(count($filternsector)){
             $query->whereIn('nsector',$filternsector);
+        } 
+        if(count($filterisector)){
+            $query->whereIn('isector',$filterisector);
         } 
         if(count($filterncategory)){
             $query->whereIn('ncategory',$filterncategory);
         } 
+        if(count($filtericategory)){
+            $query->whereIn('icategory',$filtericategory);
+        } 
         if(count($filternadstype)){
             $query->whereIn('nadstype',$filternadstype);
+        } 
+        if(count($filteriadstype)){
+            $query->whereIn('iadstype',$filteriadstype);
+        } 
+        if(count($filtertadstype)){
+            $query->whereIn('tadstype',$filtertadstype);
         } 
         if($request->filterncommercialtype == "commercialonly"){
             $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');

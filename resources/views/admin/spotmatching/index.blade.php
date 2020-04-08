@@ -257,6 +257,7 @@ $(document).ready(function(){
         url:"{{ url('/admin/video/generatevideo') }}",
         data:{
           id: $(this).data("id"),
+          table: 'spotmatching',
           page: window.location.href,
         },
         success:function(response) {
@@ -268,6 +269,7 @@ $(document).ready(function(){
        },
        error:function(){
         console.log("error getting video path");
+        $("#loadingvideo").html('Video not found.');
        }
     });
   });
@@ -329,12 +331,12 @@ $(document).ready(function(){
         { data: 'action', name: 'action' },              
         { data: 'date', name: 'date' },              
         { data: 'channel', name: 'channel' },              
-        { data: 'programme', name: 'programme' },              
-        { data: 'product_name', name: 'product_name' },              
-        { data: 'copy', name: 'copy' },              
+        { data: 'iprogramme', name: 'iprogramme' },              
+        { data: 'iproduct', name: 'iproduct' },              
+        { data: 'icopy', name: 'icopy' },              
         { data: 'start_time', name: 'start_time' },              
-        { data: 'duration\\target', name: 'duration\\target' },              
-        { data: 'cost', name: 'cost' },              
+        { data: 'duration', name: 'duration' },              
+        { data: 'tvr'+$("select[name=filter-ntargetaudience]").val(), name: 'tvr'+$("select[name=filter-ntargetaudience]").val() },              
       ],
       dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
           "<'row'<'col-sm-12'B>>"+
@@ -383,6 +385,7 @@ $(document).ready(function(){
   $("select[name='filter-ntargetaudience']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='filter-ntargetaudience']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='filter-ntargetaudience']").attr('data-size','3'); // dropdown search with bootstrap select
+  $("select[name='filter-ntargetaudience']").selectpicker();
 
 });
 </script>
@@ -410,7 +413,6 @@ $(document).ready(function(){
       $("input[name="+filter+"]").val('');
       $("#filter-"+filter+"-count").html(''); // set count at button
     });
-  });
   });
 </script>
 @endsection

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use FFMpeg;
 use \App\Channel;
 use \App\Commercial;
+use \App\Spotmatching;
+use \App\Tvprogramme;
 use \App\Config;
 use \App\Videodata;
 use \Carbon\Carbon;
@@ -106,13 +108,24 @@ class VideoController extends Controller
         $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate);
         $filterchannel = array_filter(explode(',',$request->filterchannel));
         $filternprogramme = array_filter(explode(',',$request->filternprogramme));
+        $filteriprogramme = array_filter(explode(',',$request->filteriprogramme));
         $filternlevel_1 = array_filter(explode(',',$request->filternlevel_1));
+        $filterilevel_1 = array_filter(explode(',',$request->filterilevel_1));
         $filternlevel_2 = array_filter(explode(',',$request->filternlevel_2));
+        $filterilevel_2 = array_filter(explode(',',$request->filterilevel_2));
         $filternadvertiser = array_filter(explode(',',$request->filternadvertiser));
+        $filteriadvertiser = array_filter(explode(',',$request->filteriadvertiser));
         $filternproduct = array_filter(explode(',',$request->filternproduct));
+        $filteriproduct = array_filter(explode(',',$request->filteriproduct));
         $filternsector = array_filter(explode(',',$request->filternsector));
+        $filterisector = array_filter(explode(',',$request->filterisector));
         $filterncategory = array_filter(explode(',',$request->filterncategory));
+        $filtericategory = array_filter(explode(',',$request->filtericategory));
         $filternadstype = array_filter(explode(',',$request->filternadstype));
+        $filteriadstype = array_filter(explode(',',$request->filteriadstype));
+        $filtertadstype = array_filter(explode(',',$request->filtertadstype));
+
+        $query = Commercial::select('date','channel','iprogramme','iproduct','iadstype','start_time','duration');
 
         if($request->startdate && $request->enddate){
             $query->whereBetween('isodate',[$startdate,$enddate]);
@@ -123,26 +136,53 @@ class VideoController extends Controller
         if(count($filternprogramme)){
             $query->whereIn('nprogramme',$filternprogramme);
         } 
+        if(count($filteriprogramme)){
+            $query->whereIn('iprogramme',$filteriprogramme);
+        } 
         if(count($filternlevel_1)){
             $query->whereIn('nlevel_1',$filternlevel_1);
+        } 
+        if(count($filterilevel_1)){
+            $query->whereIn('ilevel_1',$filterilevel_1);
         } 
         if(count($filternlevel_2)){
             $query->whereIn('nlevel_2',$filternlevel_2);
         } 
+        if(count($filterilevel_2)){
+            $query->whereIn('ilevel_2',$filterilevel_2);
+        } 
         if(count($filternadvertiser)){
             $query->whereIn('nadvertiser',$filternadvertiser);
+        } 
+        if(count($filteriadvertiser)){
+            $query->whereIn('iadvertiser',$filteriadvertiser);
         } 
         if(count($filternproduct)){
             $query->whereIn('nproduct',$filternproduct);
         } 
+        if(count($filteriproduct)){
+            $query->whereIn('iproduct',$filteriproduct);
+        } 
         if(count($filternsector)){
             $query->whereIn('nsector',$filternsector);
+        } 
+        if(count($filterisector)){
+            $query->whereIn('isector',$filterisector);
         } 
         if(count($filterncategory)){
             $query->whereIn('ncategory',$filterncategory);
         } 
+        if(count($filtericategory)){
+            $query->whereIn('icategory',$filtericategory);
+        } 
         if(count($filternadstype)){
             $query->whereIn('nadstype',$filternadstype);
+        } 
+        if(count($filteriadstype)){
+            $query->whereIn('iadstype',$filteriadstype);
+        } 
+        if(count($filtertadstype)){
+            $query->whereIn('tadstype',$filtertadstype);
         } 
         if($request->filterncommercialtype == "commercialonly"){
             $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
@@ -178,15 +218,24 @@ class VideoController extends Controller
         $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate);
         $filterchannel = array_filter(explode(',',$request->filterchannel));
         $filternprogramme = array_filter(explode(',',$request->filternprogramme));
+        $filteriprogramme = array_filter(explode(',',$request->filteriprogramme));
         $filternlevel_1 = array_filter(explode(',',$request->filternlevel_1));
+        $filterilevel_1 = array_filter(explode(',',$request->filterilevel_1));
         $filternlevel_2 = array_filter(explode(',',$request->filternlevel_2));
+        $filterilevel_2 = array_filter(explode(',',$request->filterilevel_2));
         $filternadvertiser = array_filter(explode(',',$request->filternadvertiser));
+        $filteriadvertiser = array_filter(explode(',',$request->filteriadvertiser));
         $filternproduct = array_filter(explode(',',$request->filternproduct));
+        $filteriproduct = array_filter(explode(',',$request->filteriproduct));
         $filternsector = array_filter(explode(',',$request->filternsector));
+        $filterisector = array_filter(explode(',',$request->filterisector));
         $filterncategory = array_filter(explode(',',$request->filterncategory));
+        $filtericategory = array_filter(explode(',',$request->filtericategory));
         $filternadstype = array_filter(explode(',',$request->filternadstype));
+        $filteriadstype = array_filter(explode(',',$request->filteriadstype));
+        $filtertadstype = array_filter(explode(',',$request->filtertadstype));
         // 'date'=> ['$dateToString' => ['format' => '%d-%m-%Y', 'date' => '$date', 'timezone' => '+07:00' ]] ,
-        $query = Commercialgrouped::select('date','channel','iprogramme','iproduct','iadstype','start_time','duration');
+        $query = Tvprogramme::select('date','channel','iprogramme','iproduct','iadstype','start_time','duration');
         
         if($request->startdate && $request->enddate){
             $query->whereBetween('isodate',[$startdate,$enddate]);
@@ -197,26 +246,53 @@ class VideoController extends Controller
         if(count($filternprogramme)){
             $query->whereIn('nprogramme',$filternprogramme);
         } 
+        if(count($filteriprogramme)){
+            $query->whereIn('iprogramme',$filteriprogramme);
+        } 
         if(count($filternlevel_1)){
             $query->whereIn('nlevel_1',$filternlevel_1);
+        } 
+        if(count($filterilevel_1)){
+            $query->whereIn('ilevel_1',$filterilevel_1);
         } 
         if(count($filternlevel_2)){
             $query->whereIn('nlevel_2',$filternlevel_2);
         } 
+        if(count($filterilevel_2)){
+            $query->whereIn('ilevel_2',$filterilevel_2);
+        } 
         if(count($filternadvertiser)){
             $query->whereIn('nadvertiser',$filternadvertiser);
+        } 
+        if(count($filteriadvertiser)){
+            $query->whereIn('iadvertiser',$filteriadvertiser);
         } 
         if(count($filternproduct)){
             $query->whereIn('nproduct',$filternproduct);
         } 
+        if(count($filteriproduct)){
+            $query->whereIn('iproduct',$filteriproduct);
+        } 
         if(count($filternsector)){
             $query->whereIn('nsector',$filternsector);
+        } 
+        if(count($filterisector)){
+            $query->whereIn('isector',$filterisector);
         } 
         if(count($filterncategory)){
             $query->whereIn('ncategory',$filterncategory);
         } 
+        if(count($filtericategory)){
+            $query->whereIn('icategory',$filtericategory);
+        } 
         if(count($filternadstype)){
             $query->whereIn('nadstype',$filternadstype);
+        } 
+        if(count($filteriadstype)){
+            $query->whereIn('iadstype',$filteriadstype);
+        } 
+        if(count($filtertadstype)){
+            $query->whereIn('tadstype',$filtertadstype);
         } 
         if($request->filterncommercialtype == "commercialonly"){
             $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
@@ -251,7 +327,13 @@ class VideoController extends Controller
         }
 
         // video not exist, create
-        $commercial = Commercial::find($request->id);
+        if($request->table == 'spotmatching'){
+            $commercial = Spotmatching::find($request->id);
+        }elseif($request->table == 'tvprogramme'){
+            $commercial = Tvprogramme::find($request->id);
+        }else{
+            $commercial = Commercial::find($request->id);
+        }
         $librarypath = Config::select('value')->where('key','video path')->first();
         // get channel
         $channel = Channel::where('channel',$commercial->channel)->first();
@@ -260,9 +342,17 @@ class VideoController extends Controller
         // get bumper
         $bumper = Config::select('value')->where('key','video bumper')->first();
         $bumper = $bumper->value ?? 2;
-        $date = Carbon::createFromFormat('Y-m-d', $commercial->date)->format('Y_m_d');
-        $start_video1 = Carbon::createFromFormat('H:i:s',$commercial->start_video1);
-        $end_video1 = Carbon::createFromFormat('H:i:s',$commercial->end_video1);
+        $date = Carbon::parse($commercial->isodate->toDateTime())->format('Y_m_d');
+        if($request->table == 'spotmatching'){
+            $start_video1 = Carbon::createFromFormat('H:i:s',$commercial->startvideo1);
+            $end_video1 = Carbon::createFromFormat('H:i:s',$commercial->endvideo1);
+        }elseif($request->table == 'tvprogramme'){
+            $start_video1 = Carbon::createFromFormat('H:i:s',$commercial->start_video1);
+            $end_video1 = Carbon::createFromFormat('H:i:s',$commercial->end_video1);
+        }else{
+            $start_video1 = Carbon::createFromFormat('H:i:s',$commercial->start_video1);
+            $end_video1 = Carbon::createFromFormat('H:i:s',$commercial->end_video1);
+        }
         $start5minute = floor($start_video1->format("i") / 5)*5;
         $end5minute = floor($end_video1->format("i") / 5)*5;
         if($start5minute == $end5minute){
@@ -272,7 +362,11 @@ class VideoController extends Controller
             $sourcefilename = $channel."_".$date."_".$start_video1->format("H")."_".$minute."_00.mp4";
             $sourcestarttime = Carbon::createFromFormat("H_i_s",$start_video1->format("H")."_".$minute."_00");
             $clipbeginning = $sourcestarttime->diffInSeconds($start_video1)-$bumper;
-            $duration = Carbon::createFromFormat("H:i:s",$commercial->duration)->addSeconds($bumper*2)->format("s");
+            if($commercial->duration == 0){
+                $duration = Carbon::createFromFormat("H:i:s",'00:00:00')->addSeconds($bumper*2)->format("s");
+            }else{
+                $duration = Carbon::createFromFormat("H:i:s",$commercial->duration)->addSeconds($bumper*2)->format("s");
+            }
             $process = new Process('ffmpeg -i "'.$sourcepath.$sourcefilename.'" -ss '.$clipbeginning.' -c copy -t '.$duration.' "'.$temppath->value.'\\'.$request->id.'.mp4" -y');
             $process->run();
             if (!$process->isSuccessful()) {

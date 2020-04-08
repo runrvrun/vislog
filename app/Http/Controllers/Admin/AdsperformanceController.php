@@ -88,7 +88,7 @@ class AdsperformanceController extends Controller
             $query->whereIn('nprogramme',$filternprogramme);
         } 
         if(count($filteriprogramme)){
-            $query->whereIn('iprogramme',$filteinprogramme);
+            $query->whereIn('iprogramme',$filteriprogramme);
         } 
         if(count($filternlevel_1)){
             $query->whereIn('nlevel_1',$filternlevel_1);
