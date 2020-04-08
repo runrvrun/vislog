@@ -130,11 +130,11 @@ class MarketingController extends Controller
             array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            $adexnett->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel1']));
+            $adexnett->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel_1']));
             array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            $adexnett->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel2']));
+            $adexnett->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel_2']));
             array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
@@ -168,33 +168,69 @@ class MarketingController extends Controller
             $adexnett->whereIn('nprogramme',array_filter(explode(',',$request->nprogramme)));
             array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
         }
+        if($request->iprogramme){
+            $adexnett->whereIn('iprogramme',array_filter(explode(',',$request->iprogramme)));
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+        }
         if($request->nlevel_1){
             $adexnett->whereIn('nlevel_1',array_filter(explode(',',$request->nlevel_1)));
             array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+        }
+        if($request->ilevel_1){
+            $adexnett->whereIn('ilevel_1',array_filter(explode(',',$request->ilevel_1)));
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
             $adexnett->whereIn('nlevel_2',array_filter(explode(',',$request->nlevel_2)));
             array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
         }
+        if($request->ilevel_2){
+            $adexnett->whereIn('ilevel_2',array_filter(explode(',',$request->ilevel_2)));
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+        }
         if($request->nadvertiser){
             $adexnett->whereIn('nadvertiser',array_filter(explode(',',$request->nadvertiser)));
             array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+        }
+        if($request->iadvertiser){
+            $adexnett->whereIn('iadvertiser',array_filter(explode(',',$request->iadvertiser)));
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
             $adexnett->whereIn('nproduct',array_filter(explode(',',$request->nproduct)));
             array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
         }
+        if($request->iproduct){
+            $adexnett->whereIn('iproduct',array_filter(explode(',',$request->iproduct)));
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+        }
         if($request->nsector){
             $adexnett->whereIn('nsector',array_filter(explode(',',$request->nsector)));
             array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+        }
+        if($request->isector){
+            $adexnett->whereIn('isector',array_filter(explode(',',$request->isector)));
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
         }
         if($request->ncategory){
             $adexnett->whereIn('ncategory',array_filter(explode(',',$request->ncategory)));
             array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
         }
+        if($request->icategory){
+            $adexnett->whereIn('icategory',array_filter(explode(',',$request->icategory)));
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+        }
         if($request->nadstype){
             $adexnett->whereIn('nadstype',array_filter(explode(',',$request->nadstype)));
             array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+        }
+        if($request->iadstype){
+            $adexnett->whereIn('iadstype',array_filter(explode(',',$request->iadstype)));
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+        }
+        if($request->tadstype){
+            $adexnett->whereIn('tadstype',array_filter(explode(',',$request->tadstype)));
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             $adexnett->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
@@ -202,7 +238,7 @@ class MarketingController extends Controller
 
         $query = Adexnett::raw(function($collection) use ($filter,$nett)
         {
-            $filter = [];
+            // $filter = [];
             return $collection->aggregate(array_merge($filter,[
                 [
                     '$group'    => [
@@ -243,7 +279,7 @@ class MarketingController extends Controller
         // market share per month
         $query = Adexnett::raw(function($collection) use ($filter,$nett)
         {
-            $filter = [];
+            // $filter = [];
             return $collection->aggregate(array_merge($filter,[
                 [
                     '$group'    => [
@@ -289,7 +325,7 @@ class MarketingController extends Controller
         // top 10 agency
         $query = Adexnett::raw(function($collection) use ($filter,$nett)
         {
-            $filter = [];
+            // $filter = [];
             return $collection->aggregate(array_merge($filter,[
                 [
                     '$group'    => [
@@ -327,7 +363,7 @@ class MarketingController extends Controller
         //
         $query = Adexnett::raw(function($collection) use ($filter,$nett)
         {
-            $filter = [];
+            // $filter = [];
             return $collection->aggregate(array_merge($filter,[
                 [
                     '$group'    => [
@@ -363,7 +399,7 @@ class MarketingController extends Controller
         $data['marketshare_channel_advertiser'] = array_slice($totaladvertiser, 0, 10, true);
         $query = Adexnett::raw(function($collection) use ($filter,$nett)
         {
-            $filter = [];
+            // $filter = [];
             return $collection->aggregate(array_merge($filter,[
                 [
                     '$group'    => [
@@ -403,7 +439,7 @@ class MarketingController extends Controller
         //
         $query = Adexnett::raw(function($collection) use ($filter,$nett)
         {
-            $filter = [];
+            // $filter = [];
             return $collection->aggregate(array_merge($filter,[
                 [
                     '$group'    => [
@@ -447,7 +483,7 @@ class MarketingController extends Controller
         if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
         $data['ddtargetaudience'] = $query->pluck('targetaudience','code');
 
-        return view('admin.mktsummary.dashboard',compact('data'));
+        return view('admin.mktsummary.dashboard',compact('data','request'));
     }
 
     public function adexnett()
@@ -574,8 +610,8 @@ class MarketingController extends Controller
         if(!empty(Auth::user()->privileges['ncopy']))  $query->whereIn('ncopy',explode(',',Auth::user()->privileges['ncopy']??'%%'));
         if(!empty(Auth::user()->privileges['nadstype']))  $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']??'%%'));
         if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']??'%%'));
-        if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel1']??'%%'));
-        if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel2']??'%%'));
+        if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel_1']??'%%'));
+        if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel_2']??'%%'));
         if(!empty(Auth::user()->privileges['nprogramme'])) $query->whereIn('nprogramme',explode(',',Auth::user()->privileges['nprogramme']??'%%'));
 
         // dd($query->toSql());

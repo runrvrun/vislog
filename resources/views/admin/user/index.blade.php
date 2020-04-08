@@ -82,15 +82,7 @@ $(document).ready(function() {
                   window.location = '{{ url('admin/user/create') }}'
               }
             },  
-            { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
-            {
-              extend: 'csv',
-              text: 'CSV All',
-              className: 'buttons-csvall',
-              action: function ( e, dt, node, config ) {
-                  window.location = '{{ url('admin/user/csvall') }}'
-              }
-            },
+            { extend: 'colvis', text: 'Column' },
         ],
         lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
         columnDefs: [ {

@@ -33,7 +33,7 @@ class SpotController extends Controller
                 $datab = Spotmatching::where('_id',$val)->first();
                 $pair = ['market','activity','target','year','quarter','month','iso_week','day_of_week'
                 ,'wk_day/wk_end','nsector','ncategory','nadvertiser','nproduct','ncopy','start_time',
-                'end_time','duration','nprogramme','nlevel1','nlevel2','startvideo1','endvideo1',
+                'end_time','duration','nprogramme','nlevel_1','nlevel_2','startvideo1','endvideo1',
                 'startvideo2','endvideo2','no_of_spots','cost','t_second_cost','remark','variance',
                 'similar','durasi','status','source'];
                 foreach($pair as $p){

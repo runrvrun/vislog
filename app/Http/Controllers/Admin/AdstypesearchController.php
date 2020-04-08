@@ -22,7 +22,7 @@ class AdstypesearchController extends Controller
     public function searchnadstypejson(Request $request)
     {
         if(isset($request->term)){
-            $query = Adstypesearch::select('nadstype')->distinct()->where('nadstype','like','%'.$request->term.'%')->get();
+            $query = Adstypesearch::select('nadstype')->where('nadstype','like','%'.$request->term.'%');
             if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']));
             return $query->get();
         }else{
@@ -35,7 +35,7 @@ class AdstypesearchController extends Controller
     public function searchiadstypejson(Request $request)
     {
         if(isset($request->term)){
-            $query = Adstypesearch::select('iadstype')->distinct()->where('iadstype','like','%'.$request->term.'%')->get();
+            $query = Adstypesearch::select('iadstype')->where('iadstype','like','%'.$request->term.'%');
             if(!empty(Auth::user()->privileges['iadstype'])) $query->whereIn('iadstype',explode(',',Auth::user()->privileges['iadstype']));
             return $query->get();
         }else{
@@ -49,7 +49,7 @@ class AdstypesearchController extends Controller
     public function searchtadstypejson(Request $request)
     {
         if(isset($request->term)){
-            $query = Adstypesearch::select('tadstype')->distinct()->where('tadstype','like','%'.$request->term.'%')->get();
+            $query = Adstypesearch::select('tadstype')->where('tadstype','like','%'.$request->term.'%');
             if(!empty(Auth::user()->privileges['tadstype'])) $query->whereIn('tadstype',explode(',',Auth::user()->privileges['tadstype']));
             return $query->get();
         }else{

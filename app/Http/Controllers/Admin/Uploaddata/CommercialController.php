@@ -142,7 +142,7 @@ class CommercialController extends Controller
                                     break;
                                 case 'no_of_spots':
                                 case 'cost':                  
-                                    $insertData[$header[$key]] = (int) $value;
+                                    $insertData[$header[$key]] = (double) $value;
                                     break;
                                 case (preg_match('/tvr.*/', $header[$key]) ? true : false) :                  
                                     $insertData[$header[$key]] = (double) $value;
@@ -152,8 +152,7 @@ class CommercialController extends Controller
                             }
                         }
                         array_push($insert, $insertData);
-                        if(count($insert) == 500){
-                            // Commercial::insertMany($insertData);// insert after 1000
+                        if(count($insert) == 500){// insert after 500
                             $mongoClient=new Client();
                             $mongodata=$mongoClient->vislog->commercials;
                             $mongodata->insertMany($insert);

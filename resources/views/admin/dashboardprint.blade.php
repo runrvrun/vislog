@@ -261,13 +261,6 @@ $(document).ready(function() {
     var resp = false;
     if(window.innerWidth <= 800) resp=true;
 
-    $("#filterersubmit").click(function() {
-      $("#loading-modal").modal();
-    });
-    $("#rtl-icon2").click(function() {
-      $("#loading-modal").modal();
-    });
-
     var table = $('.spot-per-product-table').DataTable({
         responsive: resp,
         processing: true,

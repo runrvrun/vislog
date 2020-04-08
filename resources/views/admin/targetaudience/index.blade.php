@@ -71,16 +71,7 @@ $(document).ready(function() {
             "<'row'<'col-sm-12'B>>"+
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print',
-            {
-              extend: 'csv',
-              text: 'CSV All',
-              className: 'buttons-csvall',
-              action: function ( e, dt, node, config ) {
-                  window.location = '{{ url('admin/targetaudience/csvall') }}'
-              }
-            }
+        buttons: [            
         ],
         lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],        
     });

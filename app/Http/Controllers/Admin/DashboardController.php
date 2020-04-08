@@ -7,6 +7,7 @@ use DB;
 use \Carbon\Carbon;
 use App\Log;
 use App\Commercial;
+use App\Commercialgrouped;
 use App\Commercialsearch;
 use App\Adexnett;
 use App\Daypartsetting;
@@ -43,7 +44,7 @@ class DashboardController extends Controller
             // load empty on start
             return view('admin.dashboard',compact('data','request'));
         }
-        if(!empty($request->commercialdata) && $request->commercialdata == 'grouped'){
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
             $commercial = Commercialgrouped::whereNotNull('_id');
         }else{
             $commercial = Commercial::whereNotNull('_id');
@@ -84,11 +85,11 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            $commercial->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel1']));
+            $commercial->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel_1']));
             array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            $commercial->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel2']));
+            $commercial->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel_2']));
             array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
@@ -203,18 +204,26 @@ class DashboardController extends Controller
         }
         if($request->ncommercialtype == "commercialonly"){
             $commercial->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+            array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
         }
         if($request->xadstype == "loosespot"){
             $commercial->where('nadstype','=','LOOSE SPOT');
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => ['LOOSE SPOT']]]]);  
         }
         if($request->xadstype == "nonloosespot"){
             $commercial->where('nadstype','<>','LOOSE SPOT');
+            array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
         $data['number_of_spot'] = $commercial->sum('no_of_spots');        
         $data['cost'] = $commercial->sum('cost')/1000000;
-        $data['grp'] = $commercial->sum('tvr'.$ta);        
-        $query = Commercial::raw(function($collection) use ($filter,$variabled,$divider)
+        $data['grp'] = $commercial->sum('tvr'.$ta);
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use ($filter,$variabled,$divider)
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -246,7 +255,12 @@ class DashboardController extends Controller
         }
         $data['spot_per_channel'] = $cquery;
         
-        $query = Commercial::raw(function($collection) use ($filter,$variabled,$divider)
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use ($filter,$variabled,$divider)
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -297,7 +311,7 @@ class DashboardController extends Controller
                 $end_ms = $hour + $minute - 1;
                 $data['daypart'][$key]['name'] = $val->daypart;
                 if($request->variable == 'SPOT'){
-                    $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->count();
+                    $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum('no_of_spots');
                 }elseif($request->variable == 'COST'){
                     $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum($variable);
                     $data['daypart'][$key]['value'] = number_format($data['daypart'][$key]['value']/$divider,2,'.','');
@@ -306,8 +320,12 @@ class DashboardController extends Controller
                 }
             }
         }
-
-        $spot_per_date = Commercial::raw(function($collection) use($filter,$variabled,$divider) 
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $spot_per_date = $co::raw(function($collection) use($filter,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [ '$sort' => [ 'date' => 1 ] ],
@@ -382,7 +400,7 @@ class DashboardController extends Controller
         $data['advertiser'] = count($data['advertiser']);
         $data['product'] = $commercial->distinct('nproduct')->get();
         $data['product'] = count($data['product']);
-        $data['number_of_spot'] = $commercial->count();        
+        $data['number_of_spot'] = $commercial->sum('no_of_spots');        
         $data['adex'] = $commercial->sum('cost');
         if ($data['adex'] < 1000) { // cost is already per 1000
             // Anything less than a million
@@ -396,7 +414,7 @@ class DashboardController extends Controller
         }
         
         $c = clone($commercial);// clone object as so not copy by reference and got additional "where" clause
-        $data['adstype_loose_spot'] = $c->where('nadstype','LOOSE SPOT')->count();
+        $data['adstype_loose_spot'] = $c->where('nadstype','LOOSE SPOT')->sum('no_of_spots');
         if ($data['adstype_loose_spot'] < 1000000) {
             //
         } else if ($data['adstype_loose_spot'] < 1000000000) {
@@ -406,7 +424,7 @@ class DashboardController extends Controller
         }
 
         $c = clone($commercial);// clone object as so not copy by reference
-        $data['adstype_virtual_ads'] = $c->where('nadstype','VIRTUAL ADS')->count();
+        $data['adstype_virtual_ads'] = $c->where('nadstype','VIRTUAL ADS')->sum('no_of_spots');
         if ($data['adstype_virtual_ads'] < 1000000) {
             //
         } else if ($data['adstype_virtual_ads'] < 1000000000) {
@@ -416,7 +434,7 @@ class DashboardController extends Controller
         }
 
         $c = clone($commercial);// clone object as so not copy by reference
-        $data['adstype_squeeze_frames'] = $c->where('nadstype','BUILT IN SEGMEN')->count();
+        $data['adstype_squeeze_frames'] = $c->where('nadstype','BUILT IN SEGMEN')->sum('no_of_spots');
         if ($data['adstype_squeeze_frames'] < 1000000) {
             //
         } else if ($data['adstype_squeeze_frames'] < 1000000000) {
@@ -426,7 +444,7 @@ class DashboardController extends Controller
         }
 
         $c = clone($commercial);// clone object as so not copy by reference
-        $data['adstype_quiz'] = $c->where('nadstype','KUIS')->count();
+        $data['adstype_quiz'] = $c->where('nadstype','KUIS')->sum('no_of_spots');
         if ($data['adstype_quiz'] < 1000000) {
             //
         } else if ($data['adstype_quiz'] < 1000000000) {
@@ -508,24 +526,24 @@ class DashboardController extends Controller
                 $minute = $time[1] * 60;
                 $end_ms = $hour + $minute - 1;
                 $data['daypart'][$key]['name'] = $val->daypart;
-                $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->count();
+                $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum('no_of_spots');
             }
         }else{
             $c = clone($commercial); 
             $data['daypart'][0]['name'] = "00.00-06.00";
-            $data['daypart'][0]['value'] = $c->whereBetween('start_timestamp',[0,21600])->count();//00.00-06.00
+            $data['daypart'][0]['value'] = $c->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
             $c = clone($commercial); 
             $data['daypart'][1]['name'] = "06.00-12.00";
-            $data['daypart'][1]['value'] = $c->whereBetween('start_timestamp',[21601,43200])->count();//06.00-12.00
+            $data['daypart'][1]['value'] = $c->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
             $c = clone($commercial); 
             $data['daypart'][2]['name'] = "12.00-17.30";
-            $data['daypart'][2]['value'] = $c->whereBetween('start_timestamp',[43201,63000])->count();//12.00-17.30
+            $data['daypart'][2]['value'] = $c->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
             $c = clone($commercial); 
             $data['daypart'][3]['name'] = "17.30-22.00";
-            $data['daypart'][3]['value'] = $c->whereBetween('start_timestamp',[63001,79200])->count();//17.30-22.00
+            $data['daypart'][3]['value'] = $c->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
             $c = clone($commercial); 
             $data['daypart'][4]['name'] = "22.00-00.00";
-            $data['daypart'][4]['value'] = $c->whereBetween('start_timestamp',[79201,86400])->count();//22.00-00.00
+            $data['daypart'][4]['value'] = $c->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
         }
         $query = Commercial::raw(function($collection) use($filter) 
         {
@@ -814,7 +832,12 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
-        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -976,7 +999,12 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
-        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -1138,7 +1166,12 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
-        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -1300,7 +1333,12 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
-        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -1464,7 +1502,12 @@ class DashboardController extends Controller
         }
 
 
-        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -1627,7 +1670,12 @@ class DashboardController extends Controller
         }
 
 
-        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -1790,7 +1838,12 @@ class DashboardController extends Controller
         }
 
 
-        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [
@@ -1953,8 +2006,12 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => ['nadstype' => ['$nin' => ['LOOSE SPOT']]]]);  
         }
 
-
-        $query = Commercial::raw(function($collection) use($filter,$ta,$variabled,$divider) 
+        if(!empty($request->ncommercialdata) && $request->ncommercialdata == 'grouped'){
+            $co = new Commercialgrouped;
+        }else{
+            $co = new Commercial;
+        }
+        $query = $co::raw(function($collection) use($filter,$ta,$variabled,$divider) 
         {
             return $collection->aggregate(array_merge($filter,[
                 [

@@ -546,11 +546,7 @@ $(document).ready(function(){
 <script>
 $(document).ready(function(){
   var resp = false;
-  if(window.innerWidth <= 800) resp=true;
-  
-  $("#filterersubmit").click(function() {
-    $("#loading-modal").modal();
-  });
+  if(window.innerWidth <= 800) resp=true;  
 
   $("select[name='filter-ntargetaudience']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='filter-ntargetaudience']").attr('data-live-search','true'); // dropdown search with bootstrap select

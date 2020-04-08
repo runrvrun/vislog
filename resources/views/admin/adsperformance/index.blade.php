@@ -30,16 +30,45 @@
                             <tr>
                               <th></th>                  
                               <th></th>                  
-                              <th>Date</th>                  
-                              <th>Channel</th>                  
-                              <th>Programme</th>                  
-                              <th>Product</th>                  
-                              <th>Ads Type</th>                  
-                              <th>Start Time</th>                  
-                              <th>Duration</th>                  
-                              <th>Cost</th>                  
-                              <th>TVR</th>                  
-                              <th>000s</th>                  
+                              <th>Date</th>
+                              <th>Channel</th>
+                              <th>nProgramme</th>
+                              <th>nLevel 1</th>
+                              <th>nLevel 2</th>
+                              <th>nSector</th>
+                              <th>nCategory</th>
+                              <th>nAdvertiser</th>
+                              <th>nProduct</th>
+                              <th>nCopy</th>
+                              <th>nAdstype</th>
+                              <th>iProgramme</th>
+                              <th>iLevel 1</th>
+                              <th>iLevel 2</th>
+                              <th>iSector</th>
+                              <th>iCategory</th>
+                              <th>iAdvertiser</th>
+                              <th>iAdvertiser Group</th>
+                              <th>iProduct</th>
+                              <th>iCopy</th>
+                              <th>iAdstype</th>
+                              <th>tAdstype</th>
+                              <th>Size</th>
+                              <th>Title</th>
+                              <th>SB Time</th>
+                              <th>SB No.</th>
+                              <th>Tot. Spots in Break</th>
+                              <th>Position</th>
+                              <th>Pos. in Break</th>
+                              <th>Start Time</th>
+                              <th>End Time</th>
+                              <th>Duration</th>
+                              <th>No. Of Spots</th>
+                              <th>Cost</th>
+                              <th>t Second Cost</th>
+                              <th>TVR</th>
+                              <th>t Second TVR</th>
+                              <th>000s</th>
+                              <th>Break Type</th>                 
                             </tr>
                           </thead>
                         </table>
@@ -79,13 +108,14 @@
       <div class="modal-footer">
         <div id="filter-selected"></div>
         <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Add Filter</button>
+        <a id="filter-reset-selected" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
       </div>
     </div>
   </div>
 </div>
 <!-- modal play video -->
 <div class="modal fade text-left show" id="playvideo-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel7" style="display: none; padding-right: 17px;" aria-modal="true">
-  <div class="modal-dialog  modal-lg" role="document">
+  <div class="modal-dialog  modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header bg-primary white">
         <h4 class="modal-title" id="myModalLabel7"><span id="playvideo-title"></span></h4>
@@ -93,9 +123,13 @@
           <span aria-hidden="true">×</span>
         </button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body row">
+        <div class="col-8">
           <div id="loadingvideo" style="font-size:20px;">Loading video... Please wait  <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i></div>
-          <video src="" controls id="playvideo"></video>
+          <video src="" width="100%" class= controls id="playvideo"></video>
+        </div>
+        <div id="detailvideo" class="col-4" style="height:415px; overflow: auto;">
+        </div>
       </div>
       <div class="modal-footer">
         <a href="" download="" id="downloadvideo" class="btn white btn-warning"> <i class="ft-download"></i> Download </a>
@@ -110,6 +144,7 @@
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+<link href="{{ asset('css') }}/jquery.timepicker.min.css" rel="stylesheet" type="text/css">
 <style>
 #filterersubmit{
   bottom: 10px;
@@ -122,6 +157,9 @@
   width: 9%;
   right: auto;
   left: 10px;
+  position: absolute;
+  padding: 7px;
+  z-index: 10;
 }
 button.search-result{
   min-width:100px;
@@ -142,12 +180,16 @@ button.search-result{
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{{ asset('/') }}app-assets/js/filterer.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<script src="{{ asset('js') }}/jquery.timepicker.min.js"></script>
 <script type="text/javascript">
 $(function() {
     var start = moment().subtract(1, 'day');
     $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
     var end = moment();
     $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
+    // testing 1 agustus
+    $('input[name=startdate]').val('2019-07-31');
+    $('input[name=enddate]').val('2019-08-01');
 
     function cb(start, end) {
         $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
@@ -173,6 +215,10 @@ $(function() {
       $('#startdate').val(daterange.startDate.format('YYYY-MM-DD'));
       $('#enddate').val(daterange.endDate.format('YYYY-MM-DD'));
     });
+    
+    var options = { 'timeFormat': 'H:i:s','step':60 };
+    $('#starttime').timepicker(options);
+    $('#endtime').timepicker(options);
 });
 </script>
 <script type="text/javascript">
@@ -260,6 +306,39 @@ $(document).ready(function(){
        },
        error:function(){
         console.log("error getting video path");
+        $("#loadingvideo").html('Video not found.');
+       }
+    });
+    //get video detail
+    $.ajax({
+        url:"{{ url('/admin/adsperformance/get') }}",
+        data:{          
+          id: $(this).data("id"),
+          filterncommercialdata: $("select[name=filter-ncommercialdata]").val(),
+          filterntargetaudience: $("select[name=filter-ntargetaudience]").val()
+        },
+        success:function(response) {
+          $("#detailvideo").html('');
+          $("#detailvideo").append('<table class="table"><tr><td>Date:</td><td>'+ response.date + '</td></tr>'
+          +'<tr><td>Start Time:</td><td>'+ response.start_time + '</td></tr>'
+          +'<tr><td>Channel:</td><td>'+ response.channel + '</td></tr>'
+          +'<tr><td>Program:</td><td>'+ response.iprogramme + '</td></tr>'
+          +'<tr><td>Level 1:</td><td>'+ response.ilevel_1 + '</td></tr>'
+          +'<tr><td>Level 2:</td><td>'+ response.ilevel_2 + '</td></tr>'
+          +'<tr><td>Sector:</td><td>'+ response.isector + '</td></tr>'
+          +'<tr><td>Category:</td><td>'+ response.icategory + '</td></tr>'
+          +'<tr><td>Advertiser:</td><td>'+ response.iadvertiser + '</td></tr>'
+          +'<tr><td>Advertiser Group:</td><td>'+ response.iadvertiser_group + '</td></tr>'
+          +'<tr><td>Product:</td><td>'+ response.iproduct + '</td></tr>'
+          +'<tr><td>Copy:</td><td>'+ response.icopy + '</td></tr>'
+          +'<tr><td>Ads Type:</td><td>'+ response.iadstype + '</td></tr>'
+          +'<tr><td>Duration:</td><td>'+ response.duration + '</td></tr>'
+          +'<tr><td>Cost:</td><td>'+ response.cost + '</td></tr>'
+          +'<tr><td>TVR:</td><td>'+ response['tvr'+$("select[name=filter-ntargetaudience]").val()] + '</td></tr>'
+          +'<tr><td>000s:</td><td>'+ response['000s'+$("select[name=filter-ntargetaudience]").val()] + '</td></tr></table>');
+       },
+       error:function(){
+        console.log("Video detail not found");
        }
     });
   });
@@ -301,47 +380,88 @@ $(document).ready(function(){
         data : function(d){
             d.startdate = $('#startdate').val();
             d.enddate = $('#enddate').val();
+            d.starttime = $('#starttime').val();
+            d.endtime = $('#endtime').val();
             d.filterchannel = $("input[name=filter-channel]").val();
             d.filternprogramme = $("input[name=filter-nprogramme]").val();
-            d.filternlevel_1 = $("input[name=filter-nlevel1]").val();
-            d.filternlevel_2 = $("input[name=filter-nlevel2]").val();
+            d.filteriprogramme = $("input[name=filter-iprogramme]").val();
+            d.filternlevel_1 = $("input[name=filter-nlevel_1]").val();
+            d.filterilevel_1 = $("input[name=filter-ilevel_1]").val();
+            d.filternlevel_2 = $("input[name=filter-nlevel_2]").val();
+            d.filterilevel_2 = $("input[name=filter-ilevel_2]").val();
             d.filternadvertiser = $("input[name=filter-nadvertiser]").val();
+            d.filteriadvertiser = $("input[name=filter-iadvertiser]").val();
             d.filternproduct = $("input[name=filter-nproduct]").val();
+            d.filteriproduct = $("input[name=filter-iproduct]").val();
             d.filternsector = $("input[name=filter-nsector]").val();
+            d.filterisector = $("input[name=filter-isector]").val();
             d.filterncategory = $("input[name=filter-ncategory]").val();
+            d.filtericategory = $("input[name=filter-icategory]").val();
             d.filternadstype = $("input[name=filter-nadstype]").val();
+            d.filteriadstype = $("input[name=filter-iadstype]").val();
+            d.filtertadstype = $("input[name=filter-tadstype]").val();
             d.filterntargetaudience = $("select[name=filter-ntargetaudience]").val();
             d.filterncommercialdata = $("select[name=filter-ncommercialdata]").val();
             d.filterncommercialtype = $("select[name=filter-ncommercialtype]").val();
+            d.xadstype = $("select[name=xadstype]").val();
         },
         type: 'POST'
       },
       columns: [
         { data: 'id', name: 'checkbox' },              
         { data: 'action', name: 'action' },              
-        { data: 'date', name: 'date' },              
-        { data: 'channel', name: 'channel' },              
-        { data: 'iprogramme', name: 'iprogramme' },              
-        { data: 'iproduct', name: 'iproduct' },              
-        { data: 'iadstype', name: 'iadstype' },              
-        { data: 'start_time', name: 'start_time' },              
-        { data: 'duration', name: 'duration' },              
-        { data: 'cost', name: 'cost' },              
+        { data: 'date', name: 'date' },
+        { data: 'channel', name: 'channel' },
+        { data: 'nprogramme', name: 'nprogramme' },
+        { data: 'nlevel_1', name: 'nlevel_1' },
+        { data: 'nlevel_2', name: 'nlevel_2' },
+        { data: 'nsector', name: 'nsector' },
+        { data: 'ncategory', name: 'ncategory' },
+        { data: 'nadvertiser', name: 'nadvertiser' },
+        { data: 'nproduct', name: 'nproduct' },
+        { data: 'ncopy', name: 'ncopy' },
+        { data: 'nadstype', name: 'nadstype' },
+        { data: 'iprogramme', name: 'iprogramme' },
+        { data: 'ilevel_1', name: 'ilevel_1' },
+        { data: 'ilevel_2', name: 'ilevel_2' },
+        { data: 'isector', name: 'isector' },
+        { data: 'icategory', name: 'icategory' },
+        { data: 'iadvertiser', name: 'iadvertiser' },
+        { data: 'iadvertiser_group', name: 'iadvertiser_group' },
+        { data: 'iproduct', name: 'iproduct' },
+        { data: 'icopy', name: 'icopy' },
+        { data: 'iadstype', name: 'iadstype' },
+        { data: 'tadstype', name: 'tadstype' },
+        { data: 'size', name: 'size' },
+        { data: 'title', name: 'title' },
+        { data: 'sb_time', name: 'sb_time' },
+        { data: 'sb_no', name: 'sb_no' },
+        { data: 'tot_spots_in_break', name: 'tot_spots_in_break' },
+        { data: 'position', name: 'position' },
+        { data: 'pos_in_break', name: 'pos_in_break' },
+        { data: 'start_time', name: 'start_time' },
+        { data: 'end_time', name: 'end_time' },
+        { data: 'duration', name: 'duration' },
+        { data: 'no_of_spots', name: 'no_of_spots' },
+        { data: 'cost', name: 'cost' },
+        { data: 't_second_cost', name: 't_second_cost' },      
         { data: 'tvr'+$("select[name=filter-ntargetaudience]").val(), name: 'tvr'+$("select[name=filter-ntargetaudience]").val() },              
+        { data: 't_second_tvr'+$("select[name=filter-ntargetaudience]").val(), name: 't_second_tvr'+$("select[name=filter-ntargetaudience]").val() },              
         { data: '000s'+$("select[name=filter-ntargetaudience]").val(), name: '000s'+$("select[name=filter-ntargetaudience]").val() },              
+        { data: 'break_type', name: 'break_type' },      
       ],
       dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
           "<'row'<'col-sm-12'B>>"+
           "<'row'<'col-sm-12'tr>>" +
           "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
       buttons: [            
-          { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
+          { extend: 'colvis', text: 'Column' },
           {
             extend: 'csv',
-            text: 'CSV All',
+            text: 'CSV',
             className: 'buttons-csvall',
-            action: function ( e, dt, node, config ) {
-                window.location = '{{ url('admin/uploaddata/csvall') }}'
+            action: function ( e, dt, node, config ) {// serialize request
+                window.location = '{{ url('admin/adsperformance/csvall') }}'
             }
           }
       ],
@@ -360,6 +480,9 @@ $(document).ready(function(){
           visible: false,
           searchable: false,
       },{
+          targets: [4,5,6,7,8,9,10,11,12,14,15,16,17,18,19,21,23,24,25,26,27,28,29,30,32,34,36,38,39,40],
+          visible: false,
+      },{
           targets: [0,1],
           sortable: false,
       } ],
@@ -377,14 +500,32 @@ $(document).ready(function(){
   $("select[name='filter-ntargetaudience']").addClass('selectpicker'); // dropdown search with bootstrap select
   $("select[name='filter-ntargetaudience']").attr('data-live-search','true'); // dropdown search with bootstrap select
   $("select[name='filter-ntargetaudience']").attr('data-size','3'); // dropdown search with bootstrap select
-
+  $("select[name='filter-ntargetaudience']").selectpicker();
 });
 </script>
 <script>
   $(document).ready(function(){
     $("#filtererreset").click(function(){
-      $("input[name^=filter-]").val('');
+      var start = moment().subtract(6, 'day');
+      $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
+      var end = moment();
+      $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));      
+      $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
+      $('input[name=starttime]').val('00:00:00');
+      $('input[name=endtime]').val('23:59:59');
+      $(".filterer").find('input[type=hidden]').val('');
+      $(".filterer").find('select').prop("selectedIndex", 0);
       $("span[id^=filter-]").html('');
+      $("select[name='ntargetaudience']").selectpicker("refresh");
+    });
+    
+    $("#filter-reset-selected").click(function(){
+      var filter = $("input[name=filter-active]").val();
+      $(".search-result.btn-primary").addClass("btn-outline-primary");
+      $(".search-result.btn-primary").removeClass("btn-primary");    
+      $("#filter-selected").html('');
+      $("input[name="+filter+"]").val('');
+      $("#filter-"+filter+"-count").html(''); // set count at button
     });
   });
 </script>
@@ -393,7 +534,7 @@ $(document).ready(function(){
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
-<button id="filtererreset" class="btn btn-secondary pull-left filterer-close" style="color:#fff"><i class="ft-rotate-ccw"></i></button>
+<a id="filtererreset" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
 <a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
@@ -405,28 +546,55 @@ $(document).ready(function(){
               {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
               {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
           </div>
+          <div class="row">
+            <div class="col-5">
+              {{ Form::text('starttime', $request->starttime ?? '00:00:00', array('id'=>'starttime','class' => 'form-control','required','autocomplete'=>'off')) }}
+            </div>
+            <div class="col-1" style="top:8px">to</div>
+            <div class="col-5">
+              {{ Form::text('endtime',  $request->endtime ?? '23:59:59', array('id'=>'endtime','class' => 'form-control','required','autocomplete'=>'off')) }}
+            </div>
+          </div>
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Channel</h6>
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
+        <button type="button" class="btn btn-primary col-10 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
         {{ Form::hidden('filter-channel') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> Programme</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> nProgramme</button>
         {{ Form::hidden('filter-nprogramme') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel1"><span id="filter-nlevel1-count"></span> Level 1</button>
-        {{ Form::hidden('filter-nlevel1') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel2"><span id="filter-nlevel2-count"></span> Level 2</button>
-        {{ Form::hidden('filter-nlevel2') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="iprogramme"><span id="filter-iprogramme-count"></span> iProgramme</button>
+        {{ Form::hidden('filter-iprogramme') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_1"><span id="filter-nlevel_1-count"></span> nLevel 1</button>
+        {{ Form::hidden('filter-nlevel_1') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="ilevel_1"><span id="filter-ilevel_1-count"></span> iLevel 1</button>
+        {{ Form::hidden('filter-ilevel_1') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_2"><span id="filter-nlevel_2-count"></span> nLevel 2</button>
+        {{ Form::hidden('filter-nlevel_2') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="ilevel_2"><span id="filter-ilevel_2-count"></span> iLevel 2</button>
+        {{ Form::hidden('filter-ilevel_2') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
-        <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> Advertiser</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> nAdvertiser</button>
         {{ Form::hidden('filter-nadvertiser') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> Product</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="iadvertiser"><span id="filter-iadvertiser-count"></span> iAdvertiser</button>
+        {{ Form::hidden('filter-iadvertiser') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> nProduct</button>
         {{ Form::hidden('filter-nproduct') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> Sector</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="iproduct"><span id="filter-iproduct-count"></span> iProduct</button>
+        {{ Form::hidden('filter-iproduct') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> nSector</button>
         {{ Form::hidden('filter-nsector') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> Category</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="isector"><span id="filter-isector-count"></span> iSector</button>
+        {{ Form::hidden('filter-isector') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> nCategory</button>
         {{ Form::hidden('filter-ncategory') }}
-        <button class="btn btn-primary col-10 filter-button" data-filter="nadstype"><span id="filter-nadstype-count"></span> Ads Type</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="icategory"><span id="filter-icategory-count"></span> iCategory</button>
+        {{ Form::hidden('filter-icategory') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nadstype"><span id="filter-nadstype-count"></span> nAds Type</button>
         {{ Form::hidden('filter-nadstype') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="iadstype"><span id="filter-iadstype-count"></span> iAds Type</button>
+        {{ Form::hidden('filter-iadstype') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="tadstype"><span id="filter-tadstype-count"></span> tAds Type</button>
+        {{ Form::hidden('filter-tadstype') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>
         {{ Form::select('filter-ntargetaudience',$data['ddtargetaudience'],null,['class'=>'form-control']) }}
@@ -442,6 +610,13 @@ $(document).ready(function(){
         <select name="filter-ncommercialtype" class="form-control col-10">
           <option value="allads">All Ads</option>
           <option value="commercialonly" selected>Commercial Only</option>
+        </select>
+        </div>
+        <div class="form-group">
+        <select name="xadstype" class="form-control col-10">
+          <option value="alladsype"  selected>All Ads Type</option>
+          <option value="loosespot">Loose Spot</option>
+          <option value="nonloosespot">Non Loose Spot</option>
         </select>
         </div>
         <hr>

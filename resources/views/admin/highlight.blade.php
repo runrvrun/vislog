@@ -53,7 +53,7 @@
             <div class="card-body pt-2 pb-0">
               <div class="media">
                 <div class="media-body white text-left">
-                  <h3 class="font-large-1 mb-0">{{ $data['number_of_spot'] ?? 0 }}</h3>
+                  <h3 class="font-large-1 mb-0">{{ number_format(($data['number_of_spot'] ?? 0),0) }}</h3>
                   <span>Spots</span>
                 </div>
                 <div class="media-right white text-right">

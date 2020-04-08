@@ -25,7 +25,9 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::post('/dashboard/spot_per_level2json', 'Admin\DashboardController@spot_per_level2json');
     Route::post('/dashboard/spot_per_adstypejson', 'Admin\DashboardController@spot_per_adstypejson');
     Route::get('/adsperformance', 'Admin\AdsperformanceController@index');
+    Route::get('/adsperformance/get', 'Admin\AdsperformanceController@get');
     Route::post('/adsperformance/indexjson', 'Admin\AdsperformanceController@indexjson');
+    Route::get('/adsperformance/csvall', 'Admin\AdsperformanceController@csvall');
     Route::get('/adsperformance/search-targetaudience-json', 'Admin\TargetaudienceController@searchjson');    
     Route::get('/adsperformance/search-channel-json', 'Admin\ChannelController@searchjson');    
     Route::get('/adsperformance/search-nprogramme-json', 'Admin\TvprogrammesearchController@searchnprogrammejson');    

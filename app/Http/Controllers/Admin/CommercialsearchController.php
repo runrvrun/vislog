@@ -74,7 +74,7 @@ class CommercialsearchController extends Controller
     public function searchnsectorjson(Request $request)
     {
         if(isset($request->term)){
-            $query = Commercialsearch::select('')->where('nsector','like','%'.$request->term.'%')->take(50)->groupBy('nsector');
+            $query = Commercialsearch::select('nsector')->where('nsector','like','%'.$request->term.'%')->take(50)->groupBy('nsector');
             if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(',',Auth::user()->privileges['nsector']));
             return $query->get();
         }else{
@@ -87,7 +87,7 @@ class CommercialsearchController extends Controller
     public function searchisectorjson(Request $request)
     {
         if(isset($request->term)){
-            $query = Commercialsearch::select('')->where('isector','like','%'.$request->term.'%')->take(50)->groupBy('isector');
+            $query = Commercialsearch::select('isector')->where('isector','like','%'.$request->term.'%')->take(50)->groupBy('isector');
             if(!empty(Auth::user()->privileges['isector'])) $query->whereIn('isector',explode(',',Auth::user()->privileges['isector']));
             return $query->get();
         }else{

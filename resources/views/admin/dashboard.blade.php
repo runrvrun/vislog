@@ -448,7 +448,6 @@ $(document).ready(function() {
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-10'p>>",
         buttons: [        
-            { extend: 'colvis', text: '<i class="ft-layout"></i>' }
         ],
         order: [[1, 'DESC']],
         "oLanguage": {
@@ -1006,7 +1005,19 @@ $(document).ready(function(){
       $("#filter-selected").html(newval.replace(filt+',',''));
     }
     $("input[name="+filter+"]").val($("#filter-selected").html());
-    $("#filter-"+filter+"-count").html(count); // set count at button
+    if(count>0){
+      $("#filter-"+filter+"-count").html(count); // set count at button
+    }else{
+      $("#filter-"+filter+"-count").html(''); // set count at button
+    }
+  });
+  $("#filter-reset-selected").click(function(){
+    var filter = $("input[name=filter-active]").val();
+    $(".search-result.btn-primary").addClass("btn-outline-primary");
+    $(".search-result.btn-primary").removeClass("btn-primary");    
+    $("#filter-selected").html('');
+    $("input[name="+filter+"]").val('');
+    $("#filter-"+filter+"-count").html(''); // set count at button
   });
 });
 </script>
@@ -1215,6 +1226,7 @@ $(document).ready(function(){
       <div class="modal-footer">
         <div id="filter-selected"></div>
         <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Add Filter</button>
+        <a id="filter-reset-selected" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
       </div>
     </div>
   </div>

@@ -77,6 +77,7 @@
       <div class="modal-footer">
         <div id="filter-selected"></div>
         <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Add Filter</button>
+        <a id="filter-reset-selected" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
       </div>
     </div>
   </div>
@@ -108,6 +109,7 @@
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+<link href="{{ asset('css') }}/jquery.timepicker.min.css" rel="stylesheet" type="text/css">
 <style>
 #filterersubmit{
   bottom: 10px;
@@ -120,6 +122,9 @@
   width: 9%;
   right: auto;
   left: 10px;
+  position: absolute;
+  padding: 7px;
+  z-index: 10;
 }
 button.search-result{
   min-width:100px;
@@ -140,6 +145,7 @@ button.search-result{
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{{ asset('/') }}app-assets/js/filterer.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
+<script src="{{ asset('js') }}/jquery.timepicker.min.js"></script>
 <script type="text/javascript">
 $(function() {
     var start = moment().subtract(1, 'day');
@@ -171,6 +177,10 @@ $(function() {
       $('#startdate').val(daterange.startDate.format('YYYY-MM-DD'));
       $('#enddate').val(daterange.endDate.format('YYYY-MM-DD'));
     });
+    
+    var options = { 'timeFormat': 'H:i:s','step':60 };
+    $('#starttime').timepicker(options);
+    $('#endtime').timepicker(options);
 });
 </script>
 <script type="text/javascript">
@@ -183,11 +193,9 @@ $(document).ready(function(){
     $('#search-term').val('');
     $("#filter-modal").modal();
     // show existing filter in modal footer
+    $("#filter-selected").html('');
     $("#filter-selected").html($("input[name=filter-"+filter+"]").val());
-    // if filter by channel, load directly
-    if(filter=="channel"){
-      $("#search-button").click();
-    }
+    $("#search-button").click();
   });
   $('#search-term').keypress(function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -291,15 +299,26 @@ $(document).ready(function(){
         data : function(d){
             d.startdate = $('#startdate').val();
             d.enddate = $('#enddate').val();
+            d.starttime = $('#starttime').val();
+            d.endtime = $('#endtime').val();
             d.filterchannel = $("input[name=filter-channel]").val();
             d.filternprogramme = $("input[name=filter-nprogramme]").val();
-            d.filternlevel_1 = $("input[name=filter-nlevel1]").val();
-            d.filternlevel_2 = $("input[name=filter-nlevel2]").val();
+            d.filteriprogramme = $("input[name=filter-iprogramme]").val();
+            d.filternlevel_1 = $("input[name=filter-nlevel_1]").val();
+            d.filterilevel_1 = $("input[name=filter-ilevel_1]").val();
+            d.filternlevel_2 = $("input[name=filter-nlevel_2]").val();
+            d.filterilevel_2 = $("input[name=filter-ilevel_2]").val();
             d.filternadvertiser = $("input[name=filter-nadvertiser]").val();
+            d.filteriadvertiser = $("input[name=filter-iadvertiser]").val();
             d.filternproduct = $("input[name=filter-nproduct]").val();
+            d.filteriproduct = $("input[name=filter-iproduct]").val();
             d.filternsector = $("input[name=filter-nsector]").val();
+            d.filterisector = $("input[name=filter-isector]").val();
             d.filterncategory = $("input[name=filter-ncategory]").val();
+            d.filtericategory = $("input[name=filter-icategory]").val();
             d.filternadstype = $("input[name=filter-nadstype]").val();
+            d.filteriadstype = $("input[name=filter-iadstype]").val();
+            d.filtertadstype = $("input[name=filter-tadstype]").val();
             d.filterntargetaudience = $("select[name=filter-ntargetaudience]").val();
             d.filterncommercialtype = $("select[name=filter-ncommercialtype]").val();
         },
@@ -322,10 +341,10 @@ $(document).ready(function(){
           "<'row'<'col-sm-12'tr>>" +
           "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
       buttons: [            
-          { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
+          { extend: 'colvis', text: 'Column' },
           {
             extend: 'csv',
-            text: 'CSV All',
+            text: 'CSV',
             className: 'buttons-csvall',
             action: function ( e, dt, node, config ) {
                 window.location = '{{ url('admin/uploaddata/csvall') }}'
@@ -370,9 +389,28 @@ $(document).ready(function(){
 <script>
   $(document).ready(function(){
     $("#filtererreset").click(function(){
-      $("input[name^=filter-]").val('');
+      var start = moment().subtract(6, 'day');
+      $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
+      var end = moment();
+      $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));      
+      $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
+      $('input[name=starttime]').val('00:00:00');
+      $('input[name=endtime]').val('23:59:59');
+      $(".filterer").find('input[type=hidden]').val('');
+      $(".filterer").find('select').prop("selectedIndex", 0);
       $("span[id^=filter-]").html('');
+      $("select[name='ntargetaudience']").selectpicker("refresh");
     });
+    
+    $("#filter-reset-selected").click(function(){
+      var filter = $("input[name=filter-active]").val();
+      $(".search-result.btn-primary").addClass("btn-outline-primary");
+      $(".search-result.btn-primary").removeClass("btn-primary");    
+      $("#filter-selected").html('');
+      $("input[name="+filter+"]").val('');
+      $("#filter-"+filter+"-count").html(''); // set count at button
+    });
+  });
   });
 </script>
 @endsection
@@ -380,7 +418,7 @@ $(document).ready(function(){
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
-<button id="filtererreset" class="btn btn-secondary pull-left filterer-close" style="color:#fff"><i class="ft-rotate-ccw"></i></button>
+<a id="filtererreset" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
 <a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
@@ -392,28 +430,55 @@ $(document).ready(function(){
               {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
               {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
           </div>
+          <div class="row">
+            <div class="col-5">
+              {{ Form::text('starttime', $request->starttime ?? '00:00:00', array('id'=>'starttime','class' => 'form-control','required','autocomplete'=>'off')) }}
+            </div>
+            <div class="col-1" style="top:8px">to</div>
+            <div class="col-5">
+              {{ Form::text('endtime',  $request->endtime ?? '23:59:59', array('id'=>'endtime','class' => 'form-control','required','autocomplete'=>'off')) }}
+            </div>
+          </div>
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Channel</h6>
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
+        <button type="button" class="btn btn-primary col-10 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
         {{ Form::hidden('filter-channel') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> Programme</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> nProgramme</button>
         {{ Form::hidden('filter-nprogramme') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel1"><span id="filter-nlevel1-count"></span> Level 1</button>
-        {{ Form::hidden('filter-nlevel1') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel2"><span id="filter-nlevel2-count"></span> Level 2</button>
-        {{ Form::hidden('filter-nlevel2') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="iprogramme"><span id="filter-iprogramme-count"></span> iProgramme</button>
+        {{ Form::hidden('filter-iprogramme') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_1"><span id="filter-nlevel_1-count"></span> nLevel 1</button>
+        {{ Form::hidden('filter-nlevel_1') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="ilevel_1"><span id="filter-ilevel_1-count"></span> iLevel 1</button>
+        {{ Form::hidden('filter-ilevel_1') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_2"><span id="filter-nlevel_2-count"></span> nLevel 2</button>
+        {{ Form::hidden('filter-nlevel_2') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="ilevel_2"><span id="filter-ilevel_2-count"></span> iLevel 2</button>
+        {{ Form::hidden('filter-ilevel_2') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
-        <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> Advertiser</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> nAdvertiser</button>
         {{ Form::hidden('filter-nadvertiser') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> Product</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="iadvertiser"><span id="filter-iadvertiser-count"></span> iAdvertiser</button>
+        {{ Form::hidden('filter-iadvertiser') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> nProduct</button>
         {{ Form::hidden('filter-nproduct') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> Sector</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="iproduct"><span id="filter-iproduct-count"></span> iProduct</button>
+        {{ Form::hidden('filter-iproduct') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> nSector</button>
         {{ Form::hidden('filter-nsector') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> Category</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="isector"><span id="filter-isector-count"></span> iSector</button>
+        {{ Form::hidden('filter-isector') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> nCategory</button>
         {{ Form::hidden('filter-ncategory') }}
-        <button class="btn btn-primary col-10 filter-button" data-filter="nadstype"><span id="filter-nadstype-count"></span> Ads Type</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="icategory"><span id="filter-icategory-count"></span> iCategory</button>
+        {{ Form::hidden('filter-icategory') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nadstype"><span id="filter-nadstype-count"></span> nAds Type</button>
         {{ Form::hidden('filter-nadstype') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="iadstype"><span id="filter-iadstype-count"></span> iAds Type</button>
+        {{ Form::hidden('filter-iadstype') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="tadstype"><span id="filter-tadstype-count"></span> tAds Type</button>
+        {{ Form::hidden('filter-tadstype') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>
         {{ Form::select('filter-ntargetaudience',$data['ddtargetaudience'],null,['class'=>'form-control']) }}

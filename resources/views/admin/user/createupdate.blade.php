@@ -118,13 +118,13 @@
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="date">Level 1: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[nlevel1]', old('privileges[level_1]',$item->privileges->level_1 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Level 1', 'data-filter'=>'nlevel1','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[nlevel_1]', old('privileges[level_1]',$item->privileges->level_1 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Level 1', 'data-filter'=>'nlevel_1','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="date">Level 2: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[nlevel2]', old('privileges[nlevel_2]',$item->privileges->nlevel_2 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Level 2', 'data-filter'=>'nlevel2','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[nlevel_2]', old('privileges[nlevel_2]',$item->privileges->nlevel_2 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Level 2', 'data-filter'=>'nlevel_2','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">

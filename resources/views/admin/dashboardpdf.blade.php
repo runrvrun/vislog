@@ -210,18 +210,6 @@
 }
 </style>
 <style type="text/css" media="all">
-#filterersubmit{
-  bottom: 10px;
-  top: auto;
-  width: 85%;
-}
-#filtererreset{
-  bottom: 10px;
-  top: auto;
-  width: 9%;
-  right: auto;
-  left: 10px;
-}
 button.search-result{
   min-width:100px;
 }
@@ -279,10 +267,6 @@ button.search-result{
 $(document).ready(function() {
     var resp = false;
     if(window.innerWidth <= 800) resp=true;
-
-    $("#filterersubmit").click(function() {
-      $("#loading-modal").modal();
-    });
 
     var table = $('.spot-per-product-table').DataTable({
         responsive: resp,
