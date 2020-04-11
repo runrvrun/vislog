@@ -27,7 +27,7 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/adsperformance', 'Admin\AdsperformanceController@index');
     Route::get('/adsperformance/get', 'Admin\AdsperformanceController@get');
     Route::post('/adsperformance/indexjson', 'Admin\AdsperformanceController@indexjson');
-    Route::get('/adsperformance/csvall', 'Admin\AdsperformanceController@csvall');
+    Route::post('/adsperformance/csvall', 'Admin\AdsperformanceController@csvall');
     Route::get('/adsperformance/search-targetaudience-json', 'Admin\TargetaudienceController@searchjson');    
     Route::get('/adsperformance/search-channel-json', 'Admin\ChannelController@searchjson');    
     Route::get('/adsperformance/search-nprogramme-json', 'Admin\TvprogrammesearchController@searchnprogrammejson');    
@@ -50,9 +50,13 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/adsperformance/search-ncopy-json', 'Admin\CommercialsearchController@searchncopyjson'); 
     Route::get('/tvads', 'Admin\VideoController@tvads');
     Route::post('/tvads/indexjson', 'Admin\VideoController@tvadsjson');
+    Route::post('/tvads/csvall', 'Admin\VideoController@tvadscsvall');
     Route::get('/tvprogramme', 'Admin\VideoController@tvprogramme');
     Route::post('/tvprogramme/indexjson', 'Admin\VideoController@tvprogrammejson');
+    Route::get('/tvprogramme/get', 'Admin\VideoController@tvprogrammeget');
+    Route::post('/tvprogramme/csvall', 'Admin\VideoController@tvprogrammecsvall');
     Route::get('/video/generatevideo', 'Admin\VideoController@generatevideo');
+    Route::get('/video/downloadmultivideo', 'Admin\VideoController@downloadmultivideo');    
     Route::get('/video/logdownload', 'Admin\VideoController@logdownload');
     Route::get('/mktsummary', 'Admin\MarketingController@mktsummary');
     Route::get('/adexnett', 'Admin\MarketingController@adexnett');

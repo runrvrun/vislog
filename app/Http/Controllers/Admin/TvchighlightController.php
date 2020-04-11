@@ -24,7 +24,7 @@ class TvchighlightController extends Controller
     }
     public function indexjson()
     {
-        $query = Tvchighlight::select('title','description')->whereNotNull('_id')->orderBy('created_at');
+        $query = Tvchighlight::select('title','description','show')->whereNotNull('_id')->orderBy('created_at');
         return datatables($query->get())
         ->addColumn('action', function ($dt) {
             return view('admin.tvchighlight.action',compact('dt'));
@@ -50,6 +50,11 @@ class TvchighlightController extends Controller
     public function store(Request $request)
     {
         $requestData = $request->all();
+        if(!isset($requestData['show'])){
+            $requestData['show'] = false;
+        }else{
+            $requestData['show'] = true;
+        }
         $requestData['filename'] = '';
         $tvc = Tvchighlight::create($requestData);        
         //upload video
@@ -113,6 +118,11 @@ class TvchighlightController extends Controller
             }
             $requestData = $request->all();
             $requestData['filename'] = $tvc->filename;
+            if(!isset($requestData['show'])){
+                $requestData['show'] = false;
+            }else{
+                $requestData['show'] = true;
+            }
             $tvc->update($requestData);
             Session::flash('message', 'TVC Highlight diubah'); 
             Session::flash('alert-class', 'alert-success'); 

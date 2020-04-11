@@ -217,9 +217,9 @@ $(document).ready(function(){
             var curfil = $("#filter-selected").html();
             if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ',')+1){
               // previously selected, set style
-              $('#filter-modal-search-result').append( '<button class="btn search-result btn-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
+              $('#filter-modal-search-result').append( '<button type="button" class="btn search-result btn-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }else{
-              $('#filter-modal-search-result').append( '<button class="btn search-result btn-outline-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
+              $('#filter-modal-search-result').append( '<button type="button" class="btn search-result btn-outline-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }
           });
         }else{
@@ -445,41 +445,41 @@ $(document).ready(function(){
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Channel</h6>
         <button type="button" class="btn btn-primary col-10 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
         {{ Form::hidden('filter-channel') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> nProgramme</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> nProgramme</button>
         {{ Form::hidden('filter-nprogramme') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="iprogramme"><span id="filter-iprogramme-count"></span> iProgramme</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iprogramme"><span id="filter-iprogramme-count"></span> iProgramme</button>
         {{ Form::hidden('filter-iprogramme') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_1"><span id="filter-nlevel_1-count"></span> nLevel 1</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_1"><span id="filter-nlevel_1-count"></span> nLevel 1</button>
         {{ Form::hidden('filter-nlevel_1') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="ilevel_1"><span id="filter-ilevel_1-count"></span> iLevel 1</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_1"><span id="filter-ilevel_1-count"></span> iLevel 1</button>
         {{ Form::hidden('filter-ilevel_1') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_2"><span id="filter-nlevel_2-count"></span> nLevel 2</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_2"><span id="filter-nlevel_2-count"></span> nLevel 2</button>
         {{ Form::hidden('filter-nlevel_2') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="ilevel_2"><span id="filter-ilevel_2-count"></span> iLevel 2</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_2"><span id="filter-ilevel_2-count"></span> iLevel 2</button>
         {{ Form::hidden('filter-ilevel_2') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
-        <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> nAdvertiser</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> nAdvertiser</button>
         {{ Form::hidden('filter-nadvertiser') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="iadvertiser"><span id="filter-iadvertiser-count"></span> iAdvertiser</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadvertiser"><span id="filter-iadvertiser-count"></span> iAdvertiser</button>
         {{ Form::hidden('filter-iadvertiser') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> nProduct</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> nProduct</button>
         {{ Form::hidden('filter-nproduct') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="iproduct"><span id="filter-iproduct-count"></span> iProduct</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iproduct"><span id="filter-iproduct-count"></span> iProduct</button>
         {{ Form::hidden('filter-iproduct') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> nSector</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> nSector</button>
         {{ Form::hidden('filter-nsector') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="isector"><span id="filter-isector-count"></span> iSector</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="isector"><span id="filter-isector-count"></span> iSector</button>
         {{ Form::hidden('filter-isector') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> nCategory</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> nCategory</button>
         {{ Form::hidden('filter-ncategory') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="icategory"><span id="filter-icategory-count"></span> iCategory</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="icategory"><span id="filter-icategory-count"></span> iCategory</button>
         {{ Form::hidden('filter-icategory') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="nadstype"><span id="filter-nadstype-count"></span> nAds Type</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nadstype"><span id="filter-nadstype-count"></span> nAds Type</button>
         {{ Form::hidden('filter-nadstype') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="iadstype"><span id="filter-iadstype-count"></span> iAds Type</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadstype"><span id="filter-iadstype-count"></span> iAds Type</button>
         {{ Form::hidden('filter-iadstype') }}
-        <button class="btn btn-primary col-5 filter-button" data-filter="tadstype"><span id="filter-tadstype-count"></span> tAds Type</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="tadstype"><span id="filter-tadstype-count"></span> tAds Type</button>
         {{ Form::hidden('filter-tadstype') }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>

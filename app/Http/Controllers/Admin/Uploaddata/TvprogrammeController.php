@@ -85,7 +85,15 @@ class TvprogrammeController extends Controller
                     $colname = strtolower($key);
                     $colname = str_replace(' ','_',$colname);
                     $colname = str_replace('.','',$colname);
-                    $insertData[$colname] = $val;
+                    switch($colname){
+                    case 'date':
+                        $date = Carbon::createFromFormat('Y-m-d H:i:s',$val.' 00:00:00')->toDateTimeString();
+                        $insertData[$colname] = $val;
+                        $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+                        break;
+                    default:
+                        $insertData[$colname] = $val;
+                    }
                 }
                 return Tvprogramme::create($insertData);
             });

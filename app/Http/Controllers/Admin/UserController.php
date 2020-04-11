@@ -47,9 +47,9 @@ class UserController extends Controller
     public function csvall()
     {
         $export = User::all();
-        $filename = 'nujeks-user.csv';
+        $filename = 'vislog-user.csv';
         $temp = 'temp/'.$filename;
-        (new FastExcel($export))->export('temp/nujeks-user.csv');
+        (new FastExcel($export))->export('temp/vislog-user.csv');
         $headers = [
             'Content-Type: text/csv',
             ];

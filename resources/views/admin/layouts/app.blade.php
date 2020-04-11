@@ -30,7 +30,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/prism.min.css">
     <!-- END VENDOR CSS-->
     <!-- BEGIN APEX CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/css/app.css?v=4">
+    <link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/css/app.css?v=6">
     <!-- END APEX CSS-->
     <!-- BEGIN Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('/') }}css/style.css?v=1">

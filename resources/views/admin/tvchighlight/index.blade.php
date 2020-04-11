@@ -36,6 +36,7 @@
                             <tr>
                               <th>Title</th>                  
                               <th>Description</th>                  
+                              <th>Show in Highlight</th>                  
                               <th></th>                  
                             </tr>
                           </thead>
@@ -76,13 +77,25 @@ var table = $('.browse-table').DataTable({
     columns: [
       { data: 'title', name: 'title' },
       { data: 'description', name: 'description' },
+      { data: 'show', name: 'show' },
       { data: 'action', name: 'action' },
     ],
     dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
         "<'row'<'col-sm-12'tr>>" +
         "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
     lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-    columnDefs: [ ],
+    columnDefs: [ 
+      {
+          render: function ( data, type, row ) {
+            if(data){
+              return 'Show';
+            }else{
+              return 'No';
+            }
+          },
+          targets: 2
+      }
+    ],
     order: [[1, 'DESC']]
 });
 $('.buttons-add').addClass('btn mr-1');

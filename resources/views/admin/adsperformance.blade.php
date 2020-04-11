@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('pagetitle')
-    <title>TV Programme</title>
+    <title>Ads Performance</title>
 @endsection
 
 @section('content')
@@ -11,7 +11,7 @@
             <section id="page">
               <div class="row">
                 <div class="col-sm-12">
-                  <div class="content-header">TV Programme</div>                
+                  <div class="content-header">Ads Performance</div>                
                 </div>
               </div>
               <div class="row">
@@ -29,22 +29,16 @@
                           <thead>
                             <tr>
                               <th></th>                  
-                              <th></th>                  
                               <th>Date</th>                  
                               <th>Channel</th>                  
-                              <th>nProgramme</th>
-                              <th>nLevel 1</th>
-                              <th>nLevel 2</th>
+                              <th>Programme</th>                  
+                              <th>Product</th>                  
+                              <th>Ads Type</th>                  
                               <th>Start Time</th>                  
-                              <th>End Time</th>
                               <th>Duration</th>                  
-                              <th>Cost</th>
-                              <th>iProgramme</th>
-                              <th>iLevel 1</th>
-                              <th>iLevel 2</th>
-                              <th>Status</th>
-                              <th>Kode</th>
-                              <th>Rate</th>
+                              <th>Cost</th>                  
+                              <th>TVR</th>                  
+                              <th>000s</th>                  
                             </tr>
                           </thead>
                         </table>
@@ -84,32 +78,6 @@
       <div class="modal-footer">
         <div id="filter-selected"></div>
         <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Add Filter</button>
-        <a id="filter-reset-selected" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- modal play video -->
-<div class="modal fade text-left show" id="playvideo-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel7" style="display: none; padding-right: 17px;" aria-modal="true">
-  <div class="modal-dialog  modal-xl" role="document">
-    <div class="modal-content">
-      <div class="modal-header bg-primary white">
-        <h4 class="modal-title" id="myModalLabel7"><span id="playvideo-title"></span></h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
-      <div class="modal-body row">
-        <div class="col-8">
-          <div id="loadingvideo" style="font-size:20px;">Preparing video... Please wait  <i class="ft-refresh-cw font-medium-4 fa fa-spin align-middle"></i></div>
-          <video src="" width="100%" controls plays-inline  type="application/x-mpegURL"  id="playvideo"></video>
-        </div>
-        <div id="detailvideo" class="col-4" style="height:415px; overflow: auto;">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <a href="" download="" id="downloadvideo" class="btn white btn-warning"> <i class="ft-download"></i> Download </a>
-        <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
@@ -120,22 +88,11 @@
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
-<link href="{{ asset('css') }}/jquery.timepicker.min.css" rel="stylesheet" type="text/css">
 <style>
 #filterersubmit{
   bottom: 10px;
   top: auto;
-  width: 85%;
-}
-#filtererreset{
-  bottom: 10px;
-  top: auto;
-  width: 9%;
-  right: auto;
-  left: 10px;
-  position: absolute;
-  padding: 7px;
-  z-index: 10;
+  width: 95%;
 }
 button.search-result{
   min-width:100px;
@@ -156,17 +113,12 @@ button.search-result{
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="{{ asset('/') }}app-assets/js/filterer.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
-<script src="{{ asset('js') }}/jquery.timepicker.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script type="text/javascript">
 $(function() {
     var start = moment().subtract(1, 'day');
     $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
     var end = moment();
     $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
-    // testing 1 agustus, not working here
-    // $('input[name=startdate]').val('2019-07-31');
-    // $('input[name=enddate]').val('2019-08-01');
 
     function cb(start, end) {
         $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
@@ -192,10 +144,6 @@ $(function() {
       $('#startdate').val(daterange.startDate.format('YYYY-MM-DD'));
       $('#enddate').val(daterange.endDate.format('YYYY-MM-DD'));
     });
-    
-    var options = { 'timeFormat': 'H:i:s','step':60 };
-    $('#starttime').timepicker(options);
-    $('#endtime').timepicker(options);
 });
 </script>
 <script type="text/javascript">
@@ -208,9 +156,11 @@ $(document).ready(function(){
     $('#search-term').val('');
     $("#filter-modal").modal();
     // show existing filter in modal footer
-    $("#filter-selected").html('');
     $("#filter-selected").html($("input[name=filter-"+filter+"]").val());
-    $("#search-button").click();
+    // if filter by channel, load directly
+    if(filter=="channel"){
+      $("#search-button").click();
+    }
   });
   $('#search-term').keypress(function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
@@ -230,11 +180,11 @@ $(document).ready(function(){
         if(result.length){
           $.each(result, function(k,v) {
             var curfil = $("#filter-selected").html();
-            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ',')+1){
+            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v + ',')+1){
               // previously selected, set style
-              $('#filter-modal-search-result').append( '<button type="button" class="btn search-result btn-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
+              $('#filter-modal-search-result').append( '<button class="btn search-result btn-primary mr-1" value="'+v+'">'+v+'</button>' );
             }else{
-              $('#filter-modal-search-result').append( '<button type="button" class="btn search-result btn-outline-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
+              $('#filter-modal-search-result').append( '<button class="btn search-result btn-outline-primary mr-1" value="'+v+'">'+v+'</button>' );
             }
           });
         }else{
@@ -262,87 +212,6 @@ $(document).ready(function(){
     $("input[name=filter-"+filter+"]").val($("#filter-selected").html());
     $("#filter-"+filter+"-count").html(count); // set count at button
   });
-
-  $(".browse-table").on("click", ".playvideo-button", function(){
-    $("#playvideo-title").html($(this).data("iproduct") + " - " + $(this).data("iprogramme") + " - " + $(this).data("channel"));
-    $("#playvideo").attr('src','');
-    $("#loadingvideo").show();
-    // get video path
-    $.ajax({
-        url:"{{ url('/admin/video/generatevideo') }}",
-        data:{
-          id: $(this).data("id"),
-          table: 'tvprogramme',
-          page: window.location.href,
-        },
-        success:function(response) {
-          videopath = response;
-          $.get(videopath)
-          .done(function() { 
-            $("#loadingvideo").hide();
-            // $("#playvideo").attr('src',videopath);
-            $("#downloadvideo").attr('href',videopath);
-            // enable HLS (m3u8) streaming playback 
-            var video = document.getElementById('playvideo');
-            if (Hls.isSupported()) {
-              var hls = new Hls();
-              hls.loadSource(videopath);
-              hls.attachMedia(video);
-              hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                video.play();
-              });
-            }
-            else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-              video.src = videopath;
-              video.addEventListener('loadedmetadata', function() {
-                video.play();
-              });
-            } 
-          }).fail(function() { 
-              $("#loadingvideo").html('Video not found.');
-          })
-       },
-       error:function(){
-        console.log("error getting video path");
-        $("#loadingvideo").html('Video not found.');
-       }
-    });
-    //get video detail
-    $.ajax({
-        url:"{{ url('/admin/tvprogramme/get') }}",
-        data:{          
-          id: $(this).data("id"),
-          filterncommercialdata: $("select[name=filter-ncommercialdata]").val(),
-          filterntargetaudience: $("select[name=filter-ntargetaudience]").val()
-        },
-        success:function(response) {
-          $("#detailvideo").html('');
-          $("#detailvideo").append('<table class="table"><tr><td>Date:</td><td>'+ response.date + '</td></tr>'
-          +'<tr><td>Channel:</td><td>'+ response.channel + '</td></tr>'
-          +'<tr><td>nProgramme:</td><td>'+ response.nprogramme + '</td></tr>'
-          +'<tr><td>nLevel 1:</td><td>'+ response.nlevel_1 + '</td></tr>'
-          +'<tr><td>nLevel 2:</td><td>'+ response.nlevel_2 + '</td></tr>'
-          +'<tr><td>Start Time:</td><td>'+ response.start_time + '</td></tr>'
-          +'<tr><td>End Time:</td><td>'+ response.end_time + '</td></tr>'
-          +'<tr><td>Duration:</td><td>'+ response.duration + '</td></tr>'
-          +'<tr><td>Cost:</td><td>'+ response.cost + '</td></tr>'
-          +'<tr><td>iProgramme:</td><td>'+ response.iprogramme + '</td></tr>'
-          +'<tr><td>iLevel_1:</td><td>'+ response.ilevel_1 + '</td></tr>'
-          +'<tr><td>iLevel_2:</td><td>'+ response.ilevel_2 + '</td></tr>'
-          +'<tr><td>Status:</td><td>'+ response.status + '</td></tr>'
-          +'<tr><td>Kode:</td><td>'+ response.kode + '</td></tr>'
-          +'<tr><td>Rate:</td><td>'+ response.rate + '</td></tr></table>');
-          $("#downloadvideo").attr('download',response.iprogramme+'_'+response.channel+'_'+(response.date.replace(/-/g, '_'))+'_'+(response.start_time.replace(/:/g, '_')));
-       },
-       error:function(){
-        console.log("Video detail not found");
-       }
-    });
-  });
-  //pause on close modal  
-  $(document).on('hide.bs.modal','#playvideo-modal', function () {
-    $("#playvideo").trigger('pause');
-  })
 }); 
 </script>
 <script>
@@ -350,9 +219,26 @@ $(document).ready(function(){
   var resp = false;
   if(window.innerWidth <= 800) resp=true;
   
+  $('.buttons-deletemulti').click(function(){
+    var deleteids_arr = [];
+    var rows_selected = table.column(0).checkboxes.selected();
+    $.each(rows_selected, function(index, rowId){
+      deleteids_arr.push(rowId);
+    });
+    var deleteids_str = encodeURIComponent(deleteids_arr);
+
+    // Check any checkbox checked or not
+    if(deleteids_arr.length > 0){
+      var confirmdelete = confirm("Hapus seluruh data terpilih?");
+      if (confirmdelete == true) {
+        window.location = '{{ url('admin/uploaddata/destroymulti?id=') }}'+deleteids_str
+      } 
+    }
+  });
+  
   $("#filterersubmit").click(function() {
     // table.draw();  
-    // destroy and remake datatable
+    // destroy and remake datatable because column changed based on targetaudience (001-100)
     if ($.fn.DataTable.isDataTable(".browse-table")) {
       $('.browse-table').DataTable().clear().destroy();
     }
@@ -364,63 +250,60 @@ $(document).ready(function(){
           },
       serverSide: true,
       ajax:{
-        url: '{!! url('admin/tvprogramme/indexjson') !!}',
+        url: '{!! url('admin/adsperformance/indexjson') !!}',
         headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data : function(d){
             d.startdate = $('#startdate').val();
             d.enddate = $('#enddate').val();
-            d.starttime = $('#starttime').val();
-            d.endtime = $('#endtime').val();
             d.filterchannel = $("input[name=filter-channel]").val();
             d.filternprogramme = $("input[name=filter-nprogramme]").val();
-            d.filteriprogramme = $("input[name=filter-iprogramme]").val();
             d.filternlevel_1 = $("input[name=filter-nlevel_1]").val();
-            d.filterilevel_1 = $("input[name=filter-ilevel_1]").val();
             d.filternlevel_2 = $("input[name=filter-nlevel_2]").val();
-            d.filterilevel_2 = $("input[name=filter-ilevel_2]").val();
+            d.filternadvertiser = $("input[name=filter-nadvertiser]").val();
+            d.filternproduct = $("input[name=filter-nproduct]").val();
+            d.filternsector = $("input[name=filter-nsector]").val();
+            d.filterncategory = $("input[name=filter-ncategory]").val();
+            d.filternadstype = $("input[name=filter-nadstype]").val();
+            d.filterntargetaudience = $("select[name=filter-ntargetaudience]").val();
+            d.filterncommercialdata = $("select[name=filter-ncommercialdata]").val();
+            d.filterncommercialtype = $("select[name=filter-ncommercialtype]").val();
         },
         type: 'POST'
       },
-      columns: [  
-        { data: '_id', name: 'checkbox' },              
-        { data: 'action', name: 'action' },              
+      columns: [
+        { data: 'id', name: 'checkbox' },              
         { data: 'date', name: 'date' },              
-        { data: 'channel', name: 'channel' },
-        { data: 'nprogramme', name: 'nprogramme' },
-        { data: 'nlevel_1', name: 'nlevel_1' },
-        { data: 'nlevel_2', name: 'nlevel_2' },
-        { data: 'start_time', name: 'start_time' },              
-        { data: 'end_time', name: 'end_time' },
-        { data: 'duration', name: 'duration' },              
-        { data: 'cost', name: 'cost' },
+        { data: 'channel', name: 'channel' },              
         { data: 'iprogramme', name: 'iprogramme' },              
-        { data: 'ilevel_1', name: 'ilevel_1' },
-        { data: 'ilevel_2', name: 'ilevel_2' },
-        { data: 'status', name: 'status' },
-        { data: 'kode', name: 'kode' },
-        { data: 'rate', name: 'rate' },
+        { data: 'iproduct', name: 'iproduct' },              
+        { data: 'iadstype', name: 'iadstype' },              
+        { data: 'start_time', name: 'start_time' },              
+        { data: 'duration', name: 'duration' },              
+        { data: 'cost', name: 'cost' },              
+        { data: 'tvr'+$("select[name=filter-ntargetaudience]").val(), name: 'tvr'+$("select[name=filter-ntargetaudience]").val() },              
+        { data: '000s'+$("select[name=filter-ntargetaudience]").val(), name: '000s'+$("select[name=filter-ntargetaudience]").val() },              
       ],
       dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
           "<'row'<'col-sm-12'B>>"+
           "<'row'<'col-sm-12'tr>>" +
           "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
       buttons: [            
-          { extend: 'colvis', text: 'Column' },
+          { extend: 'colvis', text: 'Column' },'copy', 'csv', 'excel', 'pdf', 'print',
           {
             extend: 'csv',
-            text: 'CSV',
+            text: 'CSV All',
             className: 'buttons-csvall',
             action: function ( e, dt, node, config ) {
-              var oriaction = $("#filterer-form").attr('action');
-              $("#filterer-form").attr('action','{{ url('admin/tvprogramme/csvall') }}');
-              $("#filterer-form").submit();
-              $("#filterer-form").attr('action',oriaction);
-              $("#filterer-form").attr('target','');
+                window.location = '{{ url('admin/uploaddata/csvall') }}'
             }
-          },{
-            text: 'Download Selected Video', className: 'buttons-downloadmulti'
+          },
+          {
+            text: '<i class="ft-trash"></i> Hapus', className: 'buttons-deletemulti',
+            action: function ( e, dt, node, config ) {
+
+            }
           },  
       ],
       lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
@@ -437,12 +320,6 @@ $(document).ready(function(){
           targets: ['id','created_at','updated_at'],
           visible: false,
           searchable: false,
-      },{
-          targets: [0,1],
-          sortable: false,
-      },{
-          targets: [4,5,6,8,10,12,13,14,15,16],
-          visible: false,
       } ],
       select: {
           style:    'multi',
@@ -453,58 +330,21 @@ $(document).ready(function(){
     $('.buttons-add').addClass('btn mr-1');
     $('.buttons-deletemulti').addClass('btn-danger mr-1');
 
-    $('.buttons-downloadmulti').click(function(){
-      var ids_arr = [];
-      var rows_selected = table.column(0).checkboxes.selected();
-      $.each(rows_selected, function(index, rowId){
-          ids_arr.push(rowId);
-      });
-      var ids_str = encodeURIComponent(ids_arr);
-
-      // Check any checkbox checked or not
-      if(ids_arr.length > 0){
-          window.open('{{ url('admin/video/downloadmultivideo')}}'+'?table=tvprogramme&id='+ids_str, "_blank");
-      }
-    });
   });
+
+  $("select[name='filter-ntargetaudience']").addClass('selectpicker'); // dropdown search with bootstrap select
+  $("select[name='filter-ntargetaudience']").attr('data-live-search','true'); // dropdown search with bootstrap select
+  $("select[name='filter-ntargetaudience']").attr('data-size','3'); // dropdown search with bootstrap select
 
 });
-</script>
-<script>
-  $(document).ready(function(){
-    $("#filtererreset").click(function(){
-      var start = moment().subtract(6, 'day');
-      $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
-      var end = moment();
-      $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));      
-      $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
-      $('input[name=starttime]').val('00:00:00');
-      $('input[name=endtime]').val('23:59:59');
-      $(".filterer").find('input[type=hidden]').val('');
-      $(".filterer").find('select').prop("selectedIndex", 0);
-      $("span[id^=filter-]").html('');
-      $("select[name='ntargetaudience']").selectpicker("refresh");
-    });
-    
-    $("#filter-reset-selected").click(function(){
-      var filter = $("input[name=filter-active]").val();
-      $(".search-result.btn-primary").addClass("btn-outline-primary");
-      $(".search-result.btn-primary").removeClass("btn-primary");    
-      $("#filter-selected").html('');
-      $("input[name="+filter+"]").val('');
-      $("#filter-"+filter+"-count").html(''); // set count at button
-    });
-  });
 </script>
 @endsection
 @section('filterer')
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
-<a id="filtererreset" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
 <a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
-        <form id="filterer-form" method="post" action="">@csrf
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Period & Time</h6>
@@ -514,32 +354,49 @@ $(document).ready(function(){
               {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
               {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
           </div>
-          <div class="row">
-            <div class="col-5">
-              {{ Form::text('starttime', $request->starttime ?? '00:00:00', array('id'=>'starttime','class' => 'form-control','required','autocomplete'=>'off')) }}
-            </div>
-            <div class="col-1" style="top:8px">to</div>
-            <div class="col-5">
-              {{ Form::text('endtime',  $request->endtime ?? '23:59:59', array('id'=>'endtime','class' => 'form-control','required','autocomplete'=>'off')) }}
-            </div>
-          </div>
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Channel</h6>
-        <button type="button" class="btn btn-primary col-10 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
         {{ Form::hidden('filter-channel') }}
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> nProgramme</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> Programme</button>
         {{ Form::hidden('filter-nprogramme') }}
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iprogramme"><span id="filter-iprogramme-count"></span> iProgramme</button>
-        {{ Form::hidden('filter-iprogramme') }}
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_1"><span id="filter-nlevel_1-count"></span> nLevel 1</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_1"><span id="filter-nlevel_1-count"></span> Level 1</button>
         {{ Form::hidden('filter-nlevel_1') }}
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_1"><span id="filter-ilevel_1-count"></span> iLevel 1</button>
-        {{ Form::hidden('filter-ilevel_1') }}
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_2"><span id="filter-nlevel_2-count"></span> nLevel 2</button>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nlevel_2"><span id="filter-nlevel_2-count"></span> Level 2</button>
         {{ Form::hidden('filter-nlevel_2') }}
-        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_2"><span id="filter-ilevel_2-count"></span> iLevel 2</button>
-        {{ Form::hidden('filter-ilevel_2') }}
-        </form>
+        <hr>
+        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
+        <button class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> Advertiser</button>
+        {{ Form::hidden('filter-nadvertiser') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> Product</button>
+        {{ Form::hidden('filter-nproduct') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> Sector</button>
+        {{ Form::hidden('filter-nsector') }}
+        <button class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> Category</button>
+        {{ Form::hidden('filter-ncategory') }}
+        <button class="btn btn-primary col-10 filter-button" data-filter="nadstype"><span id="filter-nadstype-count"></span> Ads Type</button>
+        {{ Form::hidden('filter-nadstype') }}
+        <hr>
+        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>
+        {{ Form::select('filter-ntargetaudience',\App\Targetaudience::whereNotNull('targetaudience')->pluck('targetaudience','code'),null,['class'=>'form-control']) }}
+        <hr>
+        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Other</h6>
+        <div class="form-group">
+        <select name="filter-ncommercialdata" class="form-control col-10">
+          <option value="" selected disabled>- Commercial Data -</option>
+          <option value="ungrouped">Ungrouped</option>
+          <option value="grouped">Grouped</option>
+        </select>
+        </div>
+        <div class="form-group">
+        <select name="filter-ncommercialtype" class="form-control col-10">
+          <option value="" selected disabled>- Commercial Type -</option>
+          <option value="allads">All Ads</option>
+          <option value="commercialonly">Commercial Only</option>
+        </select>
+        </div>
+        <hr>
+        <hr>
         <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
           <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
         </div>

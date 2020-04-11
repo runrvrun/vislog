@@ -369,7 +369,7 @@ class DashboardController extends Controller
     public function highlight(Request $request, $action = null)
     {    
         $channel = Channel::orderBy('order')->get();
-        $data['tvchighlight'] = Tvchighlight::orderBy('created_at')->take(10)->get();
+        $data['tvchighlight'] = Tvchighlight::where('show',true)->orderBy('created_at')->take(10)->get();
         $filter = [];
         $commercial = Commercial::whereNotNull('_id');
         $adexnett = Adexnett::whereNotNull('_id');
@@ -381,7 +381,7 @@ class DashboardController extends Controller
             $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
             $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
             array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
-            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')->toDateTimeString();
             $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
         }else{
@@ -416,41 +416,41 @@ class DashboardController extends Controller
         $c = clone($commercial);// clone object as so not copy by reference and got additional "where" clause
         $data['adstype_loose_spot'] = $c->where('nadstype','LOOSE SPOT')->sum('no_of_spots');
         if ($data['adstype_loose_spot'] < 1000000) {
-            //
+            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'], 0);            
         } else if ($data['adstype_loose_spot'] < 1000000000) {
-            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'] / 1000000, 2) . 'M';
+            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'] / 1000000, 0) . 'M';
         } else {
-            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'] / 1000000000, 2) . 'B';
+            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'] / 1000000000, 0) . 'B';
         }
 
         $c = clone($commercial);// clone object as so not copy by reference
         $data['adstype_virtual_ads'] = $c->where('nadstype','VIRTUAL ADS')->sum('no_of_spots');
         if ($data['adstype_virtual_ads'] < 1000000) {
-            //
+            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'], 0);                        
         } else if ($data['adstype_virtual_ads'] < 1000000000) {
-            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'] / 1000000, 2) . 'M';
+            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'] / 1000000, 0) . 'M';
         } else {
-            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'] / 1000000000, 2) . 'B';
+            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'] / 1000000000, 0) . 'B';
         }
 
         $c = clone($commercial);// clone object as so not copy by reference
         $data['adstype_squeeze_frames'] = $c->where('nadstype','BUILT IN SEGMEN')->sum('no_of_spots');
         if ($data['adstype_squeeze_frames'] < 1000000) {
-            //
+            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'], 0);                        
         } else if ($data['adstype_squeeze_frames'] < 1000000000) {
-            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'] / 1000000, 2) . 'M';
+            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'] / 1000000, 0) . 'M';
         } else {
-            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'] / 1000000000, 2) . 'B';
+            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'] / 1000000000, 0) . 'B';
         }
 
         $c = clone($commercial);// clone object as so not copy by reference
         $data['adstype_quiz'] = $c->where('nadstype','KUIS')->sum('no_of_spots');
         if ($data['adstype_quiz'] < 1000000) {
-            //
+            $data['adstype_quiz'] = number_format($data['adstype_quiz'], 0);                        
         } else if ($data['adstype_quiz'] < 1000000000) {
-            $data['adstype_quiz'] = number_format($data['adstype_quiz'] / 1000000, 2) . 'M';
+            $data['adstype_quiz'] = number_format($data['adstype_quiz'] / 1000000, 0) . 'M';
         } else {
-            $data['adstype_quiz'] = number_format($data['adstype_quiz'] / 1000000000, 2) . 'B';
+            $data['adstype_quiz'] = number_format($data['adstype_quiz'] / 1000000000, 0) . 'B';
         }
          
         $query = Commercial::raw(function($collection) use ($filter)
@@ -463,7 +463,7 @@ class DashboardController extends Controller
                             'channel'=>'$channel'
                         ],
                         'total' => [
-                            '$sum'  => 1
+                            '$sum'  => '$no_of_spots'
                         ]
                     ]
                 ]
@@ -472,7 +472,7 @@ class DashboardController extends Controller
         $oquery = [];
         $cquery = [];
         foreach($query as $key=>$val){
-            $oquery[$val->_id->channel] = ['channel'=>$val->_id->channel,'total'=>$val->total];
+            $oquery[$val->_id->channel] = ['channel'=>$val->_id->channel,'total'=>number_format($val->total,0,'','')];
         }
         foreach($channel as $k=>$v){
             if(isset($oquery[$v->channel])){
@@ -490,7 +490,7 @@ class DashboardController extends Controller
                             'channel'=>'$channel'
                         ],
                         'total' => [
-                            '$sum'  => 1
+                            '$sum'  => '$no_of_spots'
                         ]
                     ]
                 ]
@@ -499,7 +499,7 @@ class DashboardController extends Controller
         $oquery = [];
         $cquery = [];
         foreach($query as $key=>$val){
-            $oquery[$val->_id->channel] = ['channel'=>$val->_id->channel,'total'=>$val->total];
+            $oquery[$val->_id->channel] = ['channel'=>$val->_id->channel,'total'=>number_format($val->total,0,'','')];
         }
         foreach($channel as $k=>$v){
             if(isset($oquery[$v->channel])){
@@ -554,7 +554,7 @@ class DashboardController extends Controller
                             'channel'=>'$channel',
                         ],
                         'count' => [
-                            '$sum'  => 1
+                            '$sum'  => '$no_of_spots'
                         ],
                         'adex' => [
                             '$sum'  => '$cost'
@@ -589,7 +589,7 @@ class DashboardController extends Controller
                             'nprogramme'=>'$nprogramme',
                         ],
                         'count' => [
-                            '$sum'  => 1
+                            '$sum'  => '$no_of_spots'
                         ],
                         'adex' => [
                             '$sum'  => '$cost'
@@ -624,7 +624,7 @@ class DashboardController extends Controller
                             'nproduct'=>'$nproduct',
                         ],
                         'count' => [
-                            '$sum'  => 1
+                            '$sum'  => '$no_of_spots'
                         ],
                         'adex' => [
                             '$sum'  => '$cost'
@@ -664,7 +664,7 @@ class DashboardController extends Controller
                             'date'=>'$date',
                         ],
                         'total' => [
-                            '$sum'  => 1
+                            '$sum'  => '$no_of_spots'
                         ]
                     ]
                 ]
@@ -675,7 +675,7 @@ class DashboardController extends Controller
         $data['spot_per_date'] = [];
         foreach($spot_per_date as $key=>$val){
             $data['spot_per_date'][$key]['date'] = $val->_id->date;
-            $data['spot_per_date'][$key]['total'] = $val->total;
+            $data['spot_per_date'][$key]['total'] = number_format($val->total,0,'','');
         }
         usort($data['spot_per_date'], function($a, $b) {
             return $a['date'] <=> $b['date'];

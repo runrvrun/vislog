@@ -9,6 +9,7 @@ use App\Commercial;
 use App\Commercialgrouped;
 use App\User;
 use Auth;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class AdsperformanceController extends Controller
 {
@@ -186,4 +187,138 @@ class AdsperformanceController extends Controller
         return response($query);
     }
 
+    public function csvall(Request $request)
+    {
+        $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->subDays(1);
+        $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate);
+        $filterchannel = array_filter(explode(',',$request->{'filter-channel'}));
+        $filternprogramme = array_filter(explode(',',$request->{'filter-nprogramme'}));
+        $filteriprogramme = array_filter(explode(',',$request->{'filter-iprogramme'}));
+        $filternlevel_1 = array_filter(explode(',',$request->{'filter-nlevel_1'}));
+        $filterilevel_1 = array_filter(explode(',',$request->{'filter-ilevel_1'}));
+        $filternlevel_2 = array_filter(explode(',',$request->{'filter-nlevel_2'}));
+        $filterilevel_2 = array_filter(explode(',',$request->{'filter-ilevel_2'}));
+        $filternadvertiser = array_filter(explode(',',$request->{'filter-nadvertiser'}));
+        $filteriadvertiser = array_filter(explode(',',$request->{'filter-iadvertiser'}));
+        $filternproduct = array_filter(explode(',',$request->{'filter-nproduct'}));
+        $filteriproduct = array_filter(explode(',',$request->{'filter-iproduct'}));
+        $filternsector = array_filter(explode(',',$request->{'filter-nsector'}));
+        $filterisector = array_filter(explode(',',$request->{'filter-isector'}));
+        $filterncategory = array_filter(explode(',',$request->{'filter-ncategory'}));
+        $filtericategory = array_filter(explode(',',$request->{'filter-icategory'}));
+        $filternadstype = array_filter(explode(',',$request->{'filter-nadstype'}));
+        $filteriadstype = array_filter(explode(',',$request->{'filter-iadstype'}));
+        $filtertadstype = array_filter(explode(',',$request->{'filter-tadstype'}));
+        $filterntargetaudience = $request->{'filter-ntargetaudience'} ?? '01';
+        
+        // 'date'=> ['$dateToString' => ['format' => '%d-%m-%Y', 'date' => '$date', 'timezone' => '+07:00' ]] ,
+        if($request->filterncommercialdata == 'grouped'){
+            $query = Commercialgrouped::select('date','channel',
+            'nprogramme','nlevel_1','nlevel_2','nsector','ncategory','nadvertiser','nproduct','ncopy','nadstype',
+            'iprogramme','ilevel_1','ilevel_2','isector','icategory','iadvertiser','iadvertiser_group',
+            'iproduct','icopy','iadstype','tadstype','size','title','sb_time','sb_no','position','pos_in_break','tot_spots_in_break',
+            'start_time','end_time','duration','no_of_spots','cost','t_second_cost', 
+            'tvr'.$filterntargetaudience,'t_second_tvr'.$filterntargetaudience,'000s'.$filterntargetaudience,'break_type');
+        }else{
+            $query = Commercial::select('date','channel',
+            'nprogramme','nlevel_1','nlevel_2','nsector','ncategory','nadvertiser','nproduct','ncopy','nadstype',
+            'iprogramme','ilevel_1','ilevel_2','isector','icategory','iadvertiser','iadvertiser_group',
+            'iproduct','icopy','iadstype','tadstype','size','title','sb_time','sb_no','position','pos_in_break','tot_spots_in_break',
+            'start_time','end_time','duration','no_of_spots','cost','t_second_cost', 
+            'tvr'.$filterntargetaudience,'t_second_tvr'.$filterntargetaudience,'000s'.$filterntargetaudience,'break_type');
+        }
+
+        if($request->startdate && $request->enddate){
+            $query->whereBetween('isodate',[$startdate,$enddate]);
+        } 
+        if($request->starttime && $request->endtime){
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
+            $query->whereBetween('start_timestamp',[$starttimestamp,$endtimestamp]);
+        }
+        if(count($filterchannel)){
+            $query->whereIn('channel',$filterchannel);
+        } 
+        if(count($filternprogramme)){
+            $query->whereIn('nprogramme',$filternprogramme);
+        } 
+        if(count($filteriprogramme)){
+            $query->whereIn('iprogramme',$filteriprogramme);
+        } 
+        if(count($filternlevel_1)){
+            $query->whereIn('nlevel_1',$filternlevel_1);
+        } 
+        if(count($filterilevel_1)){
+            $query->whereIn('ilevel_1',$filterilevel_1);
+        } 
+        if(count($filternlevel_2)){
+            $query->whereIn('nlevel_2',$filternlevel_2);
+        } 
+        if(count($filterilevel_2)){
+            $query->whereIn('ilevel_2',$filterilevel_2);
+        } 
+        if(count($filternadvertiser)){
+            $query->whereIn('nadvertiser',$filternadvertiser);
+        } 
+        if(count($filteriadvertiser)){
+            $query->whereIn('iadvertiser',$filteriadvertiser);
+        } 
+        if(count($filternproduct)){
+            $query->whereIn('nproduct',$filternproduct);
+        } 
+        if(count($filteriproduct)){
+            $query->whereIn('iproduct',$filteriproduct);
+        } 
+        if(count($filternsector)){
+            $query->whereIn('nsector',$filternsector);
+        } 
+        if(count($filterisector)){
+            $query->whereIn('isector',$filterisector);
+        } 
+        if(count($filterncategory)){
+            $query->whereIn('ncategory',$filterncategory);
+        } 
+        if(count($filtericategory)){
+            $query->whereIn('icategory',$filtericategory);
+        } 
+        if(count($filternadstype)){
+            $query->whereIn('nadstype',$filternadstype);
+        } 
+        if(count($filteriadstype)){
+            $query->whereIn('iadstype',$filteriadstype);
+        } 
+        if(count($filtertadstype)){
+            $query->whereIn('tadstype',$filtertadstype);
+        } 
+        if($request->{'filter-ncommercialtype'} == "commercialonly"){
+            $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
+        }
+        if($request->xadstype == "loosespot"){
+            $query->where('nadstype','=','LOOSE SPOT');
+        }
+        if($request->xadstype == "nonloosespot"){
+            $query->where('nadstype','<>','LOOSE SPOT');
+        }
+        // add filter by user privilege
+        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
+        if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(',',Auth::user()->privileges['nsector']));
+        if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(',',Auth::user()->privileges['ncategory']));
+        if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(',',Auth::user()->privileges['nproduct']));
+        if(!empty(Auth::user()->privileges['nadvertiser']))  $query->whereIn('nadvertiser',explode(',',Auth::user()->privileges['nadvertiser']));
+        if(!empty(Auth::user()->privileges['ncopy']))  $query->whereIn('ncopy',explode(',',Auth::user()->privileges['ncopy']));
+        if(!empty(Auth::user()->privileges['nadstype']))  $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']));
+        if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']));
+        if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel_1']));
+        if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel_2']));
+        if(!empty(Auth::user()->privileges['nprogramme'])) $query->whereIn('nprogramme',explode(',',Auth::user()->privileges['nprogramme']));
+
+        $export = $query->get();
+        $filename = 'vislog-adsperformance.csv';
+        $temp = 'temp/'.$filename;
+        (new FastExcel($export))->export('temp/vislog-adsperformance.csv');
+        $headers = [
+            'Content-Type: text/csv',
+            ];
+        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);
+    }
 }

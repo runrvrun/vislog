@@ -466,9 +466,9 @@ class VideoController extends Controller
         $temppath = Config::select('value')->where('key','temp path')->first();
         $webpath = Config::select('value')->where('key','web path')->first();
         // check if video already exist in temp
-        if(file_exists($temppath->value."\\".$request->id.".m3u8")){
-            Log::create(['user_id'=>Auth::user()->id,'action'=>'play','page'=>$request->page??'','target'=>$webpath->value."/".$request->id.".m3u8"]);
-            return url($webpath->value."/".$request->id.".m3u8");
+        if(file_exists($temppath->value."\\".$request->id.".mp4")){
+            Log::create(['user_id'=>Auth::user()->id,'action'=>'play','page'=>$request->page??'','target'=>$webpath->value."/".$request->id.".mp4"]);
+            return url($webpath->value."/".$request->id.".mp4");
         }
 
         // video not exist, create
@@ -492,21 +492,9 @@ class VideoController extends Controller
         // get bumper
         $bumper = Config::select('value')->where('key','video bumper')->first();
         $bumper = $bumper->value ?? 0;
-        if($request->table == 'spotmatching'){
-            $d_start = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->start_video1);
-            $d_end = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->end_video1);
-        }elseif($request->table == 'tvprogramme'){
-            $d_start = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->start_video);
-            $d_end = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->end_video);
-        }else{
-            if($commercial->nadstype == "LOOSE SPOT"){
-                $d_start = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->start_video2);
-                $d_end = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->end_video2);
-            }else{
-                $d_start = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->start_video1);
-                $d_end = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->end_video1);
-            }
-        }
+        
+        $d_start = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->start_time);
+        $d_end = Carbon::createFromFormat('Y-m-d H:i:s',$commercial->date." ".$commercial->end_time);
         if($d_end < $d_start) $d_end->addDays(1); // cross midnight, add 1 day
         $d_first = clone($d_start);// first video file
         $d_first->subMinutes($d_first->minute % 5);// 5 minutes files
@@ -515,6 +503,7 @@ class VideoController extends Controller
         $d_last->subMinutes($d_last->minute % 5);// 5 minutes files
         $d_last->subSeconds($d_last->second);// remove seconds
         $channelpath = $librarypath->value."\\".$channel."\\";
+
         //loop and copy to temp_video
         $i=0;
         $d_pro = clone($d_first);
@@ -562,16 +551,9 @@ class VideoController extends Controller
         if (!$process->isSuccessful()) {
             // throw new ProcessFailedException($process);
         }
-        // convert into streamable HLS m38u format
-        $m38u = new Process('ffmpeg -i '.$temppath->value.'\\'.$request->id.'.mp4 -g 60 -hls_time 10 -hls_list_size 0 -hls_flags single_file '.$temppath->value.'\\'.$request->id.'.m3u8');
-        $m38u->setTimeout(9600);
-        $m38u->run();
-        if (!$m38u->isSuccessful()) {
-            // throw new ProcessFailedException($m38u);
-        }        
 
         Log::create(['user_id'=>Auth::user()->id,'action'=>'play','page'=>$request->page??'','target'=>$webpath->value."/".$request->id.".mp4"]);
-        return url($webpath->value."/".$request->id.".m3u8");
+        return url($webpath->value."/".$request->id.".mp4");
     }
     public function downloadmultivideo(Request $request){
         $id = urldecode($request->id);

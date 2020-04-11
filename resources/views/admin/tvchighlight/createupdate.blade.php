@@ -37,9 +37,15 @@
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="channel">Description: </label>
                   <div class="col-md-9">
-                  {{ Form::text('description', old('description',$item->description ?? null), array('id'=>'description','class' => 'form-control','autocomplete'=>'off')) }}
+                  {{ Form::textarea('description', old('description',$item->description ?? null), array('id'=>'description','class' => 'form-control','autocomplete'=>'off','rows'=>5)) }}
                   </div>
                 </div>    
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">Show in Highlight: </label>
+                  <div class="col-md-9">
+                  {{ Form::checkbox('show', 1, old('show',$item->show ?? null), array('style' => 'width: 25px;height: 25px;')) }}
+                  </div>
+                </div>
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="count">Video File: </label>
                   <div class="col-md-9">
