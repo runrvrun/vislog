@@ -595,11 +595,15 @@ class VideoController extends Controller
                 // add generated video to zip
                 $videopath = $temppath->value.'\\'.$val.'.mp4';
                 if($request->table == 'tvprogramme'){
-                    $commercial = Tvprogramme::select('date','start_time','channel','iprogramme','iproduct')->where('_id',$val)->first();
+                    $commercial = Tvprogramme::select('date','start_time','channel','iprogramme','iproduct','iadstype')->where('_id',$val)->first();
                 }else{
-                    $commercial = Commercial::select('date','start_time','channel','iprogramme','iproduct')->where('_id',$val)->first();
+                    $commercial = Commercial::select('date','start_time','channel','iprogramme','iproduct','iadstype')->where('_id',$val)->first();
                 }
-                $zipfile = basename($commercial->date.'_'.$commercial->start_time.'_'.$commercial->channel.'_'.$commercial->iprogramme.'_'.$commercial->iproduct.'.mp4');
+                if($request->table == 'tvprogramme'){
+                    $zipfile = basename($commercial->iprogramme.'_'.$commercial->channel.'_'.str_replace('-','_',$commercial->date).'_'.str_replace(':','_',$commercial->start_time).'.mp4');
+                }else{
+                    $zipfile = basename($commercial->iproduct.'_'.$commercial->channel.'_'.$commercial->iadstype.'_'.str_replace('-','_',$commercial->date).'_'.str_replace(':','_',$commercial->start_time).'.mp4');
+                }
                 $zip->addFile($videopath, $zipfile);
             }
             $zip->close();

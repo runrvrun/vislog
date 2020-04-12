@@ -233,6 +233,10 @@ class MarketingController extends Controller
             $adexnett->whereIn('tadstype',array_filter(explode(',',$request->tadstype)));
             array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
         }
+        if($request->iadvertiser_group){
+            $adexnett->whereIn('advertiser_group',array_filter(explode(',',$request->iadvertiser_group)));
+            array_push($filter,[ '$match' => ['advertiser_group' => ['$in' => array_filter(explode(',',$request->iadvertiser_group))]]]);  
+        }
         if($request->ncommercialtype == "commercialonly"){
             $adexnett->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
         }
@@ -383,13 +387,17 @@ class MarketingController extends Controller
         $totaladvertiser = [];        
         foreach($query as $key=>$val){
             $advertiser = $val->_id->nadvertiser;
-            $totaladvertiser[$advertiser][$val->_id->channel]['marketshare'] = $val->total;
             ${'totalall'.$advertiser} = (${'totalall'.$advertiser} ?? 0) + $val->total;
             $totaladvertiser[$advertiser]['all'] = ${'totalall'.$advertiser};
+            $totaladvertiser[$advertiser][$val->_id->channel]['marketshare'] = $val->total;
         }
+        // dd($totaladvertiser);
         foreach($totaladvertiser as $key=>$val){
             foreach($val as $k=>$v){
                 if($k != 'all'){
+                    if($val['all'] == 0 || !isset($val['all'])){
+                        continue;
+                    }
                     $totaladvertiser[$key][$k]['percentage'] = $v['marketshare']/$val['all'];
                 }
             }
@@ -477,12 +485,6 @@ class MarketingController extends Controller
             return $b['all'] <=> $a['all'];
         });
         $data['marketshare_channel_sector'] = array_slice($totalsector, 0, 10, true);
-
-        //
-        // populate dropdown
-        $query = \App\Targetaudience::whereNotNull('targetaudience');
-        if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
-        $data['ddtargetaudience'] = $query->pluck('targetaudience','code');
 
         return view('admin.mktsummary.dashboard',compact('data','request'));
     }

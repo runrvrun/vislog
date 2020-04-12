@@ -41,6 +41,8 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/adsperformance/search-tadstype-json', 'Admin\AdstypesearchController@searchtadstypejson'); 
     Route::get('/adsperformance/search-nadvertiser-json', 'Admin\CommercialsearchController@searchnadvertiserjson');    
     Route::get('/adsperformance/search-iadvertiser-json', 'Admin\CommercialsearchController@searchiadvertiserjson');    
+    Route::get('/adsperformance/search-iadvertiser_group-json', 'Admin\CommercialsearchController@searchiadvertisergroupjson');    
+    Route::get('/adsperformance/search-advertiser_group-json', 'Admin\CommercialsearchController@searchiadvertisergroupjson');    
     Route::get('/adsperformance/search-nproduct-json', 'Admin\CommercialsearchController@searchnproductjson');    
     Route::get('/adsperformance/search-iproduct-json', 'Admin\CommercialsearchController@searchiproductjson');    
     Route::get('/adsperformance/search-nsector-json', 'Admin\CommercialsearchController@searchnsectorjson');    

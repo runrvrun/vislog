@@ -9,6 +9,7 @@ use App\Log;
 use Auth;
 use \Carbon\Carbon;
 use Rap2hpoutre\FastExcel\FastExcel;
+use MongoDB\Client;
 
 class AdexnettController extends Controller
 {
@@ -79,68 +80,170 @@ class AdexnettController extends Controller
             $file->move($upload_path,$upload_filename);
 
             // import to database 
-            $imp = (new FastExcel)->configureCsv(';', '}', '\n', 'gbk')->import($upload_path.'/'.$upload_filename, function ($line) {
-                $insertData = [];
-                foreach($line as $key=>$val){
-                    $colname = strtolower($key);
-                    $colname = str_replace(' ','_',$colname); 
-                    $colname = str_replace('.','',$colname);
-                    switch($colname){
-                        case 'month':
-                            switch($val){
-                                case 'Januari':
-                                    $mon = '01';
+            // $imp = (new FastExcel)->configureCsv(';', '}', '\n', 'gbk')->import($upload_path.'/'.$upload_filename, function ($line) {
+            //     $insertData = [];
+            //     foreach($line as $key=>$val){
+            //         $colname = strtolower($key);
+            //         $colname = str_replace(' ','_',$colname); 
+            //         $colname = str_replace('.','',$colname);
+            //         switch($colname){
+            //             case 'month':
+            //                 switch($val){
+            //                     case 'Januari':
+            //                         $mon = '01';
+            //                         break;
+            //                     case 'Februari':
+            //                         $mon = '02';
+            //                         break;
+            //                     case 'Maret':
+            //                         $mon = '03';
+            //                         break;
+            //                     case 'April':
+            //                         $mon = '04';
+            //                         break;
+            //                     case 'Mei':
+            //                         $mon = '05';
+            //                         break;
+            //                     case 'Juni':
+            //                         $mon = '06';
+            //                         break;
+            //                     case 'Juli':
+            //                         $mon = '07';
+            //                         break;
+            //                     case 'Agustus':
+            //                         $mon = '08';
+            //                         break;
+            //                     case 'September':
+            //                         $mon = '09';
+            //                         break;
+            //                     case 'Oktober':
+            //                         $mon = '10';
+            //                         break;
+            //                     case 'November':
+            //                         $mon = '11';
+            //                         break;
+            //                     case 'Desember':
+            //                         $mon = '12';
+            //                         break;
+            //                     default:
+            //                         $mon = '01';
+            //                 }
+            //                 $dt = $line['Year']."-".$mon."-01";
+            //                 $date = Carbon::createFromFormat('Y-m-d H:i:s',$dt.' 00:00:00')->toDateTimeString();
+            //                 $insertData[$colname] = $val;
+            //                 $insertData['key'] = $key;
+            //                 $insertData['date'] = $dt;
+            //                 $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            //                 break;
+            //             default:
+            //                 $insertData[$colname] = $val;
+            //         }
+            //     }
+            //     return Adexnett::create($insertData);
+            // });
+            // $data['rowCount'] = $imp->count();
+
+            $header = [];
+            $handle = fopen($upload_path.'/'.$upload_filename, 'r');
+            if ($handle) {
+                $i = 0;
+                $insert = [];
+                while ($line = fgetcsv($handle, null, '|')) {
+                    $insertData = [];
+                    if($i == 0){
+                        //header, save as column name
+                        $header = explode(";",$line[0]);
+                        $header = array_map('strtolower', $header);
+                        $header = str_replace(' ', '_', $header);
+                        $header = str_replace('.', '', $header);
+                    }else{
+                        $content = explode(";",$line[0]);// split line into columns
+                        foreach( $content as $key => $value ){
+                            switch($header[$key]){
+                                case 'year':
+                                    $insertData['year'] = $value;
+                                    $year = $value;
                                     break;
-                                case 'Februari':
-                                    $mon = '02';
+                                case 'month':
+                                    switch($value){
+                                        case 'Januari':
+                                            $mon = '01';
+                                            break;
+                                        case 'Februari':
+                                            $mon = '02';
+                                            break;
+                                        case 'Maret':
+                                            $mon = '03';
+                                            break;
+                                        case 'April':
+                                            $mon = '04';
+                                            break;
+                                        case 'Mei':
+                                            $mon = '05';
+                                            break;
+                                        case 'Juni':
+                                            $mon = '06';
+                                            break;
+                                        case 'Juli':
+                                            $mon = '07';
+                                            break;
+                                        case 'Agustus':
+                                            $mon = '08';
+                                            break;
+                                        case 'September':
+                                            $mon = '09';
+                                            break;
+                                        case 'Oktober':
+                                            $mon = '10';
+                                            break;
+                                        case 'November':
+                                            $mon = '11';
+                                            break;
+                                        case 'Desember':
+                                            $mon = '12';
+                                            break;
+                                        default:
+                                            $mon = '01';
+                                    }
+                                    $insertData['month'] = $value;
+                                    $dt = $year."-".$mon."-01";
+                                    $insertData['date'] = $dt;
+                                    $date = Carbon::createFromFormat('Y-m-d H:i:s',$dt.' 00:00:00')->toDateTimeString();
+                                    $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));                                        
                                     break;
-                                case 'Maret':
-                                    $mon = '03';
+                                case 'spots':
+                                case 'grp':
+                                case 'gross':
+                                case 'revenue':
+                                case 'nett1':
+                                case 'nett2':
+                                case 'nett3':
+                                    $insertData[$header[$key]] = (double) $value;
                                     break;
-                                case 'April':
-                                    $mon = '04';
-                                    break;
-                                case 'Mei':
-                                    $mon = '05';
-                                    break;
-                                case 'Juni':
-                                    $mon = '06';
-                                    break;
-                                case 'Juli':
-                                    $mon = '07';
-                                    break;
-                                case 'Agustus':
-                                    $mon = '08';
-                                    break;
-                                case 'September':
-                                    $mon = '09';
-                                    break;
-                                case 'Oktober':
-                                    $mon = '10';
-                                    break;
-                                case 'November':
-                                    $mon = '11';
-                                    break;
-                                case 'Desember':
-                                    $mon = '12';
+                                case (preg_match('/tvr.*/', $header[$key]) ? true : false) :                  
+                                    $insertData[$header[$key]] = (double) $value;
                                     break;
                                 default:
-                                    $mon = '01';
+                                    $insertData[$header[$key]] = $value;
                             }
-                            $dt = $line['Year']."-".$mon."-01";
-                            $date = Carbon::createFromFormat('Y-m-d H:i:s',$dt.' 00:00:00')->toDateTimeString();
-                            $insertData[$colname] = $val;
-                            $insertData['key'] = $key;
-                            $insertData['date'] = $dt;
-                            $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-                            break;
-                        default:
-                            $insertData[$colname] = $val;
+                        }
+                        array_push($insert, $insertData);
+                        if(count($insert) == 500){// insert after 500
+                            $mongoClient=new Client();
+                            $mongodata=$mongoClient->vislog->adexnetts;
+                            $mongodata->insertMany($insert);
+                            $insert = [];// reset
+                        }
                     }
+                    $i = $i+1; //increment = no longer header
                 }
-                return Adexnett::create($insertData);
-            });
-            $data['rowCount'] = $imp->count();
+                if(count($insert) > 0){                
+                    $mongoClient=new Client();
+                    $mongodata=$mongoClient->vislog->commercials;                            
+                    $mongodata->insertMany($insert);
+                }
+            } 
+            unset($handle);
             
             unlink($upload_path.'/'.$upload_filename);
 

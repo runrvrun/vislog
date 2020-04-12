@@ -281,7 +281,7 @@ $(document).ready(function(){
           .done(function() { 
             $("#loadingvideo").hide();
             // $("#playvideo").attr('src',videopath);
-            $("#downloadvideo").attr('href',videopath);
+            $("#downloadvideo").attr('href',videopath.replace('.m3u8','.mp4'));
             // enable HLS (m3u8) streaming playback 
             var video = document.getElementById('playvideo');
             if (Hls.isSupported()) {

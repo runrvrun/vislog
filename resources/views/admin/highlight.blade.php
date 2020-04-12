@@ -93,7 +93,7 @@
     <div class="carousel-inner">
       @foreach($data['tvchighlight'] as $key=>$val)
       <div class="carousel-item {{ ($key == 0)? 'active':'' }}">
-        <video src="{{ url('/uploads/tvchighlight/'.($val->filename ?? '')) }}" controls id="playvideo"></video>
+        <video src="{{ url('/uploads/tvchighlight/'.($val->filename ?? '')) }}" controls class="playvideo"></video>
         <div class="carousel-caption d-none d-md-block">
           <h5>{{ $val->title ?? '' }}</h5>
           <p>{{ $val->description ?? ''}}</p>
@@ -291,8 +291,6 @@
 .ct-series-c .ct-bar, .ct-series-c .ct-line, .ct-series-c .ct-point, .ct-series-c .ct-slice-donut {
     stroke: #F6C41C;
 }
-</style>
-<style>
 #filterersubmit{
   bottom: 10px;
   top: auto;
@@ -308,7 +306,7 @@
 button.search-result{
   min-width:100px;
 }
-#playvideo{
+.playvideo{
     width: 473px;
     padding-top: 17px;
 }
@@ -364,6 +362,10 @@ button.search-result{
 .carousel-control-next-icon {
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
 }
+.carousel-control-prev, .carousel-control-next{
+  height: 40%;
+  top: 25%;
+}
 </style>
 @endsection
 @section('pagejs')
@@ -399,7 +401,13 @@ $(document).ready(function() {
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
         order: [[1, 'DESC']]
     });
-
+    // pause on carousel move
+    $(".carousel-control-next").click(function(){
+      $(".playvideo").trigger('pause');
+    })
+    $(".carousel-control-prev").click(function(){
+      $(".playvideo").trigger('pause');
+    })
 });
 </script>
 <script>

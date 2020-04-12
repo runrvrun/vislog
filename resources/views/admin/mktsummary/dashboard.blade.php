@@ -470,7 +470,6 @@ $(document).ready(function(){
       $(".filterer").find('input[type=hidden]').val('');
       $(".filterer").find('select').prop("selectedIndex", 0);
       $("span[id^=filter-]").html('');
-      $("select[name='ntargetaudience']").selectpicker("refresh");
   });
   
   $("#filter-reset-selected").click(function(){
@@ -492,10 +491,6 @@ $(document).ready(function(){
       $("#loading").show();
   });
 
-  $("select[name='ntargetaudience']").addClass('selectpicker'); // dropdown search with bootstrap select
-  $("select[name='ntargetaudience']").attr('data-live-search','true'); // dropdown search with bootstrap select
-  $("select[name='ntargetaudience']").attr('data-size','5'); // dropdown search with bootstrap select
-  $("select[name='ntargetaudience']").selectpicker();
 });
 </script>
 @endsection
@@ -573,16 +568,9 @@ $(document).ready(function(){
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="tadstype">
         <span id="filter-tadstype-count">{{ ($request->tadstype)? count(explode(',',$request->tadstype))-1:'' }}</span> tAds Type</button>
         {{ Form::hidden('tadstype', $request->tadstype ?? null) }}
-        <hr>
-        <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>
-        {{ Form::select('ntargetaudience',$data['ddtargetaudience'], ($request->ntargetaudience ?? '') ,['class'=>'form-control']) }}
-        <div class="form-group">
-        <select name="nett" class="form-control col-10">
-          <option value="nett1" selected>Market Share 1</option>
-          <option value="nett2">Market Share 2</option>
-          <option value="nett3">Market Share 3</option>
-        </select>
-        </div>
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadvertiser_group">
+        <span id="filter-iadvertiser_group-count">{{ ($request->iadvertiser_group)? count(explode(',',$request->iadvertiser_group))-1:'' }}</span> Advertiser Group</button>
+        {{ Form::hidden('iadvertiser_group', $request->iadvertiser_group ?? null) }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Other</h6>        
         <div class="form-group">

@@ -44,6 +44,19 @@ class CommercialsearchController extends Controller
             return $query->get();
         }
     }
+
+    public function searchiadvertisergroupjson(Request $request)
+    {
+        if(isset($request->term)){
+            $query = Commercialsearch::select('iadvertiser_group')->where('iadvertiser_group','like','%'.$request->term.'%')->take(50)->groupBy('iadvertiser_group');
+            if(!empty(Auth::user()->privileges['iadvertiser_group'])) $query->whereIn('iadvertiser_group',explode(',',Auth::user()->privileges['iadvertiser_group']));
+            return $query->get();
+        }else{
+            $query = Commercialsearch::select('iadvertiser_group')->take(50)->groupBy('iadvertiser_group');
+            if(!empty(Auth::user()->privileges['iadvertiser_group'])) $query->whereIn('iadvertiser_group',explode(',',Auth::user()->privileges['iadvertiser_group']));
+            return $query->get();
+        }
+    }
     
     public function searchnproductjson(Request $request)
     {
