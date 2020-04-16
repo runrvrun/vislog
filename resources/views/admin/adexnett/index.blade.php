@@ -30,15 +30,39 @@
                             <tr>
                               <th>Year</th>                  
                               <th>Month</th>                  
-                              <th>Product</th>                  
                               <th>Channel</th>                  
-                              <th>Programme</th>                  
-                              <th>Spot</th>                  
+                              <th>nSector</th>
+                              <th>nCategory</th>
+                              <th>nAdvertiser</th>
+                              <th>nProduct</th>                  
+                              <th>nProgramme</th>                  
+                              <th>nLevel 1</th>
+                              <th>nLevel 2</th>
+                              <th>nAdstype</th>
+                              <th>iSector</th>
+                              <th>iCategory</th>
+                              <th>iAdvertiser</th>
+                              <th>iProduct</th>
+                              <th>iProgramme</th>
+                              <th>iLevel 1</th>
+                              <th>iLevel 2</th>
+                              <th>iAdstype</th>
+                              <th>tAdstype</th>
+                              <th>Advertiser Group</th>
+                              <th>Agency</th>
+                              <th>Agency_Subs</th>
+                              <th>GM</th>
+                              <th>SM</th>
+                              <th>SGH</th>
+                              <th>AM</th>
+                              <th>Target</th>
+                              <th>Spots</th>                  
                               <th>GRP</th>                  
                               <th>Gross</th>                  
+                              <th>Revenue</th>
                               <th>Nett1</th>                  
                               <th>Nett2</th>                  
-                              <th>Nett3</th>                  
+                              <th>Nett3</th>
                             </tr>
                           </thead>
                         </table>
@@ -275,7 +299,6 @@ $(document).ready(function(){
   
   $("#filterersubmit").click(function() {
     // table.draw();  
-    // destroy and remake datatable because column changed based on targetaudience (001-100)
     if ($.fn.DataTable.isDataTable(".browse-table")) {
       $('.browse-table').DataTable().clear().destroy();
     }
@@ -309,21 +332,46 @@ $(document).ready(function(){
             d.filterisector = $("input[name=filter-isector]").val();
             d.filterncategory = $("input[name=filter-ncategory]").val();
             d.filtericategory = $("input[name=filter-icategory]").val();
+            d.filteriadvertiser_group = $("input[name=filter-iadvertiser_group]").val();
         },
         type: 'POST'
       },
       columns: [
         { data: 'year', name: 'year' },              
-        { data: 'month', name: 'month' },              
-        { data: 'iproduct', name: 'iproduct' },              
-        { data: 'channel', name: 'channel' },              
-        { data: 'iprogramme', name: 'iprogramme' },              
-        { data: 'spots', name: 'spots' },              
-        { data: 'grp', name: 'grp' },              
-        { data: 'gross', name: 'gross' },              
-        { data: 'nett1', name: 'nett1' },              
-        { data: 'nett2', name: 'nett2' },              
-        { data: 'nett3', name: 'nett3' },              
+        { data: 'month', name: 'month' },
+        { data: 'channel', name: 'channel' },
+        { data: 'nsector', name: 'nsector' },
+        { data: 'ncategory', name: 'ncategory' },
+        { data: 'nadvertiser', name: 'nadvertiser' },
+        { data: 'nproduct', name: 'nproduct' },
+        { data: 'nprogramme', name: 'nprogramme' },
+        { data: 'nlevel_1', name: 'nlevel_1' },
+        { data: 'nlevel_2', name: 'nlevel_2' },
+        { data: 'nadstype', name: 'nadstype' },
+        { data: 'isector', name: 'isector' },
+        { data: 'icategory', name: 'icategory' },
+        { data: 'iadvertiser', name: 'iadvertiser' },
+        { data: 'iproduct', name: 'iproduct' },
+        { data: 'iprogramme', name: 'iprogramme' },
+        { data: 'ilevel_1', name: 'ilevel_1' },
+        { data: 'ilevel_2', name: 'ilevel_2' },
+        { data: 'iadstype', name: 'iadstype' },
+        { data: 'tadstype', name: 'tadstype' },
+        { data: 'advertiser_group', name: 'advertiser_group' },
+        { data: 'agency', name: 'agency' },
+        { data: 'agency_subs', name: 'agency_subs' },
+        { data: 'gm', name: 'gm' },
+        { data: 'sm', name: 'sm' },
+        { data: 'sgh', name: 'sgh' },
+        { data: 'am', name: 'am' },
+        { data: 'target', name: 'target' },
+        { data: 'spots', name: 'spots' },
+        { data: 'grp', name: 'grp' },
+        { data: 'gross', name: 'gross' },
+        { data: 'revenue', name: 'revenue' },
+        { data: 'nett1', name: 'nett1' },
+        { data: 'nett2', name: 'nett2' },
+        { data: 'nett3', name: 'nett3' },
       ],
       dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
           "<'row'<'col-sm-12'B>>"+
@@ -336,7 +384,11 @@ $(document).ready(function(){
             text: 'CSV All',
             className: 'buttons-csvall',
             action: function ( e, dt, node, config ) {
-                window.location = '{{ url('admin/uploaddata/csvall') }}'
+                var oriaction = $("#filterer-form").attr('action');
+                $("#filterer-form").attr('action','{{ url('admin/adexnett/csvall') }}');
+                $("#filterer-form").submit();
+                $("#filterer-form").attr('action',oriaction);
+                $("#filterer-form").attr('target','');
             }
           }
       ],
@@ -349,6 +401,9 @@ $(document).ready(function(){
       },{
           targets: [0,1],
           sortable: false,
+      },{
+          targets: [3,4,5,6,7,8,9,10,11,12,13,16,17,18,19,20,21,22,23,24,25,26,27,31],
+          visible: false,
       } ],
       select: {
           style:    'multi',
@@ -374,7 +429,6 @@ $(document).ready(function(){
       $(".filterer").find('input[type=hidden]').val('');
       $(".filterer").find('select').prop("selectedIndex", 0);
       $("span[id^=filter-]").html('');
-      $("select[name='ntargetaudience']").selectpicker("refresh");
     });
     
     $("#filter-reset-selected").click(function(){
@@ -395,6 +449,7 @@ $(document).ready(function(){
 <a id="filtererreset" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
 <a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
+        <form id="filterer-form" method="post" action="">@csrf
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Period</h6>
@@ -438,7 +493,10 @@ $(document).ready(function(){
         {{ Form::hidden('filter-ncategory') }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="icategory"><span id="filter-icategory-count"></span> iCategory</button>
         {{ Form::hidden('filter-icategory') }}        
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadvertiser_group"><span id="filter-iadvertiser_group-count"></span> Advertiser Group</button>
+        {{ Form::hidden('filter-iadvertiser_group') }}   
         <hr>
+        </form>
         <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
           <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
         </div>

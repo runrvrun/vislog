@@ -61,10 +61,13 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/video/downloadmultivideo', 'Admin\VideoController@downloadmultivideo');    
     Route::get('/video/logdownload', 'Admin\VideoController@logdownload');
     Route::get('/mktsummary', 'Admin\MarketingController@mktsummary');
+    Route::get('/mktsummary/{a}', 'Admin\MarketingController@mktsummary');
     Route::get('/adexnett', 'Admin\MarketingController@adexnett');
     Route::post('/adexnett/indexjson', 'Admin\MarketingController@adexnettjson');
+    Route::post('/adexnett/csvall', 'Admin\MarketingController@adexnettcsvall');
     Route::get('/spotmatching', 'Admin\MarketingController@spotmatching');
     Route::post('/spotmatching/indexjson', 'Admin\MarketingController@spotmatchingjson');
+    Route::post('/spotmatching/csvall', 'Admin\MarketingController@spotmatchingcsvall');
     /**/
     Route::get('/uploaddata/commercial', 'Admin\Uploaddata\CommercialController@index');
     Route::post('/uploaddata/commercial/upload', 'Admin\Uploaddata\CommercialController@upload');

@@ -30,14 +30,60 @@
                             <tr>
                               <th></th>                  
                               <th></th>                  
-                              <th>Date</th>                  
-                              <th>Channel</th>                  
-                              <th>Programme</th>                  
-                              <th>Product</th>                  
-                              <th>Copy</th>                  
-                              <th>Start Time</th>                  
-                              <th>Duration</th>                  
-                              <th>TVR</th>                  
+                              <th>Channel</th>
+                              <th>Date</th>
+                              <th>Mo No</th>
+                              <th>Sales Name</th>
+                              <th>Sales Group</th>
+                              <th>Sales Manager</th>
+                              <th>Agent Name</th>
+                              <th>Sub Agent Name</th>
+                              <th>iSector</th>
+                              <th>iCategory</th>
+                              <th>iAdvertiser</th>
+                              <th>iProduct</th>
+                              <th>barcode</th>
+                              <th>iCopy</th>
+                              <th>Line No</th>
+                              <th>Po No</th>
+                              <th>Add Flag</th>
+                              <th>iLevel1</th>
+                              <th>iLevel2</th>
+                              <th>iProgramme</th>
+                              <th>Title Program</th>
+                              <th>Duration Program</th>
+                              <th>Date Program</th>
+                              <th>Start Time Program</th>
+                              <th>End Time Program</th>
+                              <th>Air Date</th>
+                              <th>Actual Time</th>
+                              <th>CB</th>
+                              <th>Update Date</th>
+                              <th>Booking Date Time</th>
+                              <th>Booking Date Time 1</th>
+                              <th>Spot Type</th>
+                              <th>Flag Rate</th>
+                              <th>PO Type</th>
+                              <th>PO Type Desc</th>
+                              <th>Ket Inventory</th>
+                              <th>TX Code</th>
+                              <th>Dur</th>
+                              <th>Seq</th>
+                              <th>nSector</th>
+                              <th>nCategory</th>
+                              <th>nAdvertiser</th>
+                              <th>nProduct</th>
+                              <th>nCopy</th>
+                              <th>Start Time</th>
+                              <th>End Time</th>
+                              <th>Duration</th>
+                              <th>nProgramme</th>
+                              <th>nLevel1</th>
+                              <th>nLevel2</th>
+                              <th>No. Of Spots</th>
+                              <th>Cost</th>
+                              <th>t Second Cost</th>
+                              <th>TVR</th>
                             </tr>
                           </thead>
                         </table>
@@ -323,19 +369,67 @@ $(document).ready(function(){
             d.filtertadstype = $("input[name=filter-tadstype]").val();
             d.filterntargetaudience = $("select[name=filter-ntargetaudience]").val();
             d.filterncommercialtype = $("select[name=filter-ncommercialtype]").val();
+            d.filteriadvertiser_group = $("input[name=filter-iadvertiser_group]").val();
+            d.xadstype = $("select[name=xadstype]").val();            
         },
         type: 'POST'
       },
       columns: [
         { data: '_id', name: 'checkbox' },              
         { data: 'action', name: 'action' },              
-        { data: 'date', name: 'date' },              
-        { data: 'channel', name: 'channel' },              
-        { data: 'iprogramme', name: 'iprogramme' },              
-        { data: 'iproduct', name: 'iproduct' },              
-        { data: 'icopy', name: 'icopy' },              
-        { data: 'start_time', name: 'start_time' },              
-        { data: 'duration', name: 'duration' },              
+        { data: 'channel', name: 'channel' },
+        { data: 'date', name: 'date' },
+        { data: 'mo_no', name: 'mo_no' },
+        { data: 'sales_name', name: 'sales_name' },
+        { data: 'sales_group', name: 'sales_group' },
+        { data: 'sales_manager', name: 'sales_manager' },
+        { data: 'agent_name', name: 'agent_name' },
+        { data: 'sub_agent_name', name: 'sub_agent_name' },
+        { data: 'isector', name: 'isector' },
+        { data: 'icategory', name: 'icategory' },
+        { data: 'iadvertiser', name: 'iadvertiser' },
+        { data: 'iproduct', name: 'iproduct' },
+        { data: 'barcode', name: 'barcode' },
+        { data: 'icopy', name: 'icopy' },
+        { data: 'line_no', name: 'line_no' },
+        { data: 'po_no', name: 'po_no' },
+        { data: 'add_flag', name: 'add_flag' },
+        { data: 'ilevel1', name: 'ilevel1' },
+        { data: 'ilevel2', name: 'ilevel2' },
+        { data: 'iprogramme', name: 'iprogramme' },
+        { data: 'title_program', name: 'title_program' },
+        { data: 'duration_program', name: 'duration_program' },
+        { data: 'date_program', name: 'date_program' },
+        { data: 'start_time_program', name: 'start_time_program' },
+        { data: 'end_time_program', name: 'end_time_program' },
+        { data: 'air_date', name: 'air_date' },
+        { data: 'actual_time', name: 'actual_time' },
+        { data: 'cb', name: 'cb' },
+        { data: 'update_date', name: 'update_date' },
+        { data: 'bookingdatetime', name: 'bookingdatetime' },
+        { data: 'bookingdatetime1', name: 'bookingdatetime1' },
+        { data: 'spot_type', name: 'spot_type' },
+        { data: 'flag_rate', name: 'flag_rate' },
+        { data: 'po_type', name: 'po_type' },
+        { data: 'po_type_desc', name: 'po_type_desc' },
+        { data: 'ket_inventory', name: 'ket_inventory' },
+        { data: 'tx_code', name: 'tx_code' },
+        { data: 'dur', name: 'dur' },
+        { data: 'seq', name: 'seq' },
+        { data: 'nsector', name: 'nsector' },
+        { data: 'ncategory', name: 'ncategory' },
+        { data: 'nadvertiser', name: 'nadvertiser' },
+        { data: 'nproduct', name: 'nproduct' },
+        { data: 'ncopy', name: 'ncopy' },
+        { data: 'start_time', name: 'start_time' },
+        { data: 'end_time', name: 'end_time' },
+        { data: 'duration', name: 'duration' },
+        { data: 'nprogramme', name: 'nprogramme' },
+        { data: 'nlevel1', name: 'nlevel1' },
+        { data: 'nlevel2', name: 'nlevel2' },
+        { data: 'no_of_spots', name: 'no_of_spots' },
+        { data: 'cost', name: 'cost' },
+        { data: 't_second_cost', name: 't_second_cost' },
         { data: 'tvr'+$("select[name=filter-ntargetaudience]").val(), name: 'tvr'+$("select[name=filter-ntargetaudience]").val() },              
       ],
       dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
@@ -349,7 +443,11 @@ $(document).ready(function(){
             text: 'CSV',
             className: 'buttons-csvall',
             action: function ( e, dt, node, config ) {
-                window.location = '{{ url('admin/uploaddata/csvall') }}'
+                var oriaction = $("#filterer-form").attr('action');
+                $("#filterer-form").attr('action','{{ url('admin/spotmatching/csvall') }}');
+                $("#filterer-form").submit();
+                $("#filterer-form").attr('action',oriaction);
+                $("#filterer-form").attr('target','');
             }
           }
       ],
@@ -370,6 +468,9 @@ $(document).ready(function(){
       },{
           targets: [0,1],
           sortable: false,
+      },{
+        targets: [4,5,6,7,8,9,10,11,12,14,16,17,18,19,20,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,47,49,50,51,52,54,],
+        visible: false,
       } ],
       select: {
           style:    'multi',
@@ -423,6 +524,7 @@ $(document).ready(function(){
 <a id="filtererreset" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
 <a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
+        <form id="filterer-form" method="post" action="">@csrf
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Period & Time</h6>
@@ -481,6 +583,8 @@ $(document).ready(function(){
         {{ Form::hidden('filter-iadstype') }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="tadstype"><span id="filter-tadstype-count"></span> tAds Type</button>
         {{ Form::hidden('filter-tadstype') }}
+        <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadvertiser_group"><span id="filter-iadvertiser_group-count"></span> Advertiser Group</button>
+        {{ Form::hidden('filter-iadvertiser_group') }}     
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Target Audience</h6>
         {{ Form::select('filter-ntargetaudience',$data['ddtargetaudience'],null,['class'=>'form-control']) }}
@@ -492,8 +596,17 @@ $(document).ready(function(){
           <option value="commercialonly" selected>Commercial Only</option>
         </select>
         </div>
+        <div class="form-group" style="margin-top:15px">
+        <select name="xadstype" class="form-control col-10">
+          <option value="alladsype"  selected>All Ads Type</option>
+          <option value="loosespot">Loose Spot</option>
+          <option value="nonloosespot">Non Loose Spot</option>
+          <option value="notfound">Not Found</option>
+        </select>
+        </div>
         <hr>
         <hr>
+        </form>
         <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
           <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
         </div>

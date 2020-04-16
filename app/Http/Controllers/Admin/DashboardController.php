@@ -360,7 +360,7 @@ class DashboardController extends Controller
         if($action == 'pdf'){
             $pdf = PDF::loadView('admin.dashboardpdf',compact('request','data'));
             return $pdf->download('vislog_dashboard.pdf');
-        }if($action == 'print'){
+        }elseif($action == 'print'){
             return view('admin.dashboardprint',compact('request','data'));
         }else{
             return view('admin.dashboard',compact('request','data'));
@@ -684,7 +684,7 @@ class DashboardController extends Controller
         if($action == 'pdf'){
             $pdf = PDF::loadView('admin.highlightpdf',compact('request','data'));
             return $pdf->download('vislog_highlight.pdf');
-        }if($action == 'print'){
+        }elseif($action == 'print'){
             return view('admin.highlightprint',compact('request','data'));
         }else{
             return view('admin.highlight',compact('data','request'));

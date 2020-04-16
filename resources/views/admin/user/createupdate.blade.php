@@ -140,8 +140,8 @@
                     <div id="daterange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
                         <i class="fa fa-calendar"></i>&nbsp;
                         <span></span> <i class="fa fa-caret-down"></i>
-                        {{ Form::hidden('privileges[startdate]',null,['id'=>'startdate']) }}
-                        {{ Form::hidden('privileges[enddate]',null,['id'=>'enddate']) }}
+                        {{ Form::hidden('privileges[startdate]',old('privileges[startdate]',$item->privileges->startdate ?? null),['id'=>'startdate']) }}
+                        {{ Form::hidden('privileges[enddate]',old('privileges[enddate]',$item->privileges->enddate ?? null),['id'=>'enddate']) }}
                     </div>            
                   </div>
                 </div>
@@ -215,6 +215,7 @@
       <div class="modal-footer">
         <div id="filter-selected"></div>
         <button type="button" class="btn grey btn-outline-secondary" data-dismiss="modal">Set Privilege</button>
+        <a id="filter-reset-selected" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
       </div>
     </div>
   </div>
@@ -231,10 +232,17 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script type="text/javascript">
 $(function() {
-    var start = moment('2016-01-01');
-    $('input[name="privileges[startdate]"]').val(start.format('YYYY-MM-DD'));
-    var end = moment('2099-12-31'); 
-    $('input[name="privileges[enddate]"]').val(end.format('YYYY-MM-DD'));
+    @if(isset($item->privileges['startdate']))
+      var start = moment('{{$item->privileges['startdate']}}');
+      $('input[name="privileges[startdate]"]').val(start.format('YYYY-MM-DD'));
+      var end = moment('{{$item->privileges['enddate']}}'); 
+      $('input[name="privileges[enddate]"]').val(end.format('YYYY-MM-DD'));
+    @else
+      var start = moment('2016-01-01');
+      $('input[name="privileges[startdate]"]').val(start.format('YYYY-MM-DD'));
+      var end = moment('2099-12-31'); 
+      $('input[name="privileges[enddate]"]').val(end.format('YYYY-MM-DD'));
+    @endif
 
     function cb(start, end) {
         $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
@@ -327,6 +335,14 @@ $(document).ready(function(){
     $('input[name="privileges['+filter+']"]').val($("#filter-selected").html());
     $("#filter-"+filter+"-count").html(count); // set count at button
   });
+  $("#filter-reset-selected").click(function(){
+      var filter = $("input[name=filter-active]").val();
+      $(".search-result.btn-primary").addClass("btn-outline-primary");
+      $(".search-result.btn-primary").removeClass("btn-primary");    
+      $("#filter-selected").html('');
+      $('input[name="privileges['+filter+']"]').val('');
+      $("#filter-"+filter+"-count").html(''); // set count at button
+    });
 });
 </script>
 @endsection

@@ -167,39 +167,49 @@ class AdexnettController extends Controller
                                 case 'month':
                                     switch($value){
                                         case 'Januari':
+                                        case 'January':
                                             $mon = '01';
                                             break;
                                         case 'Februari':
+                                        case 'February':
+                                        case 'Pebruari':
                                             $mon = '02';
                                             break;
                                         case 'Maret':
+                                        case 'March':
                                             $mon = '03';
                                             break;
                                         case 'April':
                                             $mon = '04';
                                             break;
                                         case 'Mei':
+                                        case 'May':
                                             $mon = '05';
                                             break;
                                         case 'Juni':
+                                        case 'June':
                                             $mon = '06';
                                             break;
                                         case 'Juli':
+                                        case 'July':
                                             $mon = '07';
                                             break;
                                         case 'Agustus':
+                                        case 'August':
                                             $mon = '08';
                                             break;
                                         case 'September':
                                             $mon = '09';
                                             break;
                                         case 'Oktober':
+                                        case 'October':
                                             $mon = '10';
                                             break;
                                         case 'November':
                                             $mon = '11';
                                             break;
                                         case 'Desember':
+                                        case 'December':
                                             $mon = '12';
                                             break;
                                         default:
@@ -239,7 +249,7 @@ class AdexnettController extends Controller
                 }
                 if(count($insert) > 0){                
                     $mongoClient=new Client();
-                    $mongodata=$mongoClient->vislog->commercials;                            
+                    $mongodata=$mongoClient->vislog->adexnetts;                            
                     $mongodata->insertMany($insert);
                 }
             } 

@@ -30,7 +30,7 @@
 			<div class="container">
 				<div class="navigation-brand">
 					<div class="brand-logo">
-						<a href="index.html" class="logo">VISLOG</a><a href="index.html" class="logo logo-alt">VISLOG</a>
+						<a href="{{url('/')}}" class="logo">VISLOG</a><a href="{{url('/')}}" class="logo logo-alt">VISLOG</a>
 					</div>
 				</div>
 				<button class="navigation-toggle">

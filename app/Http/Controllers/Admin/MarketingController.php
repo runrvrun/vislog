@@ -9,6 +9,7 @@ use App\Adexnett;
 use App\Spotmatching;
 use App\Channel;
 use Auth;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class MarketingController extends Controller
 {
@@ -88,7 +89,7 @@ class MarketingController extends Controller
         //
     }
     
-    public function mktsummary(Request $request)
+    public function mktsummary(Request $request, $action = null)
     {
         $nett = $request->nett ?? 'nett1';
 
@@ -143,13 +144,14 @@ class MarketingController extends Controller
             array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
         }
         // apply filter
-        if($request->startdate){
-            // TODO: change startdate to be start of month and enddate to be endofmonth
-            $adexnett->whereBetween('isodate',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
-            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
+        if($request->startdate){            
+            $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->firstOfMonth();
+            $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate)->endOfMonth();
+            $adexnett->whereBetween('isodate',[$startdate,$enddate]);
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->firstOfMonth()->toDateTimeString();
             $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
             array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
-            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->toDateTimeString();
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 00:00:00')->endOfMonth()->toDateTimeString();
             $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
         }else{
@@ -318,6 +320,7 @@ class MarketingController extends Controller
         $data['marketshare_channel_month'] = $totalmonth;
         // market share per month
         $totalmonth = [];
+        $totalmonthchannel = [];
         $monthlist = [];
         foreach($query as $key=>$val){
             $cmonth = Carbon::parse($val->_id->isodate->toDateTime());
@@ -325,7 +328,12 @@ class MarketingController extends Controller
             $monthlist[] = $month;
             $totalmonth[$val->_id->channel][$month]['marketshare'] = $val->total;
         }
-        $data['marketshare_month_channel'] = $totalmonth;
+        foreach($channel as $key=>$val){
+            if(isset($totalmonth[$val->channel])){
+                $totalmonthchannel[$val->channel] = $totalmonth[$val->channel];
+            }
+        }
+        $data['marketshare_month_channel'] = $totalmonthchannel;
         $data['monthlist'] = array_unique($monthlist);
         // top 10 agency
         $query = Adexnett::raw(function($collection) use ($filter,$nett)
@@ -345,6 +353,7 @@ class MarketingController extends Controller
                 ]
             ]));
         });
+        // dd($query);
         // sum all
         $totalagency = [];
         foreach($query as $key=>$val){
@@ -420,9 +429,6 @@ class MarketingController extends Controller
                             '$sum'  => '$'.$nett
                         ]
                     ]
-                ],
-                [
-                    '$limit' => 10
                 ]
             ]));
         });
@@ -460,9 +466,6 @@ class MarketingController extends Controller
                             '$sum'  => '$'.$nett
                         ]
                     ]
-                ],
-                [
-                    '$limit' => 10
                 ]
             ]));
         });
@@ -486,7 +489,11 @@ class MarketingController extends Controller
         });
         $data['marketshare_channel_sector'] = array_slice($totalsector, 0, 10, true);
 
-        return view('admin.mktsummary.dashboard',compact('data','request'));
+        if($action == 'print'){
+            return view('admin.mktsummary.print',compact('request','data'));
+        }else{
+            return view('admin.mktsummary.dashboard',compact('data','request'));
+        }
     }
 
     public function adexnett()
@@ -496,8 +503,8 @@ class MarketingController extends Controller
 
     public function adexnettjson(Request $request)
     {
-        $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->subDays(1);
-        $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate);
+        $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->firstOfMonth();
+        $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate)->endOfMonth();
         $filterchannel = array_filter(explode(',',$request->filterchannel));
         $filternprogramme = array_filter(explode(',',$request->filternprogramme));
         $filteriprogramme = array_filter(explode(',',$request->filteriprogramme));
@@ -513,13 +520,15 @@ class MarketingController extends Controller
         $filterisector = array_filter(explode(',',$request->filterisector));
         $filterncategory = array_filter(explode(',',$request->filterncategory));
         $filtericategory = array_filter(explode(',',$request->filtericategory));
+        $filteriadvertiser_group = array_filter(explode(',',$request->filteriadvertiser_group));
         
         $query = Adexnett::select('month', 'year','channel','iprogramme','iproduct','spots',
-        'grp','gross','nett1','nett2','nett3');
+        'grp','gross','nett1','nett2','nett3','nsector','ncategory','nadvertiser','nproduct',
+        'nprogramme','nlevel_1','nlevel_2','nadstype','isector','icategory','iadvertiser','ilevel_1','ilevel_2',
+        'iadstype','tadstype','advertiser_group','agency','agency_subs','gm','sm','sgh','am','target','revenue');
 
         if($request->startdate && $request->enddate){
-            // $query->whereBetween('year',[$startdate->format('m'),$enddate->format('m')]); // not working, need to handle cross year
-            $query->whereBetween('year',[$startdate->format('Y'),$enddate->format('Y')]);
+            $query->whereBetween('isodate',[$startdate,$enddate]);
         } 
         if(count($filterchannel)){
             $query->whereIn('channel',$filterchannel);
@@ -566,9 +575,101 @@ class MarketingController extends Controller
         if(count($filtericategory)){
             $query->whereIn('icategory',$filtericategory);
         } 
+        if(count($filteriadvertiser_group)){
+            $query->whereIn('advertiser_group',$filteriadvertiser_group);
+        } 
+        
         // dd($query->toSql());
         return datatables($query->get())
         ->toJson();
+    }
+
+    public function adexnettcsvall(Request $request)
+    {
+        $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->firstOfMonth();
+        $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate)->endOfMonth();
+        $filterchannel = array_filter(explode(',',$request->{'filter-channel'}));
+        $filternprogramme = array_filter(explode(',',$request->{'filter-nprogramme'}));
+        $filteriprogramme = array_filter(explode(',',$request->{'filter-iprogramme'}));
+        $filternlevel_1 = array_filter(explode(',',$request->{'filter-nlevel_1'}));
+        $filterilevel_1 = array_filter(explode(',',$request->{'filter-ilevel_1'}));
+        $filternlevel_2 = array_filter(explode(',',$request->{'filter-nlevel_2'}));
+        $filterilevel_2 = array_filter(explode(',',$request->{'filter-ilevel_2'}));
+        $filternadvertiser = array_filter(explode(',',$request->{'filter-nadvertiser'}));
+        $filteriadvertiser = array_filter(explode(',',$request->{'filter-iadvertiser'}));
+        $filternproduct = array_filter(explode(',',$request->{'filter-nproduct'}));
+        $filteriproduct = array_filter(explode(',',$request->{'filter-iproduct'}));
+        $filternsector = array_filter(explode(',',$request->{'filter-nsector'}));
+        $filterisector = array_filter(explode(',',$request->{'filter-isector'}));
+        $filterncategory = array_filter(explode(',',$request->{'filter-ncategory'}));
+        $filtericategory = array_filter(explode(',',$request->{'filter-icategory'}));
+        $filteriadvertiser_group = array_filter(explode(',',$request->{'filter-iadvertiser_group'}));
+        
+        $query = Adexnett::select('month', 'year','channel','iprogramme','iproduct','spots',
+        'grp','gross','nett1','nett2','nett3','nsector','ncategory','nadvertiser','nproduct',
+        'nprogramme','nlevel_1','nlevel_2','nadstype','isector','icategory','iadvertiser','ilevel_1','ilevel_2',
+        'iadstype','tadstype','advertiser_group','agency','agency_subs','gm','sm','sgh','am','target','revenue');
+
+        if($request->startdate && $request->enddate){
+            $query->whereBetween('isodate',[$startdate,$enddate]);
+        } 
+        if(count($filterchannel)){
+            $query->whereIn('channel',$filterchannel);
+        } 
+        if(count($filternprogramme)){
+            $query->whereIn('nprogramme',$filternprogramme);
+        } 
+        if(count($filteriprogramme)){
+            $query->whereIn('iprogramme',$filteriprogramme);
+        } 
+        if(count($filternlevel_1)){
+            $query->whereIn('nlevel_1',$filternlevel_1);
+        } 
+        if(count($filterilevel_1)){
+            $query->whereIn('ilevel_1',$filterilevel_1);
+        } 
+        if(count($filternlevel_2)){
+            $query->whereIn('nlevel_2',$filternlevel_2);
+        } 
+        if(count($filterilevel_2)){
+            $query->whereIn('ilevel_2',$filterilevel_2);
+        } 
+        if(count($filternadvertiser)){
+            $query->whereIn('nadvertiser',$filternadvertiser);
+        } 
+        if(count($filteriadvertiser)){
+            $query->whereIn('iadvertiser',$filteriadvertiser);
+        } 
+        if(count($filternproduct)){
+            $query->whereIn('nproduct',$filternproduct);
+        } 
+        if(count($filteriproduct)){
+            $query->whereIn('iproduct',$filteriproduct);
+        } 
+        if(count($filternsector)){
+            $query->whereIn('nsector',$filternsector);
+        } 
+        if(count($filterisector)){
+            $query->whereIn('isector',$filterisector);
+        } 
+        if(count($filterncategory)){
+            $query->whereIn('ncategory',$filterncategory);
+        } 
+        if(count($filtericategory)){
+            $query->whereIn('icategory',$filtericategory);
+        } 
+        if(count($filteriadvertiser_group)){
+            $query->whereIn('advertiser_group',$filteriadvertiser_group);
+        } 
+        
+        $export = $query->get();
+        $filename = 'vislog-adexnett.csv';
+        $temp = 'temp/'.$filename;
+        (new FastExcel($export))->export('temp/vislog-adexnett.csv');
+        $headers = [
+            'Content-Type: text/csv',
+            ];
+        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);    
     }
     
     public function spotmatching()
@@ -604,9 +705,16 @@ class MarketingController extends Controller
         $filteriadstype = array_filter(explode(',',$request->filteriadstype));
         $filtertadstype = array_filter(explode(',',$request->filtertadstype));
         $filterntargetaudience = $request->filterntargetaudience ?? '01';
+        $filteriadvertiser_group = array_filter(explode(',',$request->{'filter-iadvertiser_group'}));
         
-        $query = Spotmatching::select('date','channel','iprogramme','iproduct','icopy','start_time',
-        'duration','cost','tvr'.$filterntargetaudience);
+        $query = Spotmatching::select('channel','date','mo_no','sales_name','sales_group','sales_manager',
+        'agent_name','sub_agent_name','isector','icategory','iadvertiser','iproduct','barcode','icopy',
+        'line_no','po_no','add_flag','ilevel1','ilevel2','iprogramme','title_program','duration_program',
+        'date_program','start_time_program','end_time_program','air_date','actual_time','cb','update_date',
+        'bookingdatetime','bookingdatetime1','spot_type','flag_rate','po_type','po_type_desc','ket_inventory',
+        'tx_code','dur','seq','nsector','ncategory','nadvertiser','nproduct','ncopy','start_time','end_time',
+        'duration','nprogramme','nlevel1','nlevel2','no_of_spots','cost','t_second_cost',
+        'tvr'.$filterntargetaudience);
     
         if($request->startdate && $request->enddate){
             $query->whereBetween('isodate',[$startdate,$enddate]);
@@ -668,6 +776,22 @@ class MarketingController extends Controller
         if($request->filterncommercialtype == "commercialonly"){
             $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
         }
+        if(count($filteriadvertiser_group)){
+            // $query->whereIn('advertiser_group',$filteriadvertiser_group);
+        } 
+        if($request->xadstype){
+            switch($request->xadstype):
+                case 'loosespot':
+                    $query->where('ket_inventory','Y');
+                break;
+                case 'nonloosespot':
+                    $query->where('ket_inventory','N');
+                break;
+                case 'notfound':
+                    $query->where('ket_inventory','Not Found');
+                break;
+            endswitch;
+        }
         // add filter by user privilege
         if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
         if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(',',Auth::user()->privileges['nsector']));
@@ -686,5 +810,111 @@ class MarketingController extends Controller
         ->addColumn('action', function ($dt) {
             return view('admin.spotmatching.action',compact('dt'));
         })->toJson();
+    }
+
+    public function spotmatchingcsvall(Request $request)
+    {
+        $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->firstOfMonth();
+        $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate)->endOfMonth();
+        $filterchannel = array_filter(explode(',',$request->{'filter-channel'}));
+        $filternprogramme = array_filter(explode(',',$request->{'filter-nprogramme'}));
+        $filteriprogramme = array_filter(explode(',',$request->{'filter-iprogramme'}));
+        $filternlevel_1 = array_filter(explode(',',$request->{'filter-nlevel_1'}));
+        $filterilevel_1 = array_filter(explode(',',$request->{'filter-ilevel_1'}));
+        $filternlevel_2 = array_filter(explode(',',$request->{'filter-nlevel_2'}));
+        $filterilevel_2 = array_filter(explode(',',$request->{'filter-ilevel_2'}));
+        $filternadvertiser = array_filter(explode(',',$request->{'filter-nadvertiser'}));
+        $filteriadvertiser = array_filter(explode(',',$request->{'filter-iadvertiser'}));
+        $filternproduct = array_filter(explode(',',$request->{'filter-nproduct'}));
+        $filteriproduct = array_filter(explode(',',$request->{'filter-iproduct'}));
+        $filternsector = array_filter(explode(',',$request->{'filter-nsector'}));
+        $filterisector = array_filter(explode(',',$request->{'filter-isector'}));
+        $filterncategory = array_filter(explode(',',$request->{'filter-ncategory'}));
+        $filtericategory = array_filter(explode(',',$request->{'filter-icategory'}));
+        $filterntargetaudience = $request->{'filter-ntargetaudience'} ?? '01';
+        $filteriadvertiser_group = array_filter(explode(',',$request->{'filter-iadvertiser_group'}));
+        
+        $query = Spotmatching::select('channel','date','mo_no','sales_name','sales_group','sales_manager',
+        'agent_name','sub_agent_name','isector','icategory','iadvertiser','iproduct','barcode','icopy',
+        'line_no','po_no','add_flag','ilevel1','ilevel2','iprogramme','title_program','duration_program',
+        'date_program','start_time_program','end_time_program','air_date','actual_time','cb','update_date',
+        'bookingdatetime','bookingdatetime1','spot_type','flag_rate','po_type','po_type_desc','ket_inventory',
+        'tx_code','dur','seq','nsector','ncategory','nadvertiser','nproduct','ncopy','start_time','end_time',
+        'duration','nprogramme','nlevel1','nlevel2','no_of_spots','cost','t_second_cost',
+        'tvr'.$filterntargetaudience);
+
+        if($request->startdate && $request->enddate){
+            $query->whereBetween('isodate',[$startdate,$enddate]);
+        } 
+        if(count($filterchannel)){
+            $query->whereIn('channel',$filterchannel);
+        } 
+        if(count($filternprogramme)){
+            $query->whereIn('nprogramme',$filternprogramme);
+        } 
+        if(count($filteriprogramme)){
+            $query->whereIn('iprogramme',$filteriprogramme);
+        } 
+        if(count($filternlevel_1)){
+            $query->whereIn('nlevel_1',$filternlevel_1);
+        } 
+        if(count($filterilevel_1)){
+            $query->whereIn('ilevel_1',$filterilevel_1);
+        } 
+        if(count($filternlevel_2)){
+            $query->whereIn('nlevel_2',$filternlevel_2);
+        } 
+        if(count($filterilevel_2)){
+            $query->whereIn('ilevel_2',$filterilevel_2);
+        } 
+        if(count($filternadvertiser)){
+            $query->whereIn('nadvertiser',$filternadvertiser);
+        } 
+        if(count($filteriadvertiser)){
+            $query->whereIn('iadvertiser',$filteriadvertiser);
+        } 
+        if(count($filternproduct)){
+            $query->whereIn('nproduct',$filternproduct);
+        } 
+        if(count($filteriproduct)){
+            $query->whereIn('iproduct',$filteriproduct);
+        } 
+        if(count($filternsector)){
+            $query->whereIn('nsector',$filternsector);
+        } 
+        if(count($filterisector)){
+            $query->whereIn('isector',$filterisector);
+        } 
+        if(count($filterncategory)){
+            $query->whereIn('ncategory',$filterncategory);
+        } 
+        if(count($filtericategory)){
+            $query->whereIn('icategory',$filtericategory);
+        } 
+        if(count($filteriadvertiser_group)){
+            // $query->whereIn('iadvertiser_group',$filteriadvertiser_group);
+        } 
+        if($request->xadstype){
+            switch($request->xadstype):
+                case 'loosespot':
+                    $query->where('ket_inventory','Y');
+                break;
+                case 'nonloosespot':
+                    $query->where('ket_inventory','N');
+                break;
+                case 'notfound':
+                    $query->where('ket_inventory','Not Found');
+                break;
+            endswitch;
+        }
+        
+        $export = $query->get();
+        $filename = 'vislog-spotmatching.csv';
+        $temp = 'temp/'.$filename;
+        (new FastExcel($export))->export('temp/vislog-spotmatching.csv');
+        $headers = [
+            'Content-Type: text/csv',
+            ];
+        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);    
     }
 }

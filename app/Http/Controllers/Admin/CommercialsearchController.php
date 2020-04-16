@@ -36,11 +36,11 @@ class CommercialsearchController extends Controller
     {
         if(isset($request->term)){
             $query = Commercialsearch::select('iadvertiser')->where('iadvertiser','like','%'.$request->term.'%')->take(50)->groupBy('iadvertiser');
-            if(!empty(Auth::user()->privileges['iadvertiser'])) $query->whereIn('iadvertiser',explode(',',Auth::user()->privileges['iadvertiser']));
+            if(!empty(Auth::user()->privileges['nadvertiser'])) $query->whereIn('iadvertiser',explode(',',Auth::user()->privileges['nadvertiser']));
             return $query->get();
         }else{
             $query = Commercialsearch::select('iadvertiser')->take(50)->groupBy('iadvertiser');
-            if(!empty(Auth::user()->privileges['iadvertiser'])) $query->whereIn('iadvertiser',explode(',',Auth::user()->privileges['iadvertiser']));
+            if(!empty(Auth::user()->privileges['nadvertiser'])) $query->whereIn('iadvertiser',explode(',',Auth::user()->privileges['nadvertiser']));
             return $query->get();
         }
     }
@@ -49,11 +49,11 @@ class CommercialsearchController extends Controller
     {
         if(isset($request->term)){
             $query = Commercialsearch::select('iadvertiser_group')->where('iadvertiser_group','like','%'.$request->term.'%')->take(50)->groupBy('iadvertiser_group');
-            if(!empty(Auth::user()->privileges['iadvertiser_group'])) $query->whereIn('iadvertiser_group',explode(',',Auth::user()->privileges['iadvertiser_group']));
+            if(!empty(Auth::user()->privileges['nadvertiser_group'])) $query->whereIn('iadvertiser_group',explode(',',Auth::user()->privileges['nadvertiser_group']));
             return $query->get();
         }else{
             $query = Commercialsearch::select('iadvertiser_group')->take(50)->groupBy('iadvertiser_group');
-            if(!empty(Auth::user()->privileges['iadvertiser_group'])) $query->whereIn('iadvertiser_group',explode(',',Auth::user()->privileges['iadvertiser_group']));
+            if(!empty(Auth::user()->privileges['nadvertiser_group'])) $query->whereIn('iadvertiser_group',explode(',',Auth::user()->privileges['nadvertiser_group']));
             return $query->get();
         }
     }
@@ -75,11 +75,11 @@ class CommercialsearchController extends Controller
     {
         if(isset($request->term)){
             $query = Commercialsearch::select('iproduct')->where('iproduct','like','%'.$request->term.'%')->take(50)->groupBy('iproduct');
-            if(!empty(Auth::user()->privileges['iproduct'])) $query->whereIn('iproduct',explode(',',Auth::user()->privileges['iproduct']));
+            if(!empty(Auth::user()->privileges['nproduct'])) $query->whereIn('iproduct',explode(',',Auth::user()->privileges['nproduct']));
             return $query->get();
         }else{
             $query = Commercialsearch::select('iproduct')->take(50)->groupBy('iproduct');
-            if(!empty(Auth::user()->privileges['iproduct'])) $query->whereIn('iproduct',explode(',',Auth::user()->privileges['iproduct']));
+            if(!empty(Auth::user()->privileges['nproduct'])) $query->whereIn('iproduct',explode(',',Auth::user()->privileges['nproduct']));
             return $query->get();
         }
     }
@@ -101,11 +101,11 @@ class CommercialsearchController extends Controller
     {
         if(isset($request->term)){
             $query = Commercialsearch::select('isector')->where('isector','like','%'.$request->term.'%')->take(50)->groupBy('isector');
-            if(!empty(Auth::user()->privileges['isector'])) $query->whereIn('isector',explode(',',Auth::user()->privileges['isector']));
+            if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('isector',explode(',',Auth::user()->privileges['nsector']));
             return $query->get();
         }else{
             $query = Commercialsearch::select('isector')->take(50)->groupBy('isector');
-            if(!empty(Auth::user()->privileges['isector'])) $query->whereIn('isector',explode(',',Auth::user()->privileges['isector']));
+            if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('isector',explode(',',Auth::user()->privileges['nsector']));
             return $query->get();
         }
     }
@@ -127,11 +127,11 @@ class CommercialsearchController extends Controller
     {
         if(isset($request->term)){
             $query = Commercialsearch::select('icategory')->where('icategory','like','%'.$request->term.'%')->take(50)->groupBy('icategory');
-            if(!empty(Auth::user()->privileges['icategory'])) $query->whereIn('icategory',explode(',',Auth::user()->privileges['icategory']));
+            if(!empty(Auth::user()->privileges['ncategory'])) $query->whereIn('icategory',explode(',',Auth::user()->privileges['ncategory']));
             return $query->get();
         }else{
             $query = Commercialsearch::select('icategory')->take(50)->groupBy('icategory');
-            if(!empty(Auth::user()->privileges['icategory'])) $query->whereIn('icategory',explode(',',Auth::user()->privileges['icategory']));
+            if(!empty(Auth::user()->privileges['ncategory'])) $query->whereIn('icategory',explode(',',Auth::user()->privileges['ncategory']));
             return $query->get();
         }
     }
