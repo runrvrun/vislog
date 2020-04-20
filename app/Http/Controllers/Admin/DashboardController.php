@@ -37,7 +37,7 @@ class DashboardController extends Controller
         $channel = Channel::orderBy('order')->get();
         // populate dropdown
         $query = \App\Targetaudience::whereNotNull('targetaudience');
-        if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
+        if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(';',Auth::user()->privileges['targetaudience']));
         $data['ddtargetaudience'] = $query->pluck('targetaudience','code');
 
         if(empty($request->startdate)){
@@ -57,44 +57,88 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            $commercial->whereIn('nsector',explode(',',Auth::user()->privileges['nsector']));
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            $commercial->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            $commercial->whereIn('ncategory',explode(',',Auth::user()->privileges['ncategory']));
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            $commercial->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']));
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            $commercial->whereIn('nproduct',explode(',',Auth::user()->privileges['nproduct']));
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            $commercial->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']));
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            $commercial->whereIn('nadvertiser',explode(',',Auth::user()->privileges['nadvertiser']));
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            $commercial->whereIn('nadvertiser',explode(';',Auth::user()->privileges['nadvertiser']));
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            $commercial->whereIn('ncopy',explode(',',Auth::user()->privileges['ncopy']));
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            $commercial->whereIn('ncopy',explode(';',Auth::user()->privileges['ncopy']));
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            $commercial->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']));
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            $commercial->whereIn('nadstype',explode(';',Auth::user()->privileges['nadstype']));
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            $commercial->whereIn('channel',explode(',',Auth::user()->privileges['channel']));
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            $commercial->whereIn('channel',explode(';',Auth::user()->privileges['channel']));
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            $commercial->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel_1']));
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            $commercial->whereIn('nlevel_1',explode(';',Auth::user()->privileges['nlevel_1']));
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            $commercial->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel_2']));
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            $commercial->whereIn('nlevel_2',explode(';',Auth::user()->privileges['nlevel_2']));
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            $commercial->whereIn('nprogramme',explode(',',Auth::user()->privileges['nprogramme']));
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            $commercial->whereIn('nprogramme',explode(';',Auth::user()->privileges['nprogramme']));
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            $commercial->whereIn('isector',explode(';',Auth::user()->privileges['isector']));
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            $commercial->whereIn('icategory',explode(';',Auth::user()->privileges['icategory']));
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            $commercial->whereIn('iproduct',explode(';',Auth::user()->privileges['iproduct']));
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            $commercial->whereIn('iadvertiser',explode(';',Auth::user()->privileges['iadvertiser']));
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            $commercial->whereIn('iadvertiser_group',explode(';',Auth::user()->privileges['iadvertiser_group']));
+            array_push($filter,[ '$match' => ['iadvertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            $commercial->whereIn('icopy',explode(';',Auth::user()->privileges['icopy']));
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            $commercial->whereIn('iadstype',explode(';',Auth::user()->privileges['iadstype']));
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            $commercial->whereIn('tadstype',explode(';',Auth::user()->privileges['tadstype']));
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            $commercial->whereIn('ilevel_1',explode(';',Auth::user()->privileges['ilevel_1']));
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            $commercial->whereIn('ilevel_2',explode(';',Auth::user()->privileges['ilevel_2']));
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            $commercial->whereIn('iprogramme',explode(';',Auth::user()->privileges['iprogramme']));
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->ntargetaudience){
@@ -131,76 +175,76 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
-            $commercial->whereIn('channel',array_filter(explode(',',$request->channel)));
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            $commercial->whereIn('channel',array_filter(explode(';',$request->channel)));
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            $commercial->whereIn('nprogramme',array_filter(explode(',',$request->nprogramme)));
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            $commercial->whereIn('nprogramme',array_filter(explode(';',$request->nprogramme)));
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            $commercial->whereIn('iprogramme',array_filter(explode(',',$request->iprogramme)));
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            $commercial->whereIn('iprogramme',array_filter(explode(';',$request->iprogramme)));
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            $commercial->whereIn('nlevel_1',array_filter(explode(',',$request->nlevel_1)));
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            $commercial->whereIn('nlevel_1',array_filter(explode(';',$request->nlevel_1)));
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            $commercial->whereIn('ilevel_1',array_filter(explode(',',$request->ilevel_1)));
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            $commercial->whereIn('ilevel_1',array_filter(explode(';',$request->ilevel_1)));
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            $commercial->whereIn('nlevel_2',array_filter(explode(',',$request->nlevel_2)));
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            $commercial->whereIn('nlevel_2',array_filter(explode(';',$request->nlevel_2)));
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            $commercial->whereIn('ilevel_2',array_filter(explode(',',$request->ilevel_2)));
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            $commercial->whereIn('ilevel_2',array_filter(explode(';',$request->ilevel_2)));
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            $commercial->whereIn('nadvertiser',array_filter(explode(',',$request->nadvertiser)));
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            $commercial->whereIn('nadvertiser',array_filter(explode(';',$request->nadvertiser)));
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            $commercial->whereIn('iadvertiser',array_filter(explode(',',$request->iadvertiser)));
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            $commercial->whereIn('iadvertiser',array_filter(explode(';',$request->iadvertiser)));
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            $commercial->whereIn('nproduct',array_filter(explode(',',$request->nproduct)));
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            $commercial->whereIn('nproduct',array_filter(explode(';',$request->nproduct)));
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            $commercial->whereIn('iproduct',array_filter(explode(',',$request->iproduct)));
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            $commercial->whereIn('iproduct',array_filter(explode(';',$request->iproduct)));
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            $commercial->whereIn('nsector',array_filter(explode(',',$request->nsector)));
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            $commercial->whereIn('nsector',array_filter(explode(';',$request->nsector)));
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            $commercial->whereIn('isector',array_filter(explode(',',$request->isector)));
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            $commercial->whereIn('isector',array_filter(explode(';',$request->isector)));
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            $commercial->whereIn('ncategory',array_filter(explode(',',$request->ncategory)));
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            $commercial->whereIn('ncategory',array_filter(explode(';',$request->ncategory)));
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            $commercial->whereIn('icategory',array_filter(explode(',',$request->icategory)));
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            $commercial->whereIn('icategory',array_filter(explode(';',$request->icategory)));
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            $commercial->whereIn('nadstype',array_filter(explode(',',$request->nadstype)));
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            $commercial->whereIn('nadstype',array_filter(explode(';',$request->nadstype)));
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            $commercial->whereIn('iadstype',array_filter(explode(',',$request->iadstype)));
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            $commercial->whereIn('iadstype',array_filter(explode(';',$request->iadstype)));
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            $commercial->whereIn('tadstype',array_filter(explode(',',$request->tadstype)));
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            $commercial->whereIn('tadstype',array_filter(explode(';',$request->tadstype)));
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             $commercial->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
@@ -717,34 +761,67 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            array_push($filter,[ '$match' => ['iadvertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->startdate){
@@ -769,58 +846,58 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
@@ -884,34 +961,67 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            array_push($filter,[ '$match' => ['iadvertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->startdate){
@@ -936,58 +1046,58 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
@@ -1051,34 +1161,67 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            array_push($filter,[ '$match' => ['iadvertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->startdate){
@@ -1103,58 +1246,58 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
@@ -1218,34 +1361,67 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            array_push($filter,[ '$match' => ['iadvertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->startdate){
@@ -1270,58 +1446,58 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
@@ -1386,34 +1562,67 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            array_push($filter,[ '$match' => ['iadvertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->startdate){
@@ -1438,58 +1647,58 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
@@ -1554,34 +1763,67 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            array_push($filter,[ '$match' => ['iadvertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->startdate){
@@ -1606,58 +1848,58 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
@@ -1722,34 +1964,67 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            array_push($filter,[ '$match' => ['iadvertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->startdate){
@@ -1774,58 +2049,58 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  
@@ -1891,34 +2166,67 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            array_push($filter,[ '$match' => ['iadvertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->startdate){
@@ -1943,58 +2251,58 @@ class DashboardController extends Controller
             array_push($filter,[ '$match' => [ 'start_timestamp' => [ '$lte' => $endtimestamp ] ] ] );
         }
         if($request->channel){
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             array_push($filter,[ '$match' => ['nsector' => ['$nin' => ['NON-COMMERCIAL ADVERTISEMENT']]]]);  

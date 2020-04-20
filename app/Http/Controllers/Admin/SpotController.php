@@ -18,10 +18,20 @@ class SpotController extends Controller
         return view('admin.spotpairing.index');
     }
 
-    public function spotpairingjson()
+    public function spotpairingjson(Request $request)
     {
-        $data['a'] = Spotmatching::where('nproduct','Not Found')->orderBy('iproduct')->orderBy('actual_time')->orderBy('isodate')->get();
-        $data['b'] = Spotmatching::where('iproduct','Not Found')->orderBy('nproduct')->orderBy('start_time')->orderBy('isodate')->get();
+        if($request->startdate){
+            $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->subDays(1);
+            $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate);
+            $query = Spotmatching::whereBetween('isodate',[$startdate,$enddate]);
+        }else{
+            $startdate = Carbon::now()->subDays(1);
+            $enddate = Carbon::now();
+            $query = Spotmatching::whereBetween('isodate',[$startdate,$enddate]);            
+        }
+        $queryb = clone($query);
+        $data['a'] = $query->where('nproduct','Not Found')->orderBy('iproduct')->orderBy('actual_time')->orderBy('isodate')->get();
+        $data['b'] = $queryb->where('iproduct','Not Found')->orderBy('nproduct')->orderBy('start_time')->orderBy('isodate')->get();
         return $data;
     }
 
@@ -33,7 +43,7 @@ class SpotController extends Controller
                 $datab = Spotmatching::where('_id',$val)->first();
                 $pair = ['market','activity','target','year','quarter','month','iso_week','day_of_week'
                 ,'wk_day/wk_end','nsector','ncategory','nadvertiser','nproduct','ncopy','start_time',
-                'end_time','duration','nprogramme','nlevel_1','nlevel_2','startvideo1','endvideo1',
+                'end_time','duration','nprogramme','nlevel_1','nlevel_2','nadstype','startvideo1','endvideo1',
                 'startvideo2','endvideo2','no_of_spots','cost','t_second_cost','remark','variance',
                 'similar','durasi','status','source'];
                 foreach($pair as $p){

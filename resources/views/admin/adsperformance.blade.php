@@ -179,8 +179,8 @@ $(document).ready(function(){
       success: function(result){
         if(result.length){
           $.each(result, function(k,v) {
-            var curfil = $("#filter-selected").html();
-            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v + ',')+1){
+            var curfil = $("#filter-selected").html().replace(/&amp;/g, '&');
+            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v + ';')+1){
               // previously selected, set style
               $('#filter-modal-search-result').append( '<button class="btn search-result btn-primary mr-1" value="'+v+'">'+v+'</button>' );
             }else{
@@ -201,13 +201,13 @@ $(document).ready(function(){
     if($(this).hasClass('btn-primary')){
       count++; // selected, increment button count
       $("#filter-selected").html(function(i,html) { 
-          html = html + filt + ',';
+          html = html + filt + ';';
           return html;
       });
     }else{
       count--; // unselected, decrement button count
-      newval = $("#filter-selected").html();
-      $("#filter-selected").html(newval.replace(filt+',',''));
+      newval = $("#filter-selected").html().replace(/&amp;/g, '&');
+      $("#filter-selected").html(newval.replace(filt+';',''));
     }
     $("input[name=filter-"+filter+"]").val($("#filter-selected").html());
     $("#filter-"+filter+"-count").html(count); // set count at button
@@ -258,14 +258,14 @@ $(document).ready(function(){
             d.startdate = $('#startdate').val();
             d.enddate = $('#enddate').val();
             d.filterchannel = $("input[name=filter-channel]").val();
-            d.filternprogramme = $("input[name=filter-nprogramme]").val();
+            d.filternprogramme = $("input[name=filter-nprogramme]").val().replace(/&amp;/g, '&');
             d.filternlevel_1 = $("input[name=filter-nlevel_1]").val();
             d.filternlevel_2 = $("input[name=filter-nlevel_2]").val();
-            d.filternadvertiser = $("input[name=filter-nadvertiser]").val();
-            d.filternproduct = $("input[name=filter-nproduct]").val();
-            d.filternsector = $("input[name=filter-nsector]").val();
-            d.filterncategory = $("input[name=filter-ncategory]").val();
-            d.filternadstype = $("input[name=filter-nadstype]").val();
+            d.filternadvertiser = $("input[name=filter-nadvertiser]").val().replace(/&amp;/g, '&');;
+            d.filternproduct = $("input[name=filter-nproduct]").val().replace(/&amp;/g, '&');
+            d.filternsector = $("input[name=filter-nsector]").val().replace(/&amp;/g, '&');
+            d.filterncategory = $("input[name=filter-ncategory]").val().replace(/&amp;/g, '&');
+            d.filternadstype = $("input[name=filter-nadstype]").val().replace(/&amp;/g, '&');
             d.filterntargetaudience = $("select[name=filter-ntargetaudience]").val();
             d.filterncommercialdata = $("select[name=filter-ncommercialdata]").val();
             d.filterncommercialtype = $("select[name=filter-ncommercialtype]").val();

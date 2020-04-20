@@ -104,44 +104,88 @@ class MarketingController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
-            $adexnett->whereIn('nsector',explode(',',Auth::user()->privileges['nsector']));
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(',',Auth::user()->privileges['nsector'])]]]);  
+            $adexnett->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncategory'])) {
-            $adexnett->whereIn('ncategory',explode(',',Auth::user()->privileges['ncategory']));
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(',',Auth::user()->privileges['ncategory'])]]]);  
+            $adexnett->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']));
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => explode(';',Auth::user()->privileges['ncategory'])]]]);  
         }           
         if(!empty(Auth::user()->privileges['nproduct'])) {
-            $adexnett->whereIn('nproduct',explode(',',Auth::user()->privileges['nproduct']));
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(',',Auth::user()->privileges['nproduct'])]]]);  
+            $adexnett->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']));
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => explode(';',Auth::user()->privileges['nproduct'])]]]);  
         } 
         if(!empty(Auth::user()->privileges['nadvertiser'])) {
-            $adexnett->whereIn('nadvertiser',explode(',',Auth::user()->privileges['nadvertiser']));
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(',',Auth::user()->privileges['nadvertiser'])]]]);  
+            $adexnett->whereIn('nadvertiser',explode(';',Auth::user()->privileges['nadvertiser']));
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => explode(';',Auth::user()->privileges['nadvertiser'])]]]);  
         }
         if(!empty(Auth::user()->privileges['ncopy'])) {
-            $adexnett->whereIn('ncopy',explode(',',Auth::user()->privileges['ncopy']));
-            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(',',Auth::user()->privileges['ncopy'])]]]);  
+            $adexnett->whereIn('ncopy',explode(';',Auth::user()->privileges['ncopy']));
+            array_push($filter,[ '$match' => ['ncopy' => ['$in' => explode(';',Auth::user()->privileges['ncopy'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nadstype'])) {
-            $adexnett->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']));
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(',',Auth::user()->privileges['nadstype'])]]]);  
+            $adexnett->whereIn('nadstype',explode(';',Auth::user()->privileges['nadstype']));
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => explode(';',Auth::user()->privileges['nadstype'])]]]);  
         }
         if(!empty(Auth::user()->privileges['channel']))  {
-            $adexnett->whereIn('channel',explode(',',Auth::user()->privileges['channel']));
-            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(',',Auth::user()->privileges['channel'])]]]);  
+            $adexnett->whereIn('channel',explode(';',Auth::user()->privileges['channel']));
+            array_push($filter,[ '$match' => ['channel' => ['$in' => explode(';',Auth::user()->privileges['channel'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_1'])) {
-            $adexnett->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel_1']));
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(',',Auth::user()->privileges['nlevel_1'])]]]);  
+            $adexnett->whereIn('nlevel_1',explode(';',Auth::user()->privileges['nlevel_1']));
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => explode(';',Auth::user()->privileges['nlevel_1'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nlevel_2'])) {
-            $adexnett->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel_2']));
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(',',Auth::user()->privileges['nlevel_2'])]]]);  
+            $adexnett->whereIn('nlevel_2',explode(';',Auth::user()->privileges['nlevel_2']));
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => explode(';',Auth::user()->privileges['nlevel_2'])]]]);  
         }
         if(!empty(Auth::user()->privileges['nprogramme'])) {
-            $adexnett->whereIn('nprogramme',explode(',',Auth::user()->privileges['nprogramme']));
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(',',Auth::user()->privileges['nprogramme'])]]]);  
+            $adexnett->whereIn('nprogramme',explode(';',Auth::user()->privileges['nprogramme']));
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => explode(';',Auth::user()->privileges['nprogramme'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['isector'])) {
+            $adexnett->whereIn('isector',explode(';',Auth::user()->privileges['isector']));
+            array_push($filter,[ '$match' => ['isector' => ['$in' => explode(';',Auth::user()->privileges['isector'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icategory'])) {
+            $adexnett->whereIn('icategory',explode(';',Auth::user()->privileges['icategory']));
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => explode(';',Auth::user()->privileges['icategory'])]]]);  
+        }           
+        if(!empty(Auth::user()->privileges['iproduct'])) {
+            $adexnett->whereIn('iproduct',explode(';',Auth::user()->privileges['iproduct']));
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => explode(';',Auth::user()->privileges['iproduct'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser'])) {
+            $adexnett->whereIn('iadvertiser',explode(';',Auth::user()->privileges['iadvertiser']));
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser'])]]]);  
+        } 
+        if(!empty(Auth::user()->privileges['iadvertiser_group'])) {
+            $adexnett->whereIn('advertiser_group',explode(';',Auth::user()->privileges['iadvertiser_group']));
+            array_push($filter,[ '$match' => ['advertiser_group' => ['$in' => explode(';',Auth::user()->privileges['iadvertiser_group'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['icopy'])) {
+            $adexnett->whereIn('icopy',explode(';',Auth::user()->privileges['icopy']));
+            array_push($filter,[ '$match' => ['icopy' => ['$in' => explode(';',Auth::user()->privileges['icopy'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iadstype'])) {
+            $adexnett->whereIn('iadstype',explode(';',Auth::user()->privileges['iadstype']));
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => explode(';',Auth::user()->privileges['iadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['tadstype'])) {
+            $adexnett->whereIn('tadstype',explode(';',Auth::user()->privileges['tadstype']));
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => explode(';',Auth::user()->privileges['tadstype'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_1'])) {
+            $adexnett->whereIn('ilevel_1',explode(';',Auth::user()->privileges['ilevel_1']));
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => explode(';',Auth::user()->privileges['ilevel_1'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['ilevel_2'])) {
+            $adexnett->whereIn('ilevel_2',explode(';',Auth::user()->privileges['ilevel_2']));
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => explode(';',Auth::user()->privileges['ilevel_2'])]]]);  
+        }
+        if(!empty(Auth::user()->privileges['iprogramme'])) {
+            $adexnett->whereIn('iprogramme',explode(';',Auth::user()->privileges['iprogramme']));
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => explode(';',Auth::user()->privileges['iprogramme'])]]]);  
         }
         // apply filter
         if($request->startdate){            
@@ -164,80 +208,80 @@ class MarketingController extends Controller
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );    
         }
         if($request->channel){
-            $adexnett->whereIn('channel',array_filter(explode(',',$request->channel)));
-            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(',',$request->channel))]]]);  
+            $adexnett->whereIn('channel',array_filter(explode(';',$request->channel)));
+            array_push($filter,[ '$match' => ['channel' => ['$in' => array_filter(explode(';',$request->channel))]]]);  
         }
         if($request->nprogramme){
-            $adexnett->whereIn('nprogramme',array_filter(explode(',',$request->nprogramme)));
-            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(',',$request->nprogramme))]]]);  
+            $adexnett->whereIn('nprogramme',array_filter(explode(';',$request->nprogramme)));
+            array_push($filter,[ '$match' => ['nprogramme' => ['$in' => array_filter(explode(';',$request->nprogramme))]]]);  
         }
         if($request->iprogramme){
-            $adexnett->whereIn('iprogramme',array_filter(explode(',',$request->iprogramme)));
-            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(',',$request->iprogramme))]]]);  
+            $adexnett->whereIn('iprogramme',array_filter(explode(';',$request->iprogramme)));
+            array_push($filter,[ '$match' => ['iprogramme' => ['$in' => array_filter(explode(';',$request->iprogramme))]]]);  
         }
         if($request->nlevel_1){
-            $adexnett->whereIn('nlevel_1',array_filter(explode(',',$request->nlevel_1)));
-            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(',',$request->nlevel_1))]]]);  
+            $adexnett->whereIn('nlevel_1',array_filter(explode(';',$request->nlevel_1)));
+            array_push($filter,[ '$match' => ['nlevel_1' => ['$in' => array_filter(explode(';',$request->nlevel_1))]]]);  
         }
         if($request->ilevel_1){
-            $adexnett->whereIn('ilevel_1',array_filter(explode(',',$request->ilevel_1)));
-            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(',',$request->ilevel_1))]]]);  
+            $adexnett->whereIn('ilevel_1',array_filter(explode(';',$request->ilevel_1)));
+            array_push($filter,[ '$match' => ['ilevel_1' => ['$in' => array_filter(explode(';',$request->ilevel_1))]]]);  
         }
         if($request->nlevel_2){
-            $adexnett->whereIn('nlevel_2',array_filter(explode(',',$request->nlevel_2)));
-            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(',',$request->nlevel_2))]]]);  
+            $adexnett->whereIn('nlevel_2',array_filter(explode(';',$request->nlevel_2)));
+            array_push($filter,[ '$match' => ['nlevel_2' => ['$in' => array_filter(explode(';',$request->nlevel_2))]]]);  
         }
         if($request->ilevel_2){
-            $adexnett->whereIn('ilevel_2',array_filter(explode(',',$request->ilevel_2)));
-            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(',',$request->ilevel_2))]]]);  
+            $adexnett->whereIn('ilevel_2',array_filter(explode(';',$request->ilevel_2)));
+            array_push($filter,[ '$match' => ['ilevel_2' => ['$in' => array_filter(explode(';',$request->ilevel_2))]]]);  
         }
         if($request->nadvertiser){
-            $adexnett->whereIn('nadvertiser',array_filter(explode(',',$request->nadvertiser)));
-            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(',',$request->nadvertiser))]]]);  
+            $adexnett->whereIn('nadvertiser',array_filter(explode(';',$request->nadvertiser)));
+            array_push($filter,[ '$match' => ['nadvertiser' => ['$in' => array_filter(explode(';',$request->nadvertiser))]]]);  
         }
         if($request->iadvertiser){
-            $adexnett->whereIn('iadvertiser',array_filter(explode(',',$request->iadvertiser)));
-            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(',',$request->iadvertiser))]]]);  
+            $adexnett->whereIn('iadvertiser',array_filter(explode(';',$request->iadvertiser)));
+            array_push($filter,[ '$match' => ['iadvertiser' => ['$in' => array_filter(explode(';',$request->iadvertiser))]]]);  
         }
         if($request->nproduct){
-            $adexnett->whereIn('nproduct',array_filter(explode(',',$request->nproduct)));
-            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(',',$request->nproduct))]]]);  
+            $adexnett->whereIn('nproduct',array_filter(explode(';',$request->nproduct)));
+            array_push($filter,[ '$match' => ['nproduct' => ['$in' => array_filter(explode(';',$request->nproduct))]]]);  
         }
         if($request->iproduct){
-            $adexnett->whereIn('iproduct',array_filter(explode(',',$request->iproduct)));
-            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(',',$request->iproduct))]]]);  
+            $adexnett->whereIn('iproduct',array_filter(explode(';',$request->iproduct)));
+            array_push($filter,[ '$match' => ['iproduct' => ['$in' => array_filter(explode(';',$request->iproduct))]]]);  
         }
         if($request->nsector){
-            $adexnett->whereIn('nsector',array_filter(explode(',',$request->nsector)));
-            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(',',$request->nsector))]]]);  
+            $adexnett->whereIn('nsector',array_filter(explode(';',$request->nsector)));
+            array_push($filter,[ '$match' => ['nsector' => ['$in' => array_filter(explode(';',$request->nsector))]]]);  
         }
         if($request->isector){
-            $adexnett->whereIn('isector',array_filter(explode(',',$request->isector)));
-            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(',',$request->isector))]]]);  
+            $adexnett->whereIn('isector',array_filter(explode(';',$request->isector)));
+            array_push($filter,[ '$match' => ['isector' => ['$in' => array_filter(explode(';',$request->isector))]]]);  
         }
         if($request->ncategory){
-            $adexnett->whereIn('ncategory',array_filter(explode(',',$request->ncategory)));
-            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(',',$request->ncategory))]]]);  
+            $adexnett->whereIn('ncategory',array_filter(explode(';',$request->ncategory)));
+            array_push($filter,[ '$match' => ['ncategory' => ['$in' => array_filter(explode(';',$request->ncategory))]]]);  
         }
         if($request->icategory){
-            $adexnett->whereIn('icategory',array_filter(explode(',',$request->icategory)));
-            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(',',$request->icategory))]]]);  
+            $adexnett->whereIn('icategory',array_filter(explode(';',$request->icategory)));
+            array_push($filter,[ '$match' => ['icategory' => ['$in' => array_filter(explode(';',$request->icategory))]]]);  
         }
         if($request->nadstype){
-            $adexnett->whereIn('nadstype',array_filter(explode(',',$request->nadstype)));
-            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(',',$request->nadstype))]]]);  
+            $adexnett->whereIn('nadstype',array_filter(explode(';',$request->nadstype)));
+            array_push($filter,[ '$match' => ['nadstype' => ['$in' => array_filter(explode(';',$request->nadstype))]]]);  
         }
         if($request->iadstype){
-            $adexnett->whereIn('iadstype',array_filter(explode(',',$request->iadstype)));
-            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(',',$request->iadstype))]]]);  
+            $adexnett->whereIn('iadstype',array_filter(explode(';',$request->iadstype)));
+            array_push($filter,[ '$match' => ['iadstype' => ['$in' => array_filter(explode(';',$request->iadstype))]]]);  
         }
         if($request->tadstype){
-            $adexnett->whereIn('tadstype',array_filter(explode(',',$request->tadstype)));
-            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(',',$request->tadstype))]]]);  
+            $adexnett->whereIn('tadstype',array_filter(explode(';',$request->tadstype)));
+            array_push($filter,[ '$match' => ['tadstype' => ['$in' => array_filter(explode(';',$request->tadstype))]]]);  
         }
         if($request->iadvertiser_group){
-            $adexnett->whereIn('advertiser_group',array_filter(explode(',',$request->iadvertiser_group)));
-            array_push($filter,[ '$match' => ['advertiser_group' => ['$in' => array_filter(explode(',',$request->iadvertiser_group))]]]);  
+            $adexnett->whereIn('advertiser_group',array_filter(explode(';',$request->iadvertiser_group)));
+            array_push($filter,[ '$match' => ['advertiser_group' => ['$in' => array_filter(explode(';',$request->iadvertiser_group))]]]);  
         }
         if($request->ncommercialtype == "commercialonly"){
             $adexnett->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
@@ -505,22 +549,22 @@ class MarketingController extends Controller
     {
         $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->firstOfMonth();
         $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate)->endOfMonth();
-        $filterchannel = array_filter(explode(',',$request->filterchannel));
-        $filternprogramme = array_filter(explode(',',$request->filternprogramme));
-        $filteriprogramme = array_filter(explode(',',$request->filteriprogramme));
-        $filternlevel_1 = array_filter(explode(',',$request->filternlevel_1));
-        $filterilevel_1 = array_filter(explode(',',$request->filterilevel_1));
-        $filternlevel_2 = array_filter(explode(',',$request->filternlevel_2));
-        $filterilevel_2 = array_filter(explode(',',$request->filterilevel_2));
-        $filternadvertiser = array_filter(explode(',',$request->filternadvertiser));
-        $filteriadvertiser = array_filter(explode(',',$request->filteriadvertiser));
-        $filternproduct = array_filter(explode(',',$request->filternproduct));
-        $filteriproduct = array_filter(explode(',',$request->filteriproduct));
-        $filternsector = array_filter(explode(',',$request->filternsector));
-        $filterisector = array_filter(explode(',',$request->filterisector));
-        $filterncategory = array_filter(explode(',',$request->filterncategory));
-        $filtericategory = array_filter(explode(',',$request->filtericategory));
-        $filteriadvertiser_group = array_filter(explode(',',$request->filteriadvertiser_group));
+        $filterchannel = array_filter(explode(';',$request->filterchannel));
+        $filternprogramme = array_filter(explode(';',$request->filternprogramme));
+        $filteriprogramme = array_filter(explode(';',$request->filteriprogramme));
+        $filternlevel_1 = array_filter(explode(';',$request->filternlevel_1));
+        $filterilevel_1 = array_filter(explode(';',$request->filterilevel_1));
+        $filternlevel_2 = array_filter(explode(';',$request->filternlevel_2));
+        $filterilevel_2 = array_filter(explode(';',$request->filterilevel_2));
+        $filternadvertiser = array_filter(explode(';',$request->filternadvertiser));
+        $filteriadvertiser = array_filter(explode(';',$request->filteriadvertiser));
+        $filternproduct = array_filter(explode(';',$request->filternproduct));
+        $filteriproduct = array_filter(explode(';',$request->filteriproduct));
+        $filternsector = array_filter(explode(';',$request->filternsector));
+        $filterisector = array_filter(explode(';',$request->filterisector));
+        $filterncategory = array_filter(explode(';',$request->filterncategory));
+        $filtericategory = array_filter(explode(';',$request->filtericategory));
+        $filteriadvertiser_group = array_filter(explode(';',$request->filteriadvertiser_group));
         
         $query = Adexnett::select('month', 'year','channel','iprogramme','iproduct','spots',
         'grp','gross','nett1','nett2','nett3','nsector','ncategory','nadvertiser','nproduct',
@@ -588,22 +632,22 @@ class MarketingController extends Controller
     {
         $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->firstOfMonth();
         $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate)->endOfMonth();
-        $filterchannel = array_filter(explode(',',$request->{'filter-channel'}));
-        $filternprogramme = array_filter(explode(',',$request->{'filter-nprogramme'}));
-        $filteriprogramme = array_filter(explode(',',$request->{'filter-iprogramme'}));
-        $filternlevel_1 = array_filter(explode(',',$request->{'filter-nlevel_1'}));
-        $filterilevel_1 = array_filter(explode(',',$request->{'filter-ilevel_1'}));
-        $filternlevel_2 = array_filter(explode(',',$request->{'filter-nlevel_2'}));
-        $filterilevel_2 = array_filter(explode(',',$request->{'filter-ilevel_2'}));
-        $filternadvertiser = array_filter(explode(',',$request->{'filter-nadvertiser'}));
-        $filteriadvertiser = array_filter(explode(',',$request->{'filter-iadvertiser'}));
-        $filternproduct = array_filter(explode(',',$request->{'filter-nproduct'}));
-        $filteriproduct = array_filter(explode(',',$request->{'filter-iproduct'}));
-        $filternsector = array_filter(explode(',',$request->{'filter-nsector'}));
-        $filterisector = array_filter(explode(',',$request->{'filter-isector'}));
-        $filterncategory = array_filter(explode(',',$request->{'filter-ncategory'}));
-        $filtericategory = array_filter(explode(',',$request->{'filter-icategory'}));
-        $filteriadvertiser_group = array_filter(explode(',',$request->{'filter-iadvertiser_group'}));
+        $filterchannel = array_filter(explode(';',$request->{'filter-channel'}));
+        $filternprogramme = array_filter(explode(';',$request->{'filter-nprogramme'}));
+        $filteriprogramme = array_filter(explode(';',$request->{'filter-iprogramme'}));
+        $filternlevel_1 = array_filter(explode(';',$request->{'filter-nlevel_1'}));
+        $filterilevel_1 = array_filter(explode(';',$request->{'filter-ilevel_1'}));
+        $filternlevel_2 = array_filter(explode(';',$request->{'filter-nlevel_2'}));
+        $filterilevel_2 = array_filter(explode(';',$request->{'filter-ilevel_2'}));
+        $filternadvertiser = array_filter(explode(';',$request->{'filter-nadvertiser'}));
+        $filteriadvertiser = array_filter(explode(';',$request->{'filter-iadvertiser'}));
+        $filternproduct = array_filter(explode(';',$request->{'filter-nproduct'}));
+        $filteriproduct = array_filter(explode(';',$request->{'filter-iproduct'}));
+        $filternsector = array_filter(explode(';',$request->{'filter-nsector'}));
+        $filterisector = array_filter(explode(';',$request->{'filter-isector'}));
+        $filterncategory = array_filter(explode(';',$request->{'filter-ncategory'}));
+        $filtericategory = array_filter(explode(';',$request->{'filter-icategory'}));
+        $filteriadvertiser_group = array_filter(explode(';',$request->{'filter-iadvertiser_group'}));
         
         $query = Adexnett::select('month', 'year','channel','iprogramme','iproduct','spots',
         'grp','gross','nett1','nett2','nett3','nsector','ncategory','nadvertiser','nproduct',
@@ -676,7 +720,7 @@ class MarketingController extends Controller
     {
         // populate dropdown
         $query = \App\Targetaudience::whereNotNull('targetaudience');
-        if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(',',Auth::user()->privileges['targetaudience']));
+        if(!empty(Auth::user()->privileges['targetaudience'])) $query->whereIn('targetaudience',explode(';',Auth::user()->privileges['targetaudience']));
         $data['ddtargetaudience'] = $query->pluck('targetaudience','code');
         
         return view('admin.spotmatching.index',compact('data'));
@@ -686,26 +730,26 @@ class MarketingController extends Controller
     {
         $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->subDays(1);
         $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate);
-        $filterchannel = array_filter(explode(',',$request->filterchannel));
-        $filternprogramme = array_filter(explode(',',$request->filternprogramme));
-        $filteriprogramme = array_filter(explode(',',$request->filteriprogramme));
-        $filternlevel_1 = array_filter(explode(',',$request->filternlevel_1));
-        $filterilevel_1 = array_filter(explode(',',$request->filterilevel_1));
-        $filternlevel_2 = array_filter(explode(',',$request->filternlevel_2));
-        $filterilevel_2 = array_filter(explode(',',$request->filterilevel_2));
-        $filternadvertiser = array_filter(explode(',',$request->filternadvertiser));
-        $filteriadvertiser = array_filter(explode(',',$request->filteriadvertiser));
-        $filternproduct = array_filter(explode(',',$request->filternproduct));
-        $filteriproduct = array_filter(explode(',',$request->filteriproduct));
-        $filternsector = array_filter(explode(',',$request->filternsector));
-        $filterisector = array_filter(explode(',',$request->filterisector));
-        $filterncategory = array_filter(explode(',',$request->filterncategory));
-        $filtericategory = array_filter(explode(',',$request->filtericategory));
-        $filternadstype = array_filter(explode(',',$request->filternadstype));
-        $filteriadstype = array_filter(explode(',',$request->filteriadstype));
-        $filtertadstype = array_filter(explode(',',$request->filtertadstype));
+        $filterchannel = array_filter(explode(';',$request->filterchannel));
+        $filternprogramme = array_filter(explode(';',$request->filternprogramme));
+        $filteriprogramme = array_filter(explode(';',$request->filteriprogramme));
+        $filternlevel_1 = array_filter(explode(';',$request->filternlevel_1));
+        $filterilevel_1 = array_filter(explode(';',$request->filterilevel_1));
+        $filternlevel_2 = array_filter(explode(';',$request->filternlevel_2));
+        $filterilevel_2 = array_filter(explode(';',$request->filterilevel_2));
+        $filternadvertiser = array_filter(explode(';',$request->filternadvertiser));
+        $filteriadvertiser = array_filter(explode(';',$request->filteriadvertiser));
+        $filternproduct = array_filter(explode(';',$request->filternproduct));
+        $filteriproduct = array_filter(explode(';',$request->filteriproduct));
+        $filternsector = array_filter(explode(';',$request->filternsector));
+        $filterisector = array_filter(explode(';',$request->filterisector));
+        $filterncategory = array_filter(explode(';',$request->filterncategory));
+        $filtericategory = array_filter(explode(';',$request->filtericategory));
+        $filternadstype = array_filter(explode(';',$request->filternadstype));
+        $filteriadstype = array_filter(explode(';',$request->filteriadstype));
+        $filtertadstype = array_filter(explode(';',$request->filtertadstype));
         $filterntargetaudience = $request->filterntargetaudience ?? '01';
-        $filteriadvertiser_group = array_filter(explode(',',$request->{'filter-iadvertiser_group'}));
+        $filteriadvertiser_group = array_filter(explode(';',$request->{'filter-iadvertiser_group'}));
         
         $query = Spotmatching::select('channel','date','mo_no','sales_name','sales_group','sales_manager',
         'agent_name','sub_agent_name','isector','icategory','iadvertiser','iproduct','barcode','icopy',
@@ -794,16 +838,27 @@ class MarketingController extends Controller
         }
         // add filter by user privilege
         if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
-        if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(',',Auth::user()->privileges['nsector']));
-        if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(',',Auth::user()->privileges['ncategory']??'%%'));
-        if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(',',Auth::user()->privileges['nproduct']??'%%'));
-        if(!empty(Auth::user()->privileges['nadvertiser']))  $query->whereIn('nadvertiser',explode(',',Auth::user()->privileges['nadvertiser']??'%%'));
-        if(!empty(Auth::user()->privileges['ncopy']))  $query->whereIn('ncopy',explode(',',Auth::user()->privileges['ncopy']??'%%'));
-        if(!empty(Auth::user()->privileges['nadstype']))  $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']??'%%'));
-        if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(',',Auth::user()->privileges['channel']??'%%'));
-        if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(',',Auth::user()->privileges['nlevel_1']??'%%'));
-        if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(',',Auth::user()->privileges['nlevel_2']??'%%'));
-        if(!empty(Auth::user()->privileges['nprogramme'])) $query->whereIn('nprogramme',explode(',',Auth::user()->privileges['nprogramme']??'%%'));
+        if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
+        if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']??'%%'));
+        if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']??'%%'));
+        if(!empty(Auth::user()->privileges['nadvertiser']))  $query->whereIn('nadvertiser',explode(';',Auth::user()->privileges['nadvertiser']??'%%'));
+        if(!empty(Auth::user()->privileges['ncopy']))  $query->whereIn('ncopy',explode(';',Auth::user()->privileges['ncopy']??'%%'));
+        if(!empty(Auth::user()->privileges['nadstype']))  $query->whereIn('nadstype',explode(';',Auth::user()->privileges['nadstype']??'%%'));
+        if(!empty(Auth::user()->privileges['isector'])) $query->whereIn('isector',explode(';',Auth::user()->privileges['isector']));
+        if(!empty(Auth::user()->privileges['icategory']))  $query->whereIn('icategory',explode(';',Auth::user()->privileges['icategory']));
+        if(!empty(Auth::user()->privileges['iproduct']))  $query->whereIn('iproduct',explode(';',Auth::user()->privileges['iproduct']));
+        if(!empty(Auth::user()->privileges['iadvertiser']))  $query->whereIn('iadvertiser',explode(';',Auth::user()->privileges['iadvertiser']));
+        if(!empty(Auth::user()->privileges['iadvertiser_group']))  $query->whereIn('advertiser_group',explode(';',Auth::user()->privileges['iadvertiser_group']));
+        if(!empty(Auth::user()->privileges['icopy']))  $query->whereIn('icopy',explode(';',Auth::user()->privileges['icopy']));
+        if(!empty(Auth::user()->privileges['iadstype']))  $query->whereIn('iadstype',explode(';',Auth::user()->privileges['iadstype']));
+        if(!empty(Auth::user()->privileges['tadstype']))  $query->whereIn('tadstype',explode(';',Auth::user()->privileges['tadstype']));
+        if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(';',Auth::user()->privileges['channel']??'%%'));
+        if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(';',Auth::user()->privileges['nlevel_1']??'%%'));
+        if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(';',Auth::user()->privileges['nlevel_2']??'%%'));
+        if(!empty(Auth::user()->privileges['nprogramme'])) $query->whereIn('nprogramme',explode(';',Auth::user()->privileges['nprogramme']??'%%'));
+        if(!empty(Auth::user()->privileges['ilevel_1']))  $query->whereIn('ilevel_1',explode(';',Auth::user()->privileges['ilevel_1']??'%%'));
+        if(!empty(Auth::user()->privileges['ilevel_2']))  $query->whereIn('ilevel_2',explode(';',Auth::user()->privileges['ilevel_2']??'%%'));
+        if(!empty(Auth::user()->privileges['iprogramme'])) $query->whereIn('iprogramme',explode(';',Auth::user()->privileges['iprogramme']??'%%'));
 
         // dd($query->toSql());
         return datatables($query->get())
@@ -816,23 +871,23 @@ class MarketingController extends Controller
     {
         $startdate = Carbon::createFromFormat('Y-m-d',$request->startdate)->firstOfMonth();
         $enddate = Carbon::createFromFormat('Y-m-d',$request->enddate)->endOfMonth();
-        $filterchannel = array_filter(explode(',',$request->{'filter-channel'}));
-        $filternprogramme = array_filter(explode(',',$request->{'filter-nprogramme'}));
-        $filteriprogramme = array_filter(explode(',',$request->{'filter-iprogramme'}));
-        $filternlevel_1 = array_filter(explode(',',$request->{'filter-nlevel_1'}));
-        $filterilevel_1 = array_filter(explode(',',$request->{'filter-ilevel_1'}));
-        $filternlevel_2 = array_filter(explode(',',$request->{'filter-nlevel_2'}));
-        $filterilevel_2 = array_filter(explode(',',$request->{'filter-ilevel_2'}));
-        $filternadvertiser = array_filter(explode(',',$request->{'filter-nadvertiser'}));
-        $filteriadvertiser = array_filter(explode(',',$request->{'filter-iadvertiser'}));
-        $filternproduct = array_filter(explode(',',$request->{'filter-nproduct'}));
-        $filteriproduct = array_filter(explode(',',$request->{'filter-iproduct'}));
-        $filternsector = array_filter(explode(',',$request->{'filter-nsector'}));
-        $filterisector = array_filter(explode(',',$request->{'filter-isector'}));
-        $filterncategory = array_filter(explode(',',$request->{'filter-ncategory'}));
-        $filtericategory = array_filter(explode(',',$request->{'filter-icategory'}));
+        $filterchannel = array_filter(explode(';',$request->{'filter-channel'}));
+        $filternprogramme = array_filter(explode(';',$request->{'filter-nprogramme'}));
+        $filteriprogramme = array_filter(explode(';',$request->{'filter-iprogramme'}));
+        $filternlevel_1 = array_filter(explode(';',$request->{'filter-nlevel_1'}));
+        $filterilevel_1 = array_filter(explode(';',$request->{'filter-ilevel_1'}));
+        $filternlevel_2 = array_filter(explode(';',$request->{'filter-nlevel_2'}));
+        $filterilevel_2 = array_filter(explode(';',$request->{'filter-ilevel_2'}));
+        $filternadvertiser = array_filter(explode(';',$request->{'filter-nadvertiser'}));
+        $filteriadvertiser = array_filter(explode(';',$request->{'filter-iadvertiser'}));
+        $filternproduct = array_filter(explode(';',$request->{'filter-nproduct'}));
+        $filteriproduct = array_filter(explode(';',$request->{'filter-iproduct'}));
+        $filternsector = array_filter(explode(';',$request->{'filter-nsector'}));
+        $filterisector = array_filter(explode(';',$request->{'filter-isector'}));
+        $filterncategory = array_filter(explode(';',$request->{'filter-ncategory'}));
+        $filtericategory = array_filter(explode(';',$request->{'filter-icategory'}));
         $filterntargetaudience = $request->{'filter-ntargetaudience'} ?? '01';
-        $filteriadvertiser_group = array_filter(explode(',',$request->{'filter-iadvertiser_group'}));
+        $filteriadvertiser_group = array_filter(explode(';',$request->{'filter-iadvertiser_group'}));
         
         $query = Spotmatching::select('channel','date','mo_no','sales_name','sales_group','sales_manager',
         'agent_name','sub_agent_name','isector','icategory','iadvertiser','iproduct','barcode','icopy',

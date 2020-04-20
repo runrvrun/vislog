@@ -23,12 +23,12 @@ class AdstypesearchController extends Controller
     {
         if(isset($request->term)){
             $query = Adstypesearch::select('nadstype')->where('nadstype','like','%'.$request->term.'%');
-            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']));
-            return $query->get();
+            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('nadstype',explode(';',Auth::user()->privileges['nadstype']));
+            return $query->orderby('nadstype','ASC')->get();
         }else{
             $query = Adstypesearch::select('nadstype')->take(50)->groupBy('nadstype');
-            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('nadstype',explode(',',Auth::user()->privileges['nadstype']));
-            return $query->get();
+            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('nadstype',explode(';',Auth::user()->privileges['nadstype']));
+            return $query->orderby('nadstype','ASC')->get();
         }
     }
 
@@ -36,12 +36,12 @@ class AdstypesearchController extends Controller
     {
         if(isset($request->term)){
             $query = Adstypesearch::select('iadstype')->where('iadstype','like','%'.$request->term.'%');
-            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('iadstype',explode(',',Auth::user()->privileges['nadstype']));
-            return $query->get();
+            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('iadstype',explode(';',Auth::user()->privileges['nadstype']));
+            return $query->orderby('iadstype','ASC')->get();
         }else{
             $query = Adstypesearch::select('iadstype')->take(50)->groupBy('iadstype');
-            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('iadstype',explode(',',Auth::user()->privileges['nadstype']));
-            return $query->get();
+            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('iadstype',explode(';',Auth::user()->privileges['nadstype']));
+            return $query->orderby('iadstype','ASC')->get();
         }
     }
 
@@ -50,18 +50,18 @@ class AdstypesearchController extends Controller
     {
         if(isset($request->term)){
             $query = Adstypesearch::select('tadstype')->where('tadstype','like','%'.$request->term.'%');
-            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('tadstype',explode(',',Auth::user()->privileges['nadstype']));
-            return $query->get();
+            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('tadstype',explode(';',Auth::user()->privileges['nadstype']));
+            return $query->orderby('tadstype','ASC')->get();
         }else{
             $query = Adstypesearch::select('tadstype')->take(50)->groupBy('tadstype');
-            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('tadstype',explode(',',Auth::user()->privileges['nadstype']));
-            return $query->get();
+            if(!empty(Auth::user()->privileges['nadstype'])) $query->whereIn('tadstype',explode(';',Auth::user()->privileges['nadstype']));
+            return $query->orderby('tadstype','ASC')->get();
         }
     }
 
     public function destroymulti(Request $request)
     {
-        $ids = explode(',',htmlentities($request->id));
+        $ids = explode(';',htmlentities($request->id));
         foreach($ids as $id){
             Adstypesearch::where('_id',$id)->delete();
         }

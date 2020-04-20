@@ -40936,3 +40936,26 @@ input[type="radio"].switch {
     color: #fff; }
   .main-content .color-palette span.dark {
     color: rgba(0, 0, 0, 0.87); }
+
+
+
+  body.layout-dark.layout-transparent .filterer a, body.layout-dark.layout-transparent .filterer p, body.layout-dark.layout-transparent .filterer span, body.layout-dark.layout-transparent .filterer label, body.layout-dark.layout-transparent .filterer h4, body.layout-dark.layout-transparent .filterer h6, body.layout-dark.layout-transparent .filterer .filterer-close i, body.layout-dark.layout-transparent .filterer .form-control, body.layout-dark.layout-transparent .filterer div {
+      color: #000 !important;
+  }
+  body.layout-dark.layout-transparent .filterer i{
+      color: #000;
+  }
+  .filterer hr, .filterer #daterange i{
+    color: #000 !important;
+    border-color: #000 !important;
+  }
+  body.layout-dark.layout-transparent #daterange span, body.layout-dark.layout-transparent #daterange i, body.layout-dark.layout-transparent div.daterangepicker, body.layout-dark.layout-transparent div.ranges, body.layout-dark.layout-transparent div.calendar-table, body.layout-dark.layout-transparent div.drp-buttons, body.layout-dark.layout-transparent span.drp-selected{
+    color: #000 !important;
+  }
+  body.layout-dark.layout-transparent .filterer .form-control, body.layout-dark .filterer .dropdown-menu {
+      background-color: #fff !important;
+      border-color: #ced4da !important;
+  }
+  .filterer .form-control{
+    border: 1px solid #ced4da !important;
+  }

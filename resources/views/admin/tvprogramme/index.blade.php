@@ -230,7 +230,7 @@ $(document).ready(function(){
         if(result.length){
           $.each(result, function(k,v) {
             var curfil = $("#filter-selected").html();
-            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ',')+1){
+            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ';')+1){
               // previously selected, set style
               $('#filter-modal-search-result').append( '<button type="button" class="btn search-result btn-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }else{
@@ -251,13 +251,13 @@ $(document).ready(function(){
     if($(this).hasClass('btn-primary')){
       count++; // selected, increment button count
       $("#filter-selected").html(function(i,html) { 
-          html = html + filt + ',';
+          html = html + filt + ';';
           return html;
       });
     }else{
       count--; // unselected, decrement button count
-      newval = $("#filter-selected").html();
-      $("#filter-selected").html(newval.replace(filt+',',''));
+      newval = $("#filter-selected").html().replace(/&amp;/g, '&');
+      $("#filter-selected").html(newval.replace(filt+';',''));
     }
     $("input[name=filter-"+filter+"]").val($("#filter-selected").html());
     $("#filter-"+filter+"-count").html(count); // set count at button
@@ -374,8 +374,8 @@ $(document).ready(function(){
             d.starttime = $('#starttime').val();
             d.endtime = $('#endtime').val();
             d.filterchannel = $("input[name=filter-channel]").val();
-            d.filternprogramme = $("input[name=filter-nprogramme]").val();
-            d.filteriprogramme = $("input[name=filter-iprogramme]").val();
+            d.filternprogramme = $("input[name=filter-nprogramme]").val().replace(/&amp;/g, '&');
+            d.filteriprogramme = $("input[name=filter-iprogramme]").val().replace(/&amp;/g, '&');
             d.filternlevel_1 = $("input[name=filter-nlevel_1]").val();
             d.filterilevel_1 = $("input[name=filter-ilevel_1]").val();
             d.filternlevel_2 = $("input[name=filter-nlevel_2]").val();

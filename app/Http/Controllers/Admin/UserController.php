@@ -159,10 +159,11 @@ class UserController extends Controller
                 //startdate enddate convert to isodate
                 $date = Carbon::createFromFormat('Y-m-d H:i:s',$requestData['privileges'][$k].' 00:00:00')->toDateTimeString();
                 $requestData['privileges']['iso'.$k] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));        
-            }elseif(!empty($p) && substr($p,strlen($p)-1) != ','){
+            }elseif(!empty($p) && substr($p,strlen($p)-1) != ';'){
                 //add comma at the end for consistency
-                $requestData['privileges'][$k] .= ',';
+                $requestData['privileges'][$k] .= ';';
             }
+            $requestData['privileges'][$k] = html_entity_decode($requestData['privileges'][$k]);
         }
         // dd($requestData);
         User::where('_id',$userid)->update($requestData);

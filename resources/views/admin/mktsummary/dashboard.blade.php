@@ -456,7 +456,7 @@ $(document).ready(function(){
         if(result.length){
           $.each(result, function(k,v) {
             var curfil = $("#filter-selected").html();
-            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ',')+1){
+            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ';')+1){
               // previously selected, set style
               $('#filter-modal-search-result').append( '<button class="btn search-result btn-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }else{
@@ -477,13 +477,13 @@ $(document).ready(function(){
     if($(this).hasClass('btn-primary')){
       count++; // selected, increment button count
       $("#filter-selected").html(function(i,html) { 
-          html = html + filt + ',';
+          html = html + filt + ';';
           return html;
       });
     }else{
       count--; // unselected, decrement button count
-      newval = $("#filter-selected").html();
-      $("#filter-selected").html(newval.replace(filt+',',''));
+      newval = $("#filter-selected").html().replace(/&amp;/g, '&');
+      $("#filter-selected").html(newval.replace(filt+';',''));
     }
     $("input[name="+filter+"]").val($("#filter-selected").html());
     $("#filter-"+filter+"-count").html(count); // set count at button
@@ -557,60 +557,60 @@ $(document).ready(function(){
         <button type="button" class="btn btn-primary col-10 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
         {{ Form::hidden('channel') }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nprogramme">
-        <span id="filter-nprogramme-count">{{ ($request->nprogramme)? count(explode(',',$request->nprogramme))-1:'' }}</span> nProgramme</button>
+        <span id="filter-nprogramme-count">{{ ($request->nprogramme)? count(explode(';',$request->nprogramme))-1:'' }}</span> nProgramme</button>
         {{ Form::hidden('nprogramme', $request->nprogramme ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iprogramme">
-        <span id="filter-iprogramme-count">{{ ($request->iprogramme)? count(explode(',',$request->iprogramme))-1:'' }}</span> iProgramme</button>
+        <span id="filter-iprogramme-count">{{ ($request->iprogramme)? count(explode(';',$request->iprogramme))-1:'' }}</span> iProgramme</button>
         {{ Form::hidden('iprogramme', $request->iprogramme ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_1">
-        <span id="filter-nlevel_1-count">{{ ($request->nlevel_1)? count(explode(',',$request->nlevel_1))-1:'' }}</span> nLevel 1</button>
+        <span id="filter-nlevel_1-count">{{ ($request->nlevel_1)? count(explode(';',$request->nlevel_1))-1:'' }}</span> nLevel 1</button>
         {{ Form::hidden('nlevel_1', $request->nlevel_1 ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_1">
-        <span id="filter-ilevel_1-count">{{ ($request->ilevel_1)? count(explode(',',$request->ilevel_1))-1:'' }}</span> iLevel 1</button>
+        <span id="filter-ilevel_1-count">{{ ($request->ilevel_1)? count(explode(';',$request->ilevel_1))-1:'' }}</span> iLevel 1</button>
         {{ Form::hidden('ilevel_1', $request->ilevel_1 ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_2">
-        <span id="filter-nlevel_2-count">{{ ($request->nlevel_2)? count(explode(',',$request->nlevel_2))-1:'' }}</span> nLevel 2</button>
+        <span id="filter-nlevel_2-count">{{ ($request->nlevel_2)? count(explode(';',$request->nlevel_2))-1:'' }}</span> nLevel 2</button>
         {{ Form::hidden('nlevel_2', $request->nlevel_2 ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_2">
-        <span id="filter-ilevel_2-count">{{ ($request->ilevel_2)? count(explode(',',$request->ilevel_2))-1:'' }}</span> iLevel 2</button>
+        <span id="filter-ilevel_2-count">{{ ($request->ilevel_2)? count(explode(';',$request->ilevel_2))-1:'' }}</span> iLevel 2</button>
         {{ Form::hidden('ilevel_2', $request->ilevel_2 ?? null) }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nadvertiser">
-        <span id="filter-nadvertiser-count">{{ ($request->nadvertiser)? count(explode(',',$request->nadvertiser))-1:'' }}</span> nAdvertiser</button>
+        <span id="filter-nadvertiser-count">{{ ($request->nadvertiser)? count(explode(';',$request->nadvertiser))-1:'' }}</span> nAdvertiser</button>
         {{ Form::hidden('nadvertiser', $request->nadvertiser ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadvertiser">
-        <span id="filter-iadvertiser-count">{{ ($request->iadvertiser)? count(explode(',',$request->iadvertiser))-1:'' }}</span> iAdvertiser</button>
+        <span id="filter-iadvertiser-count">{{ ($request->iadvertiser)? count(explode(';',$request->iadvertiser))-1:'' }}</span> iAdvertiser</button>
         {{ Form::hidden('iadvertiser', $request->iadvertiser ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nproduct">
-        <span id="filter-nproduct-count">{{ ($request->nproduct)? count(explode(',',$request->nproduct))-1:'' }}</span> nProduct</button>
+        <span id="filter-nproduct-count">{{ ($request->nproduct)? count(explode(';',$request->nproduct))-1:'' }}</span> nProduct</button>
         {{ Form::hidden('nproduct', $request->nproduct ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iproduct">
-        <span id="filter-iproduct-count">{{ ($request->iproduct)? count(explode(',',$request->iproduct))-1:'' }}</span> iProduct</button>
+        <span id="filter-iproduct-count">{{ ($request->iproduct)? count(explode(';',$request->iproduct))-1:'' }}</span> iProduct</button>
         {{ Form::hidden('iproduct', $request->iproduct ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nsector">
-        <span id="filter-nsector-count">{{ ($request->nsector)? count(explode(',',$request->nsector))-1:'' }}</span> nSector</button>
+        <span id="filter-nsector-count">{{ ($request->nsector)? count(explode(';',$request->nsector))-1:'' }}</span> nSector</button>
         {{ Form::hidden('nsector', $request->nsector ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="isector">
-        <span id="filter-isector-count">{{ ($request->isector)? count(explode(',',$request->isector))-1:'' }}</span> iSector</button>
+        <span id="filter-isector-count">{{ ($request->isector)? count(explode(';',$request->isector))-1:'' }}</span> iSector</button>
         {{ Form::hidden('isector', $request->isector ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ncategory">
-        <span id="filter-ncategory-count">{{ ($request->ncategory)? count(explode(',',$request->ncategory))-1:'' }}</span> nCategory</button>
+        <span id="filter-ncategory-count">{{ ($request->ncategory)? count(explode(';',$request->ncategory))-1:'' }}</span> nCategory</button>
         {{ Form::hidden('ncategory', $request->ncategory ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="icategory">
-        <span id="filter-icategory-count">{{ ($request->icategory)? count(explode(',',$request->icategory))-1:'' }}</span> iCategory</button>
+        <span id="filter-icategory-count">{{ ($request->icategory)? count(explode(';',$request->icategory))-1:'' }}</span> iCategory</button>
         {{ Form::hidden('icategory', $request->icategory ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nadstype">
-        <span id="filter-nadstype-count">{{ ($request->nadstype)? count(explode(',',$request->nadstype))-1:'' }}</span> nAds Type</button>
+        <span id="filter-nadstype-count">{{ ($request->nadstype)? count(explode(';',$request->nadstype))-1:'' }}</span> nAds Type</button>
         {{ Form::hidden('nadstype', $request->nadstype ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadstype">
-        <span id="filter-iadstype-count">{{ ($request->iadstype)? count(explode(',',$request->iadstype))-1:'' }}</span> iAds Type</button>
+        <span id="filter-iadstype-count">{{ ($request->iadstype)? count(explode(';',$request->iadstype))-1:'' }}</span> iAds Type</button>
         {{ Form::hidden('iadstype', $request->iadstype ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="tadstype">
-        <span id="filter-tadstype-count">{{ ($request->tadstype)? count(explode(',',$request->tadstype))-1:'' }}</span> tAds Type</button>
+        <span id="filter-tadstype-count">{{ ($request->tadstype)? count(explode(';',$request->tadstype))-1:'' }}</span> tAds Type</button>
         {{ Form::hidden('tadstype', $request->tadstype ?? null) }}
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadvertiser_group">
-        <span id="filter-iadvertiser_group-count">{{ ($request->iadvertiser_group)? count(explode(',',$request->iadvertiser_group))-1:'' }}</span> Advertiser Group</button>
+        <span id="filter-iadvertiser_group-count">{{ ($request->iadvertiser_group)? count(explode(';',$request->iadvertiser_group))-1:'' }}</span> Advertiser Group</button>
         {{ Form::hidden('iadvertiser_group', $request->iadvertiser_group ?? null) }}
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Other</h6>        

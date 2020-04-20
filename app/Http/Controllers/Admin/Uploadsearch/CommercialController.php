@@ -124,7 +124,7 @@ class CommercialController extends Controller
 
     public function destroymulti(Request $request)
     {
-        $ids = explode(',',htmlentities($request->id));
+        $ids = explode(';',htmlentities($request->id));
         foreach($ids as $id){
             Commercialsearch::where('_id',$id)->delete();
         }

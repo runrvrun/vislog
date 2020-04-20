@@ -73,39 +73,87 @@
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-md-3 label-control" for="date">Sector: </label>
+                  <label class="col-md-3 label-control" for="date">nSector: </label>
                   <div class="col-md-9">
                     {{ Form::text('privileges[nsector]', old('privileges[nsector]',$item->privileges->nsector ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Sector', 'data-filter'=>'nsector','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-md-3 label-control" for="date">Category: </label>
+                  <label class="col-md-3 label-control" for="date">iSector: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[ncategory]', old('privileges[ncategory]',$item->privileges->ncategory ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Category', 'data-filter'=>'ncategory','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[isector]', old('privileges[isector]',$item->privileges->isector ?? null), array('class' => 'form-control filter-button', 'data-title'=>'iSector', 'data-filter'=>'isector','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-md-3 label-control" for="date">Advertiser: </label>
+                  <label class="col-md-3 label-control" for="date">nCategory: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[nadvertiser]', old('privileges[nadvertiser]',$item->privileges->nadvertiser ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Advertiser', 'data-filter'=>'nadvertiser','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[ncategory]', old('privileges[ncategory]',$item->privileges->ncategory ?? null), array('class' => 'form-control filter-button', 'data-title'=>'nCategory', 'data-filter'=>'ncategory','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-md-3 label-control" for="date">Product: </label>
+                  <label class="col-md-3 label-control" for="date">iCategory: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[nproduct]', old('privileges[nproduct]',$item->privileges->nproduct ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Product', 'data-filter'=>'nproduct','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[icategory]', old('privileges[icategory]',$item->privileges->icategory ?? null), array('class' => 'form-control filter-button', 'data-title'=>'iCategory', 'data-filter'=>'icategory','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-md-3 label-control" for="date">Copy: </label>
+                  <label class="col-md-3 label-control" for="date">nAdvertiser: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[ncopy]', old('privileges[ncopy]',$item->privileges->ncopy ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Copy', 'data-filter'=>'ncopy','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[nadvertiser]', old('privileges[nadvertiser]',$item->privileges->nadvertiser ?? null), array('class' => 'form-control filter-button', 'data-title'=>'nAdvertiser', 'data-filter'=>'nadvertiser','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-md-3 label-control" for="date">Ads Type: </label>
+                  <label class="col-md-3 label-control" for="date">iAdvertiser: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[nadstype]', old('privileges[nadstype]',$item->privileges->nadstype ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Ads Type', 'data-filter'=>'nadstype','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[iadvertiser]', old('privileges[iadvertiser]',$item->privileges->iadvertiser ?? null), array('class' => 'form-control filter-button', 'data-title'=>'iAdvertiser', 'data-filter'=>'iadvertiser','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">Advertiser Group: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[iadvertiser_group]', old('privileges[iadvertiser_group]',$item->privileges->iadvertiser_group ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Advertiser Group', 'data-filter'=>'iadvertiser_group','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">nProduct: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[nproduct]', old('privileges[nproduct]',$item->privileges->nproduct ?? null), array('class' => 'form-control filter-button', 'data-title'=>'nProduct', 'data-filter'=>'nproduct','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">iProduct: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[iproduct]', old('privileges[iproduct]',$item->privileges->iproduct ?? null), array('class' => 'form-control filter-button', 'data-title'=>'iProduct', 'data-filter'=>'iproduct','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">nCopy: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[ncopy]', old('privileges[ncopy]',$item->privileges->ncopy ?? null), array('class' => 'form-control filter-button', 'data-title'=>'nCopy', 'data-filter'=>'ncopy','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">iCopy: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[icopy]', old('privileges[icopy]',$item->privileges->icopy ?? null), array('class' => 'form-control filter-button', 'data-title'=>'iCopy', 'data-filter'=>'icopy','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">nAds Type: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[nadstype]', old('privileges[nadstype]',$item->privileges->nadstype ?? null), array('class' => 'form-control filter-button', 'data-title'=>'nAds Type', 'data-filter'=>'nadstype','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">iAds Type: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[iadstype]', old('privileges[iadstype]',$item->privileges->iadstype ?? null), array('class' => 'form-control filter-button', 'data-title'=>'iAds Type', 'data-filter'=>'iadstype','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">tAds Type: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[tadstype]', old('privileges[tadstype]',$item->privileges->tadstype ?? null), array('class' => 'form-control filter-button', 'data-title'=>'tAds Type', 'data-filter'=>'tadstype','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <h4 class="form-section"><i class="ft-unlock"></i> Channel Privileges</h4>
@@ -116,21 +164,39 @@
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-md-3 label-control" for="date">Level 1: </label>
+                  <label class="col-md-3 label-control" for="date">nLevel 1: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[nlevel_1]', old('privileges[level_1]',$item->privileges->level_1 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Level 1', 'data-filter'=>'nlevel_1','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[nlevel_1]', old('privileges[nlevel_1]',$item->privileges->nlevel_1 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'nLevel 1', 'data-filter'=>'nlevel_1','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-md-3 label-control" for="date">Level 2: </label>
+                  <label class="col-md-3 label-control" for="date">iLevel 1: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[nlevel_2]', old('privileges[nlevel_2]',$item->privileges->nlevel_2 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Level 2', 'data-filter'=>'nlevel_2','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[ilevel_1]', old('privileges[ilevel_1]',$item->privileges->ilevel_1 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'iLevel 1', 'data-filter'=>'ilevel_1','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-md-3 label-control" for="date">Programme: </label>
+                  <label class="col-md-3 label-control" for="date">nLevel 2: </label>
                   <div class="col-md-9">
-                    {{ Form::text('privileges[nprogramme]', old('privileges[nprogramme]',$item->privileges->nprogramme ?? null), array('class' => 'form-control filter-button', 'data-title'=>'Programme', 'data-filter'=>'nprogramme','placeholder'=>'all')) }}
+                    {{ Form::text('privileges[nlevel_2]', old('privileges[nlevel_2]',$item->privileges->nlevel_2 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'nLevel 2', 'data-filter'=>'nlevel_2','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">iLevel 2: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[ilevel_2]', old('privileges[ilevel_2]',$item->privileges->ilevel_2 ?? null), array('class' => 'form-control filter-button', 'data-title'=>'iLevel 2', 'data-filter'=>'ilevel_2','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">nProgramme: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[nprogramme]', old('privileges[nprogramme]',$item->privileges->nprogramme ?? null), array('class' => 'form-control filter-button', 'data-title'=>'nProgramme', 'data-filter'=>'nprogramme','placeholder'=>'all')) }}
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 label-control" for="date">iProgramme: </label>
+                  <div class="col-md-9">
+                    {{ Form::text('privileges[iprogramme]', old('privileges[iprogramme]',$item->privileges->iprogramme ?? null), array('class' => 'form-control filter-button', 'data-title'=>'iProgramme', 'data-filter'=>'iprogramme','placeholder'=>'all')) }}
                   </div>
                 </div>
                 <h4 class="form-section"><i class="ft-unlock"></i> Other Privileges</h4>
@@ -302,8 +368,8 @@ $(document).ready(function(){
       success: function(result){
         if(result.length){
           $.each(result, function(k,v) {
-            var curfil = $("#filter-selected").html();
-            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ',')+1){
+            var curfil = $("#filter-selected").html().replace(/&amp;/g, '&');;            
+            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ';')+1){
               // previously selected, set style
               $('#filter-modal-search-result').append( '<button class="btn search-result btn-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }else{
@@ -324,13 +390,13 @@ $(document).ready(function(){
     if($(this).hasClass('btn-primary')){
       count++; // selected, increment button count
       $("#filter-selected").html(function(i,html) { 
-          html = html + filt + ',';
-          return html;
+        html = html + filt + ';';
+        return html;
       });
     }else{
       count--; // unselected, decrement button count
-      newval = $("#filter-selected").html();
-      $("#filter-selected").html(newval.replace(filt+',',''));
+      newval = $("#filter-selected").html().replace(/&amp;/g, '&');
+      $("#filter-selected").html(newval.replace(filt+';',''));
     }
     $('input[name="privileges['+filter+']"]').val($("#filter-selected").html());
     $("#filter-"+filter+"-count").html(count); // set count at button
