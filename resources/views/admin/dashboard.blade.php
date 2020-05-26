@@ -8,6 +8,12 @@
         <!-- BEGIN : Main Content-->
         <div class="main-content">
         <div class="content-wrapper">
+		<div class="row">
+            <div class="col-sm-12">
+				<div class="content-header">Dashboard</div>
+					<div class="content-sub-header">Get conclusions easily and quickly with this feature. Select set of data filter and report will process immediately. Download the dashboard easily by clicking print button on the right tab menu.</div>
+			</div>
+		</div>
 <div class="row">
   <div class="col-xl-3 col-lg-6 col-md-6 col-12">
     <div class="card gradient-blackberry">
@@ -83,6 +89,7 @@
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Channel</h4>
+			<p class="card-subtitle text-muted">This graph shows comparison of total ad spots, advertising expenditure, or other measurements among selected TV Channels. Higher value means more ads and revenue that appears on the TV Channel.</p>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -113,6 +120,7 @@
           <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="product" role="tabpanel" aria-labelledby="product-tab">
               <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Product</h4>
+				<p class="card-subtitle text-muted">The data table shows total ad spots, advertising expenditure, or other measurements for selected products.</p>
               <div class="card-body card-dashboard table-responsive">
                 <table class="table spot-per-product-table">
                   <thead>
@@ -126,6 +134,7 @@
             </div>
             <div class="tab-pane fade" id="advertiser" role="tabpanel" aria-labelledby="advertiser-tab">
             <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Advertiser</h4>
+				<p class="card-subtitle text-muted">The data table shows total ad spots, advertising expenditure, or other measurements for selected advertisers.</p>
               <div class="card-body card-dashboard table-responsive">
                 <table class="table spot-per-advertiser-table">
                   <thead>
@@ -139,6 +148,7 @@
             </div>
             <div class="tab-pane fade" id="sector" role="tabpanel" aria-labelledby="sector-tab">
             <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Sector</h4>
+				<p class="card-subtitle text-muted">The data table shows total ad spots, advertising expenditure, or other measurements for selected sectors.</p>
               <div class="card-body card-dashboard table-responsive">
                 <table class="table spot-per-sector-table">
                   <thead>
@@ -152,6 +162,7 @@
             </div>
             <div class="tab-pane fade" id="category" role="tabpanel" aria-labelledby="category-tab">
             <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Category</h4>
+				<p class="card-subtitle text-muted">The data table shows total ad spots, advertising expenditure, or other measurements for selected categories.</p>
               <div class="card-body card-dashboard table-responsive">
                 <table class="table spot-per-category-table">
                   <thead>
@@ -185,6 +196,7 @@
           <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="program" role="tabpanel" aria-labelledby="program-tab">
               <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Program</h4>
+				<p class="card-subtitle text-muted">The following data table shows total ad spots, advertising expenditure, or other measurements for selected TV programs.</p>
               <div class="card-body card-dashboard table-responsive">
                 <table class="table spot-per-programme-table">
                   <thead>
@@ -198,6 +210,7 @@
             </div>
             <div class="tab-pane fade" id="level1" role="tabpanel" aria-labelledby="level1-tab">
             <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Level1</h4>
+				<p class="card-subtitle text-muted">The following data table shows total ad spots, advertising expenditure, or other measurements for selected general type of TV programs.</p>
               <div class="card-body card-dashboard table-responsive">
                 <table class="table spot-per-level1-table">
                   <thead>
@@ -211,6 +224,7 @@
             </div>
             <div class="tab-pane fade" id="level2" role="tabpanel" aria-labelledby="level2-tab">
             <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Level2</h4>
+				<p class="card-subtitle text-muted">The following data table shows total ad spots, advertising expenditure, or other measurements for selected type of TV programs.</p>
               <div class="card-body card-dashboard table-responsive">
                 <table class="table spot-per-level2-table">
                   <thead>
@@ -233,6 +247,7 @@
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Type</h4>
+			<p class="card-subtitle text-muted">Highlight the comparison of total ad spots, advertising expenditure, or other measurements between loose spot and non-loose spot.</p>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -245,6 +260,7 @@
   <div class="card">
     <div class="card-header">
         <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Ads Type</h4>
+			<p class="card-subtitle text-muted">Highlight the comparison of total ad spots, advertising expenditure, or other measurements with various adstype.</p>
       </div>
       <div class="card-content">
         <div class="card-body card-dashboard table-responsive">
@@ -266,6 +282,7 @@
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Time Period</h4>
+			<p class="card-subtitle text-muted">The following graph is comparison of total ad spots, advertising expenditure, or other measurements between primetime and non-primetime.</p>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -278,6 +295,7 @@
   <div class="card">
     <div class="card-header">
         <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Daypart</h4>
+			<p class="card-subtitle text-muted">The following graph is comparison of total ad spots, advertising expenditure, or other measurements between the selection of time periods.</p>
       </div>
       <div class="card-content">
         <div class="card-body card-dashboard table-responsive">
@@ -292,6 +310,7 @@
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Total {{ $request->variable ?? 'Spot'}} for Each Date</h4>
+			<p class="card-subtitle text-muted">The graph shows total ad spots, advertising expenditure, or other measurements that posted on all TV channels every day during monthly period. You can learn the pattern of daily total ad spots, measuring lowest and highest total ad spots, and much more.</p>
       </div>
       <div class="card-content">
         <div class="card-body">

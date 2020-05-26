@@ -19,7 +19,7 @@ class User extends Authenticatable
      */
     protected $guarded = ['id'];
     // protected $dates = ['expired_at'];
-    protected $dates = ['created_at', 'updated_at', 'expired_at'];
+    protected $dates = ['created_at', 'updated_at', 'expired_at', 'last_login'];
 
     /**
      * The attributes that should be hidden for arrays.

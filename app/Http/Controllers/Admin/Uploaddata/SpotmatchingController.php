@@ -9,6 +9,7 @@ use App\Log;
 use Auth;
 use \Carbon\Carbon;
 use Rap2hpoutre\FastExcel\FastExcel;
+use MongoDB\Client;
 
 class SpotmatchingController extends Controller
 {
@@ -77,28 +78,49 @@ class SpotmatchingController extends Controller
             // store file to temp folder
             $file->move($upload_path,$upload_filename);
 
-            // import to database
-            $imp = (new FastExcel)->configureCsv(';', '}', '\n', 'gbk')->import($upload_path.'/'.$upload_filename, function ($line) {
-                $insertData = [];
-                foreach($line as $key=>$val){
-                    $colname = strtolower($key);
-                    $colname = str_replace(' ','_',$colname);
-                    $colname = str_replace('.','',$colname);
-                    switch($colname){
-                        case 'date':
-                            $date = Carbon::createFromFormat('d/m/Y H:i:s',$val.' 00:00:00')->toDateTimeString();
-                            $insertData[$colname] = $val;
-                            $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-                            break;
-                        default:
-                            $insertData[$colname] = $val;
+            $header = [];
+            $handle = fopen($upload_path.'/'.$upload_filename, 'r');
+            if ($handle) {
+                $i = 0;
+                $insert = [];
+                while ($line = fgetcsv($handle, null, '|')) {
+                    $insertData = [];
+                    if($i == 0){
+                        //header, save as column name
+                        $header = explode(";",$line[0]);
+                        $header = array_map('strtolower', $header);
+                        $header = str_replace(' ', '_', $header);
+                        $header = str_replace('.', '', $header);
+                    }else{
+                        $content = explode(";",$line[0]);// split line into columns
+                        foreach( $content as $key => $value ){
+                            switch($header[$key]){
+                                case 'date':
+                                    $insertData['date'] = $value;
+                                    $date = Carbon::createFromFormat('d/m/Y H:i:s',$value.' 00:00:00')->toDateTimeString();
+                                    $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+                                    break;
+                                default:
+                                    $insertData[$header[$key]] = str_replace('�',' ',$value);
+                            }
+                        }
+                        array_push($insert, $insertData);
+                        if(count($insert) == 500){// insert after 500
+                            $mongoClient=new Client();
+                            $mongodata=$mongoClient->vislog->spotmatchings;
+                            $mongodata->insertMany($insert);
+                            $insert = [];// reset
+                        }
                     }
+                    $i = $i+1; //increment = no longer header
                 }
-                return Spotmatching::create($insertData);
-            });
-
-            $data['rowCount'] = $imp->count();
-            
+                if(count($insert) > 0){                
+                    $mongoClient=new Client();
+                    $mongodata=$mongoClient->vislog->spotmatchings;                            
+                    $mongodata->insertMany($insert);
+                }
+            } 
+            unset($handle);
             unlink($upload_path.'/'.$upload_filename);
 
             $return = [

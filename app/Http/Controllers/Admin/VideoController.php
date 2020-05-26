@@ -134,12 +134,12 @@ class VideoController extends Controller
             'start_time','end_time','duration','break_type');
 
         if($request->startdate && $request->enddate){
-            $query->whereBetween('isodate',[$startdate,$enddate]);
+            $query->whereBetween('date',[$request->startdate,$request->enddate]);
         } 
         if($request->starttime && $request->endtime){
             $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
             $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
-            $query->whereBetween('start_timestamp',[$starttimestamp,$endtimestamp]);
+            $query->whereBetween('start_time',[$request->starttime,$request->endtime]);
         }
         if(count($filterchannel)){
             $query->whereIn('channel',$filterchannel);
@@ -264,12 +264,12 @@ class VideoController extends Controller
         'start_time','end_time','duration','break_type');
 
         if($request->startdate && $request->enddate){
-            $query->whereBetween('isodate',[$startdate,$enddate]);
+            $query->whereBetween('date',[$request->startdate,$request->enddate]);
         } 
         if($request->starttime && $request->endtime){
             $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
             $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
-            $query->whereBetween('start_timestamp',[$starttimestamp,$endtimestamp]);
+            $query->whereBetween('start_time',[$request->starttime,$request->endtime]);
         }
         if(count($filterchannel)){
             $query->whereIn('channel',$filterchannel);
@@ -382,7 +382,7 @@ class VideoController extends Controller
         $query = Tvprogramme::select('date','channel','nprogramme','nlevel_1','nlevel_2','iprogramme','ilevel_1','ilevel_2','iproduct','iadstype','start_time','end_time','duration','cost','status','kode','rate');
         
         if($request->startdate && $request->enddate){
-            $query->whereBetween('isodate',[$startdate,$enddate]);
+            $query->whereBetween('date',[$request->startdate,$request->enddate]);
         } 
         if($request->starttime && $request->endtime){
             $starttimestamp = $request->starttime;
@@ -438,7 +438,7 @@ class VideoController extends Controller
         $query = Tvprogramme::select('date','channel','nprogramme','nlevel_1','nlevel_2','iprogramme','ilevel_1','ilevel_2','iproduct','iadstype','start_time','end_time','duration','cost','status','kode','rate');
 
         if($request->startdate && $request->enddate){
-            $query->whereBetween('isodate',[$startdate,$enddate]);
+            $query->whereBetween('date',[$request->startdate,$request->enddate]);
         } 
         if(count($filterchannel)){
             $query->whereIn('channel',$filterchannel);

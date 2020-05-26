@@ -138,7 +138,7 @@
                 <li class="dropdown nav-item"><a id="ddnotif" href="#" data-toggle="dropdown" class="nav-link position-relative dropdown-toggle"><i class="ft-bell font-medium-3 blue-grey darken-4"></i>
                 <?php
                 // $notif = App\Notification::where('user_to_notify',Auth::user()->id)->get();
-                $notif = App\Notification::get();
+                $notif = App\Notification::orderBy('created_at','DESC')->get();
                 ?>
                 <span class="notification badge badge-pill badge-danger">{{ ($notif->count()>0)? $notif->count():'' }}</span>
                   <p class="d-none">Notifications</p></a>

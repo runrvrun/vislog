@@ -43,19 +43,19 @@ class InsertCommercial implements ShouldQueue
                     case 'date':
                         // $date = Carbon::createFromFormat('d/m/Y H:i:s',$val.' 00:00:00')->toDateTimeString();
                         $date = Carbon::createFromFormat('Y-m-d H:i:s',$val.' 00:00:00')->toDateTimeString();
-                        $insertData[$colname] = $val;
+                        $insertData[$colname] = str_replace('�',' ',$val);
                         $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
                         break;
                     case 'start_time':
                         $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$val)->timestamp;
-                        $insertData[$colname] = $val;
+                        $insertData[$colname] = str_replace('�',' ',$val);
                         $insertData['start_timestamp'] = $timestamp;
                         break;
                     case 'count':
-                        $insertData[$colname] = $val;
+                        $insertData[$colname] = str_replace('�',' ',$val);
                         break;
                     default:
-                        $insertData[$colname] = $val;
+                        $insertData[$colname] = str_replace('�',' ',$val);
                 }
             }
             return Commercial::create($insertData);

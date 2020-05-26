@@ -130,13 +130,13 @@ class AdexnettController extends Controller
             //                 }
             //                 $dt = $line['Year']."-".$mon."-01";
             //                 $date = Carbon::createFromFormat('Y-m-d H:i:s',$dt.' 00:00:00')->toDateTimeString();
-            //                 $insertData[$colname] = $val;
+            //                 $insertData[$colname] = str_replace('�',' ',$val);
             //                 $insertData['key'] = $key;
             //                 $insertData['date'] = $dt;
             //                 $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
             //                 break;
             //             default:
-            //                 $insertData[$colname] = $val;
+            //                 $insertData[$colname] = str_replace('�',' ',$val);
             //         }
             //     }
             //     return Adexnett::create($insertData);
@@ -234,7 +234,7 @@ class AdexnettController extends Controller
                                     $insertData[$header[$key]] = (double) $value;
                                     break;
                                 default:
-                                    $insertData[$header[$key]] = $value;
+                                    $insertData[$header[$key]] = str_replace('�',' ',$value);
                             }
                         }
                         array_push($insert, $insertData);

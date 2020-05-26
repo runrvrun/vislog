@@ -88,11 +88,11 @@ class TvprogrammeController extends Controller
                     switch($colname){
                     case 'date':
                         $date = Carbon::createFromFormat('Y-m-d H:i:s',$val.' 00:00:00')->toDateTimeString();
-                        $insertData[$colname] = $val;
+                        $insertData[$colname] = str_replace('�',' ',$val);
                         $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
                         break;
                     default:
-                        $insertData[$colname] = $val;
+                        $insertData[$colname] = str_replace('�',' ',$val);
                     }
                 }
                 return Tvprogramme::create($insertData);

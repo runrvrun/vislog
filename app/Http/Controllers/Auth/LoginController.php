@@ -65,6 +65,9 @@ class LoginController extends Controller
             $role = Role::where('role',$user->role)->first();
             session(['privilege'=>$role->pages]);
             Log::create(['user_id'=>Auth::user()->id,'action'=>'login','date'=>date('Y-m-d')]);
+            $user = User::find(Auth::user()->id);
+            $user->last_login = date('Y-m-d H:i:s'); 
+            $user->update();
             return redirect()->intended('/admin');
         }else{
             return redirect('login')->withErrors([

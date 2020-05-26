@@ -72,7 +72,8 @@ class RegisterController extends Controller
             'status' => 1,
             'expired_at' =>  "2099-12-31",
             'privileges[period_start]' =>  "2000-01-01",
-            'privileges[period_end]' =>  "2099-12-31"
+            'privileges[period_end]' =>  "2099-12-31",
+            'last_login' =>  \Carbon\Carbon::now()
         ]);
     }
 }

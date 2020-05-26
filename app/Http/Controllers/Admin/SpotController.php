@@ -30,8 +30,8 @@ class SpotController extends Controller
             $query = Spotmatching::whereBetween('isodate',[$startdate,$enddate]);            
         }
         $queryb = clone($query);
-        $data['a'] = $query->where('nproduct','Not Found')->orderBy('iproduct')->orderBy('actual_time')->orderBy('isodate')->get();
-        $data['b'] = $queryb->where('iproduct','Not Found')->orderBy('nproduct')->orderBy('start_time')->orderBy('isodate')->get();
+        $data['a'] = $query->where('nproduct','Not Found')->orderBy('iproduct')->orderBy('actual_time')->get();
+        $data['b'] = $queryb->where('iproduct','Not Found')->orderBy('nproduct')->orderBy('start_time')->get();
         return $data;
     }
 

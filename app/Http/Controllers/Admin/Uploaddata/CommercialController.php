@@ -81,38 +81,6 @@ class CommercialController extends Controller
             // store file to temp folder
             $file->move($upload_path,$upload_filename);
 
-            // InsertCommercial::dispatch($upload_path,$upload_filename);
-            // import to database
-            // $imp = (new FastExcel)->configureCsv(';', '}', '\n', 'gbk')->import($upload_path.'/'.$upload_filename, function ($line) {
-            //     $insertData = [];
-            //     foreach($line as $key=>$val){
-            //         $colname = strtolower($key);
-            //         $colname = str_replace(' ','_',$colname);
-            //         $colname = str_replace('.','',$colname);
-            //         switch($colname){
-            //             case 'date':
-            //                 // $date = Carbon::createFromFormat('d/m/Y H:i:s',$val.' 00:00:00')->toDateTimeString();
-            //                 $date = Carbon::createFromFormat('Y-m-d H:i:s',$val.' 00:00:00')->toDateTimeString();
-            //                 $insertData[$colname] = $val;
-            //                 $insertData['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-            //                 break;
-            //             case 'start_time':
-            //                 $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$val)->timestamp;
-            //                 $insertData[$colname] = $val;
-            //                 $insertData['start_timestamp'] = $timestamp;
-            //                 break;
-            //             case 'count':
-            //                 $insertData[$colname] = $val;
-            //                 break;
-            //             default:
-            //                 $insertData[$colname] = $val;
-            //         }
-            //     }
-            //     return Commercial::create($insertData);
-            // });
-
-            // $data['rowCount'] = $imp->count();
-            
             $header = [];
             $handle = fopen($upload_path.'/'.$upload_filename, 'r');
             if ($handle) {
@@ -128,6 +96,10 @@ class CommercialController extends Controller
                         $header = str_replace('.', '', $header);
                     }else{
                         $content = explode(";",$line[0]);// split line into columns
+                        // dd($content);
+                        if(count($content)<10){
+                            return response(['message'=>'Incorrect template'],400);
+                        }
                         foreach( $content as $key => $value ){
                             switch($header[$key]){
                                 case 'date':
@@ -137,7 +109,7 @@ class CommercialController extends Controller
                                     break;
                                 case 'start_time':
                                     $insertData['start_time'] = $value;
-                                    $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$value)->timestamp;
+                                    $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 '.$value)->timestamp;
                                     $insertData['start_timestamp'] = $timestamp;
                                     break;
                                 case 'no_of_spots':
@@ -148,7 +120,7 @@ class CommercialController extends Controller
                                     $insertData[$header[$key]] = (double) $value;
                                     break;
                                 default:
-                                    $insertData[$header[$key]] = $value;
+                                    $insertData[$header[$key]] = str_replace('�',' ',$value);
                             }
                         }
                         array_push($insert, $insertData);

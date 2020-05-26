@@ -62,7 +62,7 @@
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="date">Password: </label>
                   <div class="col-md-9">
-                  {{ Form::password('password', array('class' => 'form-control','placeholder'=>'leave empty to keep password')) }}
+                  {{ Form::password('password', array('class' => 'form-control','placeholder'=>'leave empty to keep password','autocomplete'=>'off')) }}
                   </div>
                 </div>
                <h4 class="form-section"><i class="ft-unlock"></i> Commercial Privileges</h4>

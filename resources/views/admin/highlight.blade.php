@@ -8,6 +8,12 @@
         <!-- BEGIN : Main Content-->
         <div class="main-content">
         <div class="content-wrapper">
+		<div class="row">
+            <div class="col-sm-12">
+				<div class="content-header">Highlight</div>
+					<div class="content-sub-header">General analysis of advertising in monthly periods. Easily and quickly known total ad spots in a TV Channel, TV show, Product and much more. You can easily download highlight report by clicking the print button on right tab of menu.</div>
+			</div>
+		</div>		
 <div class="row">
   <div class="col-md-6">
     <div class="row">
@@ -86,11 +92,14 @@
   <div class="col-md-6">
     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="false">
     <ol class="carousel-indicators">
+    @if(isset($data['tvchighlight']))
     @foreach($data['tvchighlight'] as $key=>$val)
       <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}" class="{{ ($key == 0)? 'active':'' }}"></li>
       @endforeach
+      @endif
     </ol>
     <div class="carousel-inner">
+    @if(isset($data['tvchighlight']))
       @foreach($data['tvchighlight'] as $key=>$val)
       <div class="carousel-item {{ ($key == 0)? 'active':'' }}">
         <video src="{{ url('/uploads/tvchighlight/'.($val->filename ?? '')) }}" controls class="playvideo"></video>
@@ -100,6 +109,7 @@
         </div>
       </div>
       @endforeach
+      @endif
     </div>
     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -117,6 +127,7 @@
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Ads Type Selection</h4>
+			<p class="card-subtitle text-muted">Highlight the highest number of ad spots among TV Channels and the comparison between Loose Spot and Non Loose Spot.</p>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -147,6 +158,7 @@
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Daypart</h4>
+			<p class="card-subtitle text-muted">The following graph is comparison of total ad spots between the selection of time periods.</p>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -161,7 +173,7 @@
     <div class="card" style="background-color:#2196f3">
       <div class="card-header">
         <h4 class="card-title white">Top Performance</h4>
-        <small class="white">Top ranking list based on number of spots TV ads.</small>
+        <small class="white">Quickly get the highlight ranking of total ad spots and advertising expenditures based on TV Channels, TV Programs, and Products.</small>
       </div>
       <div class="card-content"  style="min-height: 218px;">
         <div class="whitebox">
@@ -184,11 +196,13 @@
                   <th>Channel</th><th style="text-align:right">Spot</th><th style="text-align:right">Adex (B)</th>
                   </tr>
                 </thead>
+                @if(!empty($data['top_channel']))
                 @foreach($data['top_channel'] as $key=>$val)
                 <tr>
                 <td>{{ $val['channel'] }}</td><td style="text-align:right">{{ $val['spot'] }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
                 </tr>
                 @endforeach
+                @endif
                 </table>
             </div>
             <div class="tab-pane fade" id="program" role="tabpanel" aria-labelledby="program-tab">
@@ -198,11 +212,13 @@
                   <th>Program</th><th style="text-align:right">Spot</th><th style="text-align:right">Adex (B)</th>
                   </tr>
                 </thead>
+                @if(!empty($data['top_programme']))
                 @foreach($data['top_programme'] as $key=>$val)
                 <tr>
                 <td>{{ $val['programme'] }}</td><td style="text-align:right">{{ $val['spot'] }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
                 </tr>
                 @endforeach
+                @endif
                 </table>
             </div>
             <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="product-tab">
@@ -212,11 +228,13 @@
                   <th>Product</th><th style="text-align:right">Spot</th><th style="text-align:right">Adex (B)</th>
                   </tr>
                 </thead>
+                @if(!empty($data['top_product']))
                 @foreach($data['top_product'] as $key=>$val)
                 <tr>
                 <td>{{ $val['product'] }}</td><td style="text-align:right">{{ $val['spot'] }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
                 </tr>
                 @endforeach
+                @endif
                 </table>
             </div>
           </div>
@@ -240,14 +258,18 @@
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="dataupdate" role="tabpanel" aria-labelledby="dataupdate-tab">
+                @if(!empty($data['data_update']))
               @foreach($data['data_update'] as $key=>$val)
               <div class="row"><div class="col-md-8">{{ ucfirst($val->action) }}</div><div class="col-md-4"><small>{{ $val->created_at->diffForHumans() }}</small></div></div>
               @endforeach
+              @endif
           </div>
           <div class="tab-pane fade" id="videoupdate" role="tabpanel" aria-labelledby="videoupdate-tab">
+                @if(!empty($data['video_update']))
               @foreach($data['video_update'] as $key=>$val)
               <div class="row"><div class="col-md-8">{{ ucfirst($val->action) }}</div><div class="col-md-4"><small>{{ $val->created_at->diffForHumans() }}</small></div></div>
               @endforeach
+              @endif
           </div>
           <div class="tab-pane fade" id="recentactivity" role="tabpanel" aria-labelledby="recentactivity-tab">
           </div>
@@ -261,6 +283,7 @@
     <div class="card">
       <div class="card-header">
         <h4 class="card-title">Total Spot for Each Date</h4>
+			<p class="card-subtitle text-muted">The graph shows total ad spots that posted on all TV channels every day during monthly period. You can learn the pattern of daily total ad spots, measuring lowest and highest total ad spots, and much more.</p>
       </div>
       <div class="card-content">
         <div class="card-body">
@@ -498,15 +521,19 @@ $(document).ready(function() {
 <script>
   var data = {
     labels: [
+        @if(!empty($data['spot_per_date']))
         @foreach($data['spot_per_date'] as $key=>$val)
           '{{ $val['date'] }}',
         @endforeach
+        @endif
         ],
     series: [
       [
+        @if(!empty($data['spot_per_date']))
         @foreach($data['spot_per_date'] as $key=>$val)
           {{ $val['total'].',' }}
         @endforeach
+        @endif
       ]
     ]
   };
@@ -643,22 +670,28 @@ $(document).ready(function(){
 <script>
   var data = {
     labels: [
+        @if(!empty($data['spot_per_channel_loose']))
         @foreach($data['spot_per_channel_loose'] as $key=>$val)
           '{{ $val['channel'] }}',
         @endforeach
+        @endif
         ],
     series: [
       [
+        @if(!empty($data['spot_per_channel_loose']))
         @foreach($data['spot_per_channel_loose'] as $key=>$val)
           {{ $val['total'].',' }}
         @endforeach
+        @endif
       ],
       [
+        @if(!empty($data['spot_per_channel']))
         @foreach($data['spot_per_channel'] as $key=>$val)
           @if(isset($data['spot_per_channel_loose'][$key]))
           {{ ($val['total'] - $data['spot_per_channel_loose'][$key]['total']).',' }}
           @endif
         @endforeach
+        @endif
       ]
     ]
   };

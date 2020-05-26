@@ -11,7 +11,8 @@
             <section id="page">
               <div class="row">
                 <div class="col-sm-12">
-                  <div class="content-header">Ads Performance</div>                
+                  <div class="content-header">Ads Performance</div>
+						<div class="content-sub-header">Find ads data with complete custom data filters to meet your needs. This menu also provides postbuy synchronization according to the audience segment you want to analyze. Equipped with video ads display will make your analysis much more complete.</div>
                 </div>
               </div>
               <div class="row">
@@ -21,7 +22,8 @@
                     <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ ucfirst(Session::get('message')) }}</p>
                     @endif
                     <div class="card-header">
-                      <h4 class="card-title">TV Ads</h4>                    
+                      <h4 class="card-title">TV Ads Data Table</h4>
+						<p class="card-subtitle text-muted">Following data table gives you all information that you need. You can custom search filter completely and adjust your table layout as well. Export data table is easy, just click CSV button and than your file will be downloaded shortly. Click preview icon and ads video will display on your demand.</p>
                     </div>
                     <div class="card-content ">
                       <div class="card-body card-dashboard table-responsive">

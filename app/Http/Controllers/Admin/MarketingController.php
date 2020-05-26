@@ -572,7 +572,7 @@ class MarketingController extends Controller
         'iadstype','tadstype','advertiser_group','agency','agency_subs','gm','sm','sgh','am','target','revenue');
 
         if($request->startdate && $request->enddate){
-            $query->whereBetween('isodate',[$startdate,$enddate]);
+            $query->whereBetween('date',[$request->startdate,$request->enddate]);
         } 
         if(count($filterchannel)){
             $query->whereIn('channel',$filterchannel);
@@ -655,7 +655,7 @@ class MarketingController extends Controller
         'iadstype','tadstype','advertiser_group','agency','agency_subs','gm','sm','sgh','am','target','revenue');
 
         if($request->startdate && $request->enddate){
-            $query->whereBetween('isodate',[$startdate,$enddate]);
+            $query->whereBetween('date',[$request->startdate,$request->enddate]);
         } 
         if(count($filterchannel)){
             $query->whereIn('channel',$filterchannel);
@@ -761,7 +761,7 @@ class MarketingController extends Controller
         'tvr'.$filterntargetaudience);
     
         if($request->startdate && $request->enddate){
-            $query->whereBetween('isodate',[$startdate,$enddate]);
+            $query->whereBetween('date',[$request->startdate,$request->enddate]);
         } 
         if(count($filterchannel)){
             $query->whereIn('channel',$filterchannel);
@@ -826,13 +826,13 @@ class MarketingController extends Controller
         if($request->xadstype){
             switch($request->xadstype):
                 case 'loosespot':
-                    $query->where('ket_inventory','Y');
+                    $query->where('ket_inventory','Y')->where('status','Found');
                 break;
                 case 'nonloosespot':
-                    $query->where('ket_inventory','N');
+                    $query->where('ket_inventory','N')->where('status','Found');
                 break;
                 case 'notfound':
-                    $query->where('ket_inventory','Not Found');
+                    $query->where('status','Not Found');
                 break;
             endswitch;
         }
@@ -899,7 +899,7 @@ class MarketingController extends Controller
         'tvr'.$filterntargetaudience);
 
         if($request->startdate && $request->enddate){
-            $query->whereBetween('isodate',[$startdate,$enddate]);
+            $query->whereBetween('date',[$request->startdate,$request->enddate]);
         } 
         if(count($filterchannel)){
             $query->whereIn('channel',$filterchannel);

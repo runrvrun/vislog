@@ -67,7 +67,7 @@ class CommercialController extends Controller
             //         $colname = strtolower($key);
             //         $colname = str_replace(' ','_',$colname);
             //         $colname = str_replace('.','',$colname);
-            //         $insertData[$colname] = $val;
+            //         $insertData[$colname] = str_replace('�',' ',$val);
             //     }
             //     return Commercialsearch::create($insertData);
             // });
@@ -90,7 +90,7 @@ class CommercialController extends Controller
                     }else{
                         $content = explode(";",$line[0]);// split line into columns
                         foreach( $content as $key => $value ){                            
-                            $insertData[$header[$key]] = $value;
+                            $insertData[$header[$key]] = str_replace('�',' ',$value);
                         }
                         array_push($insert, $insertData);
                         if(count($insert) == 500){

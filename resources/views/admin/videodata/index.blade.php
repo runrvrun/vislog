@@ -152,8 +152,7 @@ var table = $('.browse-table').DataTable({
         "<'row'<'col-sm-12'tr>>" +
         "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
     lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-    columnDefs: [ ],
-    order: [[1, 'DESC']]
+    order: []
 });
 $('.buttons-add').addClass('btn mr-1');
 

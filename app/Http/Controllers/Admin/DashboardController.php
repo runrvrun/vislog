@@ -415,9 +415,9 @@ class DashboardController extends Controller
         $channel = Channel::orderBy('order')->get();
         $data['tvchighlight'] = Tvchighlight::where('show',true)->orderBy('created_at')->take(10)->get();
         $filter = [];
-        $commercial = Commercial::whereNotNull('_id');
-        $adexnett = Adexnett::whereNotNull('_id');
-        $log = Log::whereNotNull('_id');
+        $commercial = new Commercial();
+        $adexnett = new Adexnett();
+        $log = new Log();
         if($request->startdate){
             $commercial->whereBetween('isodate',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
             $adexnett->whereBetween('isodate',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
@@ -429,15 +429,16 @@ class DashboardController extends Controller
             $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
         }else{
-            $commercial->whereBetween('isodate',[Carbon::now()->subDays(6),Carbon::now()]);
-            $adexnett->whereBetween('isodate',[Carbon::now()->subDays(6),Carbon::now()]);
-            $log->whereBetween('created_at',[Carbon::now()->subDays(6),Carbon::now()]);
-            $date = Carbon::now()->subDays(1)->toDateTimeString();
-            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
-            $date = Carbon::now()->toDateTimeString();
-            $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );    
+            // $commercial->whereBetween('isodate',[Carbon::now()->subDays(6),Carbon::now()]);
+            // $adexnett->whereBetween('isodate',[Carbon::now()->subDays(6),Carbon::now()]);
+            // $log->whereBetween('created_at',[Carbon::now()->subDays(6),Carbon::now()]);
+            // $date = Carbon::now()->subDays(1)->toDateTimeString();
+            // $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            // array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
+            // $date = Carbon::now()->toDateTimeString();
+            // $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+            // array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );    
+            return view('admin.highlight');
         }
 
         $data['advertiser'] = $commercial->distinct('nadvertiser')->get();

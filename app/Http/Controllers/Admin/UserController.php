@@ -32,7 +32,7 @@ class UserController extends Controller
     }
 
     public function indexjson()
-    {
+    {        
         return datatables(User::get())
         ->addColumn('action', function ($dt) {
             return view('admin.user.action',compact('dt'));
@@ -41,15 +41,28 @@ class UserController extends Controller
         {
             return date('d-m-Y', strtotime($user->expired_at) );
         })
+        ->editColumn('last_login', function ($user) 
+        {
+            return date('d-m-Y H:i:s', strtotime($user->last_login) );
+        })
         ->toJson();
     }
 
     public function csvall()
     {
-        $export = User::all();
+        $export = User::select('name','email','company','phone','role','expired_at','last_login')->get();
+        $exp = [];
+        foreach($export as $key=>$val){
+            $last_login = '';
+            if(!empty($val->last_login)){
+                $last_login = $val->last_login->format('d-m-y H:i:s');
+            }
+            $exp[] = ['name'=>$val->name,'email'=>$val->email,'company'=>$val->company,'phone'=>$val->phone,'role'=>$val->role,'expired_at'=>$val->expired_at->format('d-m-y'),'last_login'=>$last_login];
+        }
+        // dd($exp);
         $filename = 'vislog-user.csv';
         $temp = 'temp/'.$filename;
-        (new FastExcel($export))->export('temp/vislog-user.csv');
+        (new FastExcel($exp))->export('temp/vislog-user.csv');
         $headers = [
             'Content-Type: text/csv',
             ];
@@ -235,8 +248,12 @@ class UserController extends Controller
         $requestData['name'] = $request->name;
         $requestData['title'] = $request->title;
         $requestData['about'] = $request->about;
+        $requestData['company'] = $request->company;
+        $requestData['phone'] = $request->phone;
 
         $user->update($requestData);
+        Session::flash('message', 'Profile updated'); 
+        Session::flash('alert-class', 'alert-success');
         return redirect('admin/myprofile');
     }
 }

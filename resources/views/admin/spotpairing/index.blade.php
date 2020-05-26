@@ -27,7 +27,7 @@
                       <div class="card-body card-dashboard table-responsive">
                         {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
                         {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
-                      <form method="POST" action="{{ url('admin/spotpairingupdate') }}" onSubmit="return confirm('Update Spot Pairing?')">
+                      <form method="POST" action="{{ url('admin/spotpairingupdate') }}" onSubmit="return confirm('Update Spot Pairing?')">@csrf
                         <div class="row">
                           <div class="col-md-1">Period</div>
                           <div class="col-md-4">
@@ -40,8 +40,24 @@
                           <div class="col-md-3"><button type="submit" class="btn btn-success btn-block"><i class="ft-save"></i> Save Matching</button></div>
                         </div>
                         <div class="row">
-                          <div class="col-md-6">iProduct</div>
-                          <div class="col-md-6">nProduct</div>
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-4">iProduct</div>
+                              <div class="position-relative has-icon-right col-md-7 col-md-offset-1">
+                                <input name="iproduct-filter" class="form-control round" placeholder="Search" type="text" />
+                                <div class="form-control-position"><i class="ft-search"></i></div>
+                              </div>
+                            </div>                            
+                          </div>
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-4">nProduct</div>
+                              <div class="position-relative has-icon-right col-md-7 col-md-offset-1">
+                                <input name="nproduct-filter" class="form-control round" placeholder="Search" type="text" />
+                                <div class="form-control-position"><i class="ft-search"></i></div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                         <div class="row">
                           <div class="col-md-6" id="iproduct" style="height:500px;overflow-y:scroll;">
@@ -80,6 +96,9 @@
   text-align: center;
   font-weight: bold;
   margin: 0 10px 0 0;
+}
+form .form-control-position {
+    right: 16px;
 }
 </style>
 @endsection
@@ -137,7 +156,7 @@ $("#btnfilter").click(function() {
         if(result.a){
           $.each(result.a, function(k,v) {                            
             var no = k+1;
-            $('#iproduct').append( '<div class="spot"><input type="text" value="'+no+'" disabled></input>'+ v.iproduct +'<span>'+ v.date +' '+ v.actual_time +'</span></div><input type="hidden" id="matchn'+no+'" name="i['+ v._id +']">' );
+            $('#iproduct').append( '<div class="spot" data-iproduct="'+v.iproduct+'"><input type="text" value="'+no+'" disabled></input>'+ v.iproduct +'<span>'+ v.date +' '+ v.actual_time +'</span></div><input type="hidden" id="matchn'+no+'" name="i['+ v._id +']">' );
           });
         }else{
           $('#iproduct').html('<td colspan=6>No unpaired spot</td>');
@@ -145,13 +164,31 @@ $("#btnfilter").click(function() {
         if(result.b){
           $.each(result.b, function(k,v) {                            
             var no = k+1;
-            $('#nproduct').append( '<div class="spot" id="n'+no+'"><input type="text" data-id="'+v._id+'" class="nproduct" />'+v.nproduct+'<span>'+ v.date +' '+v.start_time+'</span></div>' );
+            $('#nproduct').append( '<div class="spot" id="n'+no+'"  data-nproduct="'+v.nproduct+'"><input type="text" data-id="'+v._id+'" class="nproduct" />'+v.nproduct+'<span>'+ v.date +' '+v.start_time+'</span></div>' );
           });
         }else{
           $('#nproduct').html('<td colspan=6>No unpaired spot</td>');
         }
       }
   });
+});
+$("input[name=iproduct-filter]").keyup(function(){
+  filter = $(this).val().trim().toUpperCase();
+  if(filter==''){
+    $("#iproduct").children().show();
+  }else{
+    $("#iproduct").children().hide();
+    $('div[data-iproduct*="'+filter+'"]').show();
+  }
+});
+$("input[name=nproduct-filter]").keyup(function(){
+  filter = $(this).val().trim().toUpperCase();
+  if(filter==''){
+    $("#nproduct").children().show();
+  }else{
+    $("#nproduct").children().hide();
+    $('div[data-nproduct*="'+filter+'"]').show();
+  }
 });
 </script>
 <script type="text/javascript">

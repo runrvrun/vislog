@@ -1,9 +1,9 @@
 <?php
-Auth::routes();
+// Auth::routes();
+Auth::routes(['register' => false]);
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/demorequest', 'HomeController@demorequest');
-// Auth::routes(['register' => false]);
 Route::post('userlogin','Auth\\LoginController@authenticate')->name('userlogin');
 Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
 {

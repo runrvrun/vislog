@@ -85,7 +85,7 @@ class SpotunpairedController extends Controller
                     $colname = strtolower($key);
                     $colname = str_replace(' ','_',$colname);
                     $colname = str_replace('.','',$colname);
-                    $insertData[$colname] = $val;
+                    $insertData[$colname] = str_replace('�',' ',$val);
                 }
                 return Spotunpaired::create($insertData);
             });

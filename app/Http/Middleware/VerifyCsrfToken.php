@@ -19,6 +19,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        '/logout','/login','/userlogin'
+        '/logout','/login','/userlogin','admin/spotpairingupdate'
     ];
 }

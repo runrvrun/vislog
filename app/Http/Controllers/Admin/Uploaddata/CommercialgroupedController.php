@@ -86,7 +86,7 @@ class CommercialgroupedController extends Controller
             //         $colname = strtolower($key);
             //         $colname = str_replace(' ','_',$colname);
             //         $colname = str_replace('.','',$colname);
-            //         $insertData[$colname] = $val;
+            //         $insertData[$colname] = str_replace('�',' ',$val);
             //     }
             //     return Commercialgrouped::create($insertData);
             // });
@@ -127,7 +127,7 @@ class CommercialgroupedController extends Controller
                                     $insertData[$header[$key]] = (double) $value;
                                     break;
                                 default:
-                                    $insertData[$header[$key]] = $value;
+                                    $insertData[$header[$key]] = str_replace('�',' ',$value);
                             }                          
                         }
                         array_push($insert, $insertData);
