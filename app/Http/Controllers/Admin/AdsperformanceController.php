@@ -76,13 +76,15 @@ class AdsperformanceController extends Controller
 
         if($request->startdate && $request->enddate){
             // $xquery->whereBetween('isodate',[$startdate,$enddate]);
-            $query->whereBetween('date',[$request->startdate,$request->enddate]);
+            // $xquery->whereBetween('date',[$request->startdate,$request->enddate]);
+            $query->whereBetween('isodate',[$startdate,$enddate]);
         } 
         if($request->starttime && $request->endtime){
-            // $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 '.$request->starttime)->timestamp;        
-            // $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 '.$request->endtime)->timestamp;
+            $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 '.$request->starttime)->timestamp;        
+            $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 '.$request->endtime)->timestamp;
             // $xquery->whereBetween('start_timestamp',[$starttimestamp,$endtimestamp]);
-            $query->whereBetween('start_time',[$request->starttime,$request->endtime]);
+            // $xquery->whereBetween('start_time',[$request->starttime,$request->endtime]);
+            $query->whereBetween('start_timestamp',[$starttimestamp,$endtimestamp]);
         }
         // dd($starttimestamp.' /// '.$endtimestamp);
         if(count($filterchannel)){
@@ -243,12 +245,12 @@ class AdsperformanceController extends Controller
         }
 
         if($request->startdate && $request->enddate){
-            $query->whereBetween('date',[$request->startdate,$request->enddate]);
+            $query->whereBetween('isodate',[$startdate,$enddate]);
         } 
         if($request->starttime && $request->endtime){
             $starttimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->starttime)->timestamp;        
             $endtimestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01'.$request->endtime)->timestamp;        
-            $query->whereBetween('start_time',[$request->starttime,$request->endtime]);
+            $query->whereBetween('start_timestamp',[$starttimestamp,$endtimestamp]);
         }
         if(count($filterchannel)){
             $query->whereIn('channel',$filterchannel);

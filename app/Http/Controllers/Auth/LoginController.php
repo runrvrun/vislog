@@ -61,12 +61,12 @@ class LoginController extends Controller
                 return redirect('login')->withErrors([
                     'email' => 'User inactive',
                 ]);
-            }
+            }ini_set("date.timezone","Asia/Jakarta");
             $role = Role::where('role',$user->role)->first();
             session(['privilege'=>$role->pages]);
             Log::create(['user_id'=>Auth::user()->id,'action'=>'login','date'=>date('Y-m-d')]);
             $user = User::find(Auth::user()->id);
-            $user->last_login = date('Y-m-d H:i:s'); 
+            $user->last_login = date('Y-m-d H:i:s', strtotime('+7 hours'));// +7 hours so that from UTC becomes Jakarta
             $user->update();
             return redirect()->intended('/admin');
         }else{
