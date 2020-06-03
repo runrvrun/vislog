@@ -13,6 +13,7 @@ use App\Adexnett;
 use App\Daypartsetting;
 use App\Tvchighlight;
 use App\Channel;
+use App\User;
 use Auth;
 use PDF;
 
@@ -52,9 +53,9 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            $commercial->whereBetween('isodate',[Auth::user()->privileges['isostartdate'],Auth::user()->privileges['isoenddate']]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            $commercial->whereBetween('isodate',[Auth::user()->privileges['startdate'],Auth::user()->privileges['enddate']]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             $commercial->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
@@ -416,38 +417,99 @@ class DashboardController extends Controller
         $data['tvchighlight'] = Tvchighlight::where('show',true)->orderBy('created_at')->take(10)->get();
         $filter = [];
         $commercial = new Commercial();
-        $adexnett = new Adexnett();
         $log = new Log();
-        if($request->startdate){
-            // $commercial->whereBetween('isodate',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
-            $commercial->whereBetween('isodate',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
-            $adexnett->whereBetween('isodate',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
+        if(!empty($request->startdate)){
             $log->whereBetween('created_at',[Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00'),Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')]);
+            //
             $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->startdate.' 00:00:00')->toDateTimeString();
             $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
             array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
             $date = Carbon::createFromFormat('Y-m-d H:i:s',$request->enddate.' 23:59:59')->toDateTimeString();
             $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
             array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );
-        }else{
-            // $commercial->whereBetween('isodate',[Carbon::now()->subDays(6),Carbon::now()]);
-            // $adexnett->whereBetween('isodate',[Carbon::now()->subDays(6),Carbon::now()]);
-            // $log->whereBetween('created_at',[Carbon::now()->subDays(6),Carbon::now()]);
-            // $date = Carbon::now()->subDays(1)->toDateTimeString();
-            // $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-            // array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isodate ] ] ]);
-            // $date = Carbon::now()->toDateTimeString();
-            // $isodate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
-            // array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isodate ] ] ] );    
+        }else{   
             return view('admin.highlight');
         }
 
-        $data['advertiser'] = $commercial->distinct('nadvertiser')->get();
-        $data['advertiser'] = count($data['advertiser']);
-        $data['product'] = $commercial->distinct('nproduct')->get();
-        $data['product'] = count($data['product']);
-        $data['number_of_spot'] = $commercial->sum('no_of_spots');        
-        $data['adex'] = $commercial->sum('cost');
+        $co = new Commercial;
+        // summary advertiser
+        $count = $co::raw(function($collection) use($filter) 
+        {
+            return $collection->aggregate(array_merge($filter,[                
+                    [
+                        '$group'=> [
+                          '_id'=> '$nadvertiser'
+                        ]
+                    ],
+                    [
+                        '$group'=> [
+                          '_id'=> 1,
+                          'count'=> [
+                            '$sum'=> 1
+                          ]
+                        ]
+                    ]
+                ])
+                ,['allowDiskUse' => true]
+                );
+        });
+        $data['advertiser'] = $count[0]['count'] ?? 0;
+        // summary product
+        $count = $co::raw(function($collection) use($filter) 
+        {
+            return $collection->aggregate(array_merge($filter,[                
+                    [
+                        '$group'=> [
+                          '_id'=> '$nproduct'
+                        ]
+                    ],
+                    [
+                        '$group'=> [
+                          '_id'=> 1,
+                          'count'=> [
+                            '$sum'=> 1
+                          ]
+                        ]
+                    ]
+                ])
+                ,['allowDiskUse' => true]
+                );
+        });
+        $data['product'] = $count[0]['count'] ?? 0;
+        // summary spot
+        $count = $co::raw(function($collection) use($filter) 
+        {
+            return $collection->aggregate(array_merge($filter,[                                    
+                    [
+                        '$group'=> [
+                          '_id'=> 1,
+                          'count'=> [
+                            '$sum'=> '$no_of_spots'
+                          ]
+                        ]
+                    ]
+                ])
+                ,['allowDiskUse' => true]
+                );
+        });
+        $data['number_of_spot'] = $count[0]['count'] ?? 0;
+        // summary cost
+        $count = $co::raw(function($collection) use($filter) 
+        {
+            return $collection->aggregate(array_merge($filter,[                                    
+                    [
+                        '$group'=> [
+                          '_id'=> 1,
+                          'count'=> [
+                            '$sum'=> '$cost'
+                          ]
+                        ]
+                    ]
+                ])
+                ,['allowDiskUse' => true]
+                );
+        });
+        $data['adex'] = $count[0]['count'] ?? 0;
         if ($data['adex'] < 1000) { // cost is already per 1000
             // Anything less than a million
             $data['adex'] = number_format($data['adex'],0);
@@ -458,48 +520,28 @@ class DashboardController extends Controller
             // At least a billion
             $data['adex'] = number_format($data['adex'] / 1000000, 0) . 'B';
         }
-        
-        $c = clone($commercial);// clone object as so not copy by reference and got additional "where" clause
-        $data['adstype_loose_spot'] = $c->where('nadstype','LOOSE SPOT')->sum('no_of_spots');
-        if ($data['adstype_loose_spot'] < 1000000) {
-            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'], 0);            
-        } else if ($data['adstype_loose_spot'] < 1000000000) {
-            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'] / 1000000, 0) . 'M';
-        } else {
-            $data['adstype_loose_spot'] = number_format($data['adstype_loose_spot'] / 1000000000, 0) . 'B';
-        }
-
-        $c = clone($commercial);// clone object as so not copy by reference
-        $data['adstype_virtual_ads'] = $c->where('nadstype','VIRTUAL ADS')->sum('no_of_spots');
-        if ($data['adstype_virtual_ads'] < 1000000) {
-            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'], 0);                        
-        } else if ($data['adstype_virtual_ads'] < 1000000000) {
-            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'] / 1000000, 0) . 'M';
-        } else {
-            $data['adstype_virtual_ads'] = number_format($data['adstype_virtual_ads'] / 1000000000, 0) . 'B';
-        }
-
-        $c = clone($commercial);// clone object as so not copy by reference
-        $data['adstype_squeeze_frames'] = $c->where('nadstype','BUILT IN SEGMEN')->sum('no_of_spots');
-        if ($data['adstype_squeeze_frames'] < 1000000) {
-            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'], 0);                        
-        } else if ($data['adstype_squeeze_frames'] < 1000000000) {
-            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'] / 1000000, 0) . 'M';
-        } else {
-            $data['adstype_squeeze_frames'] = number_format($data['adstype_squeeze_frames'] / 1000000000, 0) . 'B';
-        }
-
-        $c = clone($commercial);// clone object as so not copy by reference
-        $data['adstype_quiz'] = $c->where('nadstype','KUIS')->sum('no_of_spots');
-        if ($data['adstype_quiz'] < 1000000) {
-            $data['adstype_quiz'] = number_format($data['adstype_quiz'], 0);                        
-        } else if ($data['adstype_quiz'] < 1000000000) {
-            $data['adstype_quiz'] = number_format($data['adstype_quiz'] / 1000000, 0) . 'M';
-        } else {
-            $data['adstype_quiz'] = number_format($data['adstype_quiz'] / 1000000000, 0) . 'B';
-        }
-         
-        $query = Commercial::raw(function($collection) use ($filter)
+        // summary ads type selection loose spot        
+        $count = $co::raw(function($collection) use($filter) 
+        {
+            return $collection->aggregate(array_merge($filter,[                                    
+                    [
+                        '$group'=> [
+                          '_id'=> '$nadstype',
+                          'count'=> [
+                            '$sum'=> '$no_of_spots'
+                          ]
+                        ]
+                    ]
+                ])
+                ,['allowDiskUse' => true]
+                );
+        });
+        foreach($count as $val){
+            $key = 'adstype_'.str_replace(' ','_',strtolower($val->id));
+            $data[$key] = $val->count;
+        }        
+        // ads type selection graph 
+        $query = $co::raw(function($collection) use ($filter)
         {
             array_push($filter,[ '$match' => ['nadstype' => 'LOOSE SPOT']]);  
             return $collection->aggregate(array_merge($filter,[               
@@ -572,24 +614,27 @@ class DashboardController extends Controller
                 $minute = $time[1] * 60;
                 $end_ms = $hour + $minute - 1;
                 $data['daypart'][$key]['name'] = $val->daypart;
-                $data['daypart'][$key]['value'] = $c->whereBetween('start_timestamp',[$start_ms,$end_ms])->sum('no_of_spots');
+                // summary spot
+                $filterdp = $filter;
+                array_push($filterdp,[ '$match' => [ 'start_timestamp' => [ '$gte' => $start_ms ] ] ] );            
+                array_push($filterdp,[ '$match' => [ 'start_timestamp' => [ '$lte' => $end_ms ] ] ] );            
+                $count = $co::raw(function($collection) use($filterdp) 
+                {
+                    return $collection->aggregate(array_merge($filterdp,[                                    
+                            [
+                                '$group'=> [
+                                '_id'=> 1,
+                                'count'=> [
+                                    '$sum'=> '$no_of_spots'
+                                ]
+                                ]
+                            ]
+                        ])
+                        ,['allowDiskUse' => true]
+                        );
+                });
+                $data['daypart'][$key]['value'] = $count[0]['count'] ?? 0;
             }
-        }else{
-            $c = clone($commercial); 
-            $data['daypart'][0]['name'] = "00.00-06.00";
-            $data['daypart'][0]['value'] = $c->whereBetween('start_timestamp',[0,21600])->sum('no_of_spots');//00.00-06.00
-            $c = clone($commercial); 
-            $data['daypart'][1]['name'] = "06.00-12.00";
-            $data['daypart'][1]['value'] = $c->whereBetween('start_timestamp',[21601,43200])->sum('no_of_spots');//06.00-12.00
-            $c = clone($commercial); 
-            $data['daypart'][2]['name'] = "12.00-17.30";
-            $data['daypart'][2]['value'] = $c->whereBetween('start_timestamp',[43201,63000])->sum('no_of_spots');//12.00-17.30
-            $c = clone($commercial); 
-            $data['daypart'][3]['name'] = "17.30-22.00";
-            $data['daypart'][3]['value'] = $c->whereBetween('start_timestamp',[63001,79200])->sum('no_of_spots');//17.30-22.00
-            $c = clone($commercial); 
-            $data['daypart'][4]['name'] = "22.00-00.00";
-            $data['daypart'][4]['value'] = $c->whereBetween('start_timestamp',[79201,86400])->sum('no_of_spots');//22.00-00.00
         }
         $query = Commercial::raw(function($collection) use($filter) 
         {
@@ -697,10 +742,14 @@ class DashboardController extends Controller
             $data['top_product'] = $topproduct;
         }
         $l = clone($log);
-        $data['data_update'] = $l->where('action','regexp','/data update/')->orderBy('created_at','DESC')->take(5)->get();
+        $data['data_update'] = $l->where('action','regexp','/data update/')->orderBy('created_at','DESC')->take(10)->get();
         $l = clone($log);
-        $data['video_update'] = $l->where('action','regexp','/video update/')->orderBy('created_at','DESC')->take(5)->get();
-
+        $data['video_update'] = $l->where('action','regexp','/video update/')->orderBy('created_at','DESC')->take(10)->get();
+        $data['activity'] = Log::where('action','login')->orderBy('created_at','DESC')->take(10)->get();
+        if(!empty($data['activity'])) foreach($data['activity'] as $key=>$val){
+            $user = User::find($val->user_id);
+            $data['activity'][$key]['name'] = $user->name;
+        }
         $spot_per_date = Commercial::raw(function($collection) use($filter) 
         {
             return $collection->aggregate(array_merge($filter,[
@@ -759,8 +808,8 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -959,8 +1008,8 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1159,8 +1208,8 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1359,8 +1408,8 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1560,8 +1609,8 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1761,8 +1810,8 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1962,8 +2011,8 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -2164,8 +2213,8 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  

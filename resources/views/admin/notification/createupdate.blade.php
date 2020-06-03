@@ -18,7 +18,7 @@
               </p>
       @endif
         <div class="card-header">
-          <h4 class="card-title">Notification</h4>
+          <h4 class="card-title">{{ empty($item)? 'Add':'Edit' }} Notification</h4>
         </div>
         <div class="card-content">
           <div class="px-3">
@@ -31,13 +31,13 @@
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="date">Title: </label>
                   <div class="col-md-9">
-                  {{ Form::text('title', old('title',$item->data->title ?? null), array('class' => 'form-control','required','autocomplete'=>'off')) }}
+                  {{ Form::text('title', old('title',$item['data']['title'] ?? null), array('class' => 'form-control','required','autocomplete'=>'off')) }}
                   </div>
                 </div>
                 <div class="form-group row">
                   <label class="col-md-3 label-control" for="channel">Notification: </label>
                   <div class="col-md-9">
-                  {{ Form::textarea('message', old('title',$item->data->message ?? null), array('class' => 'form-control','required','rows'=>5)) }}
+                  {{ Form::textarea('message', old('title',$item['data']['message'] ?? null), array('class' => 'form-control','required','rows'=>5)) }}
                   </div>
                 </div>                                    
               </div>

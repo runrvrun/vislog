@@ -32,7 +32,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/admin';
+    protected $redirectTo = '/login';
 
     /**
      * Create a new controller instance.
@@ -77,6 +77,6 @@ class LoginController extends Controller
     }
 
     protected function loggedOut(Request $request) {
-        return redirect('/admin');
+        return redirect('/login');
     }
 }

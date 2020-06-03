@@ -99,9 +99,9 @@ class MarketingController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            $adexnett->whereBetween('isodate',[Auth::user()->privileges['isostartdate'],Auth::user()->privileges['isoenddate']]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['isostartdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['isoenddate'] ] ] ] );
+            $adexnett->whereBetween('isodate',[Auth::user()->privileges['startdate'],Auth::user()->privileges['enddate']]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             $adexnett->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
@@ -532,6 +532,43 @@ class MarketingController extends Controller
             return $b['all'] <=> $a['all'];
         });
         $data['marketshare_channel_sector'] = array_slice($totalsector, 0, 10, true);
+        //
+        $query = Adexnett::raw(function($collection) use ($filter,$nett)
+        {
+            // $filter = [];
+            return $collection->aggregate(array_merge($filter,[
+                [
+                    '$group'    => [
+                        '_id'   => [
+                            'channel'=>'$channel',
+                            'ncategory'=>'$ncategory'
+                        ],
+                        'total' => [
+                            '$sum'  => '$'.$nett
+                        ]
+                    ]
+                ]
+            ]));
+        });
+        // sum all
+        $totalcategory = [];
+        foreach($query as $key=>$val){
+            $sector = $val->_id->ncategory;
+            $totalcategory[$category][$val->_id->channel]['marketshare'] = $val->total;
+            ${'totalall'.$category} = (${'totalall'.$sector} ?? 0) + $val->total;
+            $totalcategory[$scategory]['all'] = ${'totalall'.$category};
+        }
+        foreach($totalcategory as $key=>$val){
+            foreach($val as $k=>$v){
+                if($k != 'all'){
+                    $totalcategory[$key][$k]['percentage'] = $v['marketshare']/$val['all'];
+                }
+            }
+        }
+        uasort($totalcategory, function($a, $b) {
+            return $b['all'] <=> $a['all'];
+        });
+        $data['marketshare_channel_category'] = array_slice($totalcategory, 0, 10, true);
 
         if($action == 'print'){
             return view('admin.mktsummary.print',compact('request','data'));
@@ -837,7 +874,7 @@ class MarketingController extends Controller
             endswitch;
         }
         // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
+        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
         if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
         if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']??'%%'));
         if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']??'%%'));

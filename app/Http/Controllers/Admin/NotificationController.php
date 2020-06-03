@@ -66,9 +66,20 @@ class NotificationController extends Controller
         return view('admin.notification.createupdate', compact('item'));
     }
     
-    public function update(Request $request)
+    public function update($userid,Request $request)
     {
+        $user = User::find($userid);
+        $request->validate([
+            'title' => 'required',
+            'message' => 'required',
+        ]);
         
+        $requestData['data']['title'] = $request->title;
+        $requestData['data']['message'] = $request->message;
+        Notification::where('_id',$userid)->update($requestData);
+        Session::flash('message', 'Notification updated'); 
+        Session::flash('alert-class', 'alert-success'); 
+        return redirect('admin/notification');
     }
 
     public function markallread(Request $request){

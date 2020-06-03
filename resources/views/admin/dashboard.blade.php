@@ -412,7 +412,11 @@ button.search-result{
       [
         @if(isset($data['spot_per_channel'])) 
         @foreach($data['spot_per_channel'] as $key=>$val)
-          {{ $val['total'].',' }}
+          @if($request->variable == 'SPOT')
+            {{ number_format($val['total'],0,'','') }},
+          @else
+            {{ number_format($val['total'],2,'.','') }},
+          @endif
         @endforeach
         @endif
       ]
@@ -824,7 +828,11 @@ $(document).ready(function() {
     series: [
         @if(isset($data['spot_per_type'])) 
         @foreach($data['spot_per_type'] as $key=>$val)
-          {{ $val }},
+          @if($request->variable == 'SPOT')
+          {{ number_format($val,0,'.','') }},
+          @else
+          {{ number_format($val,2,'.','') }},
+          @endif
         @endforeach
         @endif
     ]
@@ -845,7 +853,11 @@ $(document).ready(function() {
         @if(isset($data["daypart"])) 
         @foreach($data["daypart"] as $key=>$val)
           @if(strtolower($val['name']) == 'primetime' || strtolower($val['name']) == 'prime time')
-            {{ $val['value'] }}
+            @if($request->variable == 'SPOT')
+            {{ number_format($val['value'],0,'.','') }}
+            @else
+            {{ number_format($val['value'],2,'.','') }}
+            @endif
           @endif
         @endforeach
         @endif
@@ -855,12 +867,16 @@ $(document).ready(function() {
         if(isset($data["daypart"])):
         foreach($data["daypart"] as $key=>$val):
           if(strtolower($val['name']) != 'primetime' && strtolower($val['name']) != 'prime time'):
-             $nonprime = $nonprime + $val['value'];
+            $nonprime = $nonprime + $val['value'];
           endif;
         endforeach;
         endif;
         ?>
-        {{ $nonprime }}
+        @if($request->variable == 'SPOT')
+        {{ number_format($nonprime,0,'.','') }}
+        @else
+        {{ number_format($nonprime,2,'.','') }}
+        @endif
     ]
   };
   new Chartist.Pie('.spot-per-time-chart', data, {donut: true,
@@ -907,7 +923,11 @@ $(document).ready(function() {
       [
         @if(isset($data['spot_per_date'])) 
         @foreach($data['spot_per_date'] as $key=>$val)
-          {{ $val['total'].',' }}
+          @if($request->variable == 'SPOT')
+          {meta: '{{ $val['date'] }}', value: {{ number_format($val['total'],0,'.','') }} },          
+          @else
+          {meta: '{{ $val['date'] }}', value: {{ number_format($val['total'],2,'.','') }} },          
+          @endif
         @endforeach
         @endif
       ]
@@ -1083,13 +1103,13 @@ $(document).ready(function(){
 </script>
 @endsection
 @section('filterer')
-<a id="rtl-icon2" class="bg-secondary"><i class="ft-printer font-medium-4 white fa align-middle"></i></a>
+<a id="rtl-icon2" class="bg-info"><i class="ft-printer font-medium-4 white fa align-middle"></i></a>
 <form method="GET" id="filterer-form" action="{{ url('admin/dashboard') }}">
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button type="submit" id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
 <a id="filtererreset" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
-<a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
+<a id="rtl-icon" class="filterer-toggle bg-success"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
         <hr>

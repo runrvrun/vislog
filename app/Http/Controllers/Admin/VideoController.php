@@ -205,7 +205,7 @@ class VideoController extends Controller
             $query->where('nadstype','<>','LOOSE SPOT');
         }
         // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
+        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
         if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
         if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']??'%%'));
         if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']??'%%'));
@@ -329,7 +329,7 @@ class VideoController extends Controller
             $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
         }
         // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
+        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
         if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
         if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']??'%%'));
         if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']??'%%'));
@@ -411,7 +411,7 @@ class VideoController extends Controller
             $query->whereIn('ilevel_2',$filterilevel_2);
         } 
         // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
+        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
         if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(';',Auth::user()->privileges['channel']??'%%'));
         if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(';',Auth::user()->privileges['nlevel_1']??'%%'));
         if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(';',Auth::user()->privileges['nlevel_2']??'%%'));
@@ -462,7 +462,7 @@ class VideoController extends Controller
             $query->whereIn('ilevel_2',$filterilevel_2);
         }
         // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['isostartdate']??$startdate,Auth::user()->privileges['isoenddate']??$enddate]);
+        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
         if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(';',Auth::user()->privileges['channel']??'%%'));
         if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(';',Auth::user()->privileges['nlevel_1']??'%%'));
         if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(';',Auth::user()->privileges['nlevel_2']??'%%'));
@@ -500,7 +500,7 @@ class VideoController extends Controller
             $commercial = Tvprogramme::find($request->id);
             $librarypath = Config::select('value')->where('key','video path hd')->first();
         }else{
-            $commercial = Commercial::find($request->id);
+            $commercial = Commercial::find($request->id);            
             if($commercial->nadstype == "LOOSE SPOT"){
                 $librarypath = Config::select('value')->where('key','video path')->first();
             }else{
@@ -597,7 +597,7 @@ class VideoController extends Controller
     }
     public function downloadmultivideo(Request $request){
         $id = urldecode($request->id);
-        $ids = explode(';',$id);
+        $ids = explode(',',$id);
         $temppath = Config::select('value')->where('key','temp path')->first();
 
         $zip = new ZipArchive;
@@ -641,8 +641,26 @@ class VideoController extends Controller
         }
     }
 
-    public function videodata()
+    public function videodata(Request $request)
     {
+        if(!empty($request->fixdate)){
+            $commercialg = \App\Commercialgrouped::where('date',$request->date)->get();
+            foreach($commercialg as $com){
+                $date = Carbon::createFromFormat('Y-m-d H:i:s',$com->date.' 00:00:00')->toDateTimeString();
+                $upd['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+                $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 '.$com->start_time)->timestamp;
+                $upd['start_timestamp'] = $timestamp;                
+                \App\Commercialgrouped::find($com->_id)->update($upd);
+            }
+            $commercial = \App\Commercial::where('date',$request->date)->get();
+            foreach($commercial as $com){
+                $date = Carbon::createFromFormat('Y-m-d H:i:s',$com->date.' 00:00:00')->toDateTimeString();
+                $upd['isodate'] = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));
+                $timestamp = Carbon::createFromFormat('Y-m-d H:i:s','1970-01-01 '.$com->start_time)->timestamp;
+                $upd['start_timestamp'] = $timestamp;
+                \App\Commercial::find($com->_id)->update($upd);
+            }
+        }
         $config = [];
         $configs = Config::all();
         foreach($configs as $val){

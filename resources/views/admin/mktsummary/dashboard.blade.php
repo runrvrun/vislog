@@ -265,6 +265,41 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title">Top 10 Category (%)</h4>
+                </div>
+                <div class="card-content">
+                  <div class="card-body card-dashboard table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Month</th>
+                          <th style="white-space: nowrap;">All TV (B)</th>
+                          @foreach($data['channel'] as $key=>$val)
+                          <th>{{ $val->channel }}</th>
+                          @endforeach
+                          @foreach($data['marketshare_channel_category'] as $key=>$val)
+                          <tr>
+                          <td>{{ $key ?? '' }}</td>
+                          <td style="text-align:right">{{ number_format($val['all']/1000000,2) ?? '' }}</td>
+                          @foreach($data['channel'] as $k=>$v)
+                          <td style="text-align:right"><?php  $p = $val[$v->channel]['percentage'] ?? 0;?>{{ round($p*100).'%' }}</td>
+                          @endforeach                
+                          </tr>
+                          @endforeach
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         </div>
 <div id="loading">
@@ -535,13 +570,13 @@ $(document).ready(function(){
 </script>
 @endsection
 @section('filterer')
-<a id="rtl-icon2" class="bg-secondary"><i class="ft-printer font-medium-4 white fa align-middle"></i></a>
+<a id="rtl-icon2" class="bg-info"><i class="ft-printer font-medium-4 white fa align-middle"></i></a>
 <form method="GET" id="filterer-form" action="{{ url('admin/mktsummary') }}">
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button type="submit" id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
 <a id="filtererreset" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
-<a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
+<a id="rtl-icon" class="filterer-toggle bg-success"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
         <hr>

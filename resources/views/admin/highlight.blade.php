@@ -134,7 +134,7 @@
           <div class="row">
             <div class="col-md-3">
               <i class="adsicon bgaqua ft-monitor font-medium-2 p-1"></i>
-              <div class="adsheading">{{ $data['adstype_loose_spot'] ?? 0 }}</div><small>Loose Spot</small>
+              <div class="adsheading">{{ number_format(($data['adstype_loose_spot'] ?? 0),0) }}</div><small>Loose Spot</small>
             </div>
             <div class="col-md-3">
               <i class="adsicon bgtosca ft-check-circle font-medium-2 p-1"></i>
@@ -142,11 +142,11 @@
             </div>
             <div class="col-md-4">
               <i class="adsicon bgpink ft-film font-medium-2 p-1"></i>
-              <div class="adsheading">{{ $data['adstype_squeeze_frames'] ?? 0 }}</div><small>Built-in Segmen</small>
+              <div class="adsheading">{{ $data['adstype_squeeze_frame'] ?? 0 }}</div><small>Built-in Segmen</small>
             </div>
             <div class="col-md-2">
               <i class="adsicon bgpurple ft-message-square font-medium-2 p-1"></i>
-              <div class="adsheading">{{ $data['adstype_quiz'] ?? 0 }}</div><small>Kuis</small>
+              <div class="adsheading">{{ $data['adstype_kuis'] ?? 0 }}</div><small>Kuis</small>
             </div>
           </div>
           <div class="spot-per-channel-chart ct-major-twelfth"></div>
@@ -199,7 +199,7 @@
                 @if(!empty($data['top_channel']))
                 @foreach($data['top_channel'] as $key=>$val)
                 <tr>
-                <td>{{ $val['channel'] }}</td><td style="text-align:right">{{ $val['spot'] }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
+                <td>{{ $val['channel'] }}</td><td style="text-align:right">{{ number_format($val['spot'],0,'','') }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
                 </tr>
                 @endforeach
                 @endif
@@ -215,7 +215,7 @@
                 @if(!empty($data['top_programme']))
                 @foreach($data['top_programme'] as $key=>$val)
                 <tr>
-                <td>{{ $val['programme'] }}</td><td style="text-align:right">{{ $val['spot'] }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
+                <td>{{ $val['programme'] }}</td><td style="text-align:right">{{ number_format($val['spot'],0,'','') }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
                 </tr>
                 @endforeach
                 @endif
@@ -231,7 +231,7 @@
                 @if(!empty($data['top_product']))
                 @foreach($data['top_product'] as $key=>$val)
                 <tr>
-                <td>{{ $val['product'] }}</td><td style="text-align:right">{{ $val['spot'] }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
+                <td>{{ $val['product'] }}</td><td style="text-align:right">{{ number_format($val['spot'],0,'','') }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
                 </tr>
                 @endforeach
                 @endif
@@ -265,13 +265,18 @@
               @endif
           </div>
           <div class="tab-pane fade" id="videoupdate" role="tabpanel" aria-labelledby="videoupdate-tab">
-                @if(!empty($data['video_update']))
+              @if(!empty($data['video_update']))
               @foreach($data['video_update'] as $key=>$val)
               <div class="row"><div class="col-md-8">{{ ucfirst($val->action) }}</div><div class="col-md-4"><small>{{ $val->created_at->diffForHumans() }}</small></div></div>
               @endforeach
               @endif
           </div>
           <div class="tab-pane fade" id="recentactivity" role="tabpanel" aria-labelledby="recentactivity-tab">
+              @if(!empty($data['activity']))
+              @foreach($data['activity'] as $key=>$val)
+              <div class="row"><div class="col-md-8">{{ ucfirst($val->name) }} logged in</div><div class="col-md-4"><small>{{ $val->created_at->diffForHumans() }}</small></div></div>
+              @endforeach
+              @endif
           </div>
         </div>
       </div>
@@ -504,11 +509,11 @@ $(document).ready(function() {
         ],
     series: [
       [
-        {{ $data['daypart'][0]['value'] ?? 0 }},
-        {{ $data['daypart'][1]['value'] ?? 0 }},
-        {{ $data['daypart'][2]['value'] ?? 0 }},
-        {{ $data['daypart'][3]['value'] ?? 0 }},
-        {{ $data['daypart'][4]['value'] ?? 0 }},
+        {{ number_format(($data['daypart'][0]['value'] ?? 0),0,'','') }},
+        {{ number_format(($data['daypart'][1]['value'] ?? 0),0,'','') }},
+        {{ number_format(($data['daypart'][2]['value'] ?? 0),0,'','') }},
+        {{ number_format(($data['daypart'][3]['value'] ?? 0),0,'','') }},
+        {{ number_format(($data['daypart'][4]['value'] ?? 0),0,'','') }},
       ]
     ]
   };
@@ -531,7 +536,7 @@ $(document).ready(function() {
       [
         @if(!empty($data['spot_per_date']))
         @foreach($data['spot_per_date'] as $key=>$val)
-          {{ $val['total'].',' }}
+          {meta: '{{ $val['date'] }}', value: {{ $val['total'] }} },          
         @endforeach
         @endif
       ]
@@ -670,29 +675,29 @@ $(document).ready(function(){
 <script>
   var data = {
     labels: [
-        @if(!empty($data['spot_per_channel_loose']))
-        @foreach($data['spot_per_channel_loose'] as $key=>$val)
+        @if(!empty($data['spot_per_channel']))
+        @foreach($data['spot_per_channel'] as $key=>$val)
           '{{ $val['channel'] }}',
         @endforeach
         @endif
         ],
     series: [
       [
-        @if(!empty($data['spot_per_channel_loose']))
-        @foreach($data['spot_per_channel_loose'] as $key=>$val)
+        @if(!empty($data['spot_per_channel']))
+        @foreach($data['spot_per_channel'] as $key=>$val)
           {{ $val['total'].',' }}
         @endforeach
         @endif
       ],
-      [
         @if(!empty($data['spot_per_channel']))
         @foreach($data['spot_per_channel'] as $key=>$val)
-          @if(isset($data['spot_per_channel_loose'][$key]))
-          {{ ($val['total'] - $data['spot_per_channel_loose'][$key]['total']).',' }}
-          @endif
+        @if(isset($data['spot_per_channel_loose'][$key]))
+        [
+          {{ ($val['total'] - $data['spot_per_channel_loose'][$key]['total']).',' }}          
+        ]
+        @endif
         @endforeach
         @endif
-      ]
     ]
   };
   new Chartist.Bar('.spot-per-channel-chart', data,{stackBars:true,
@@ -728,13 +733,13 @@ $(document).ready(function(){
 </script>
 @endsection
 @section('filterer')
-<a id="rtl-icon2" class="bg-secondary"><i class="ft-printer font-medium-4 white fa align-middle"></i></a>
+<a id="rtl-icon2" class="bg-info"><i class="ft-printer font-medium-4 white fa align-middle"></i></a>
 <form method="GET" id="filterer-form" action="{{ url('admin/highlight') }}">
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
 <button id="filtererreset" class="btn btn-secondary pull-left filterer-close" style="color:#fff"><i class="ft-rotate-ccw"></i></button>
-<a id="rtl-icon" class="filterer-toggle bg-dark"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
+<a id="rtl-icon" class="filterer-toggle bg-success"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
         <hr>

@@ -1,10 +1,8 @@
-@extends('admin.layouts.app')
-
-@section('pagetitle')
+<?php $__env->startSection('pagetitle'); ?>
     <title>Adex Nett</title>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
         <!-- BEGIN : Main Content-->
         <div class="main-content">
           <div class="content-wrapper">
@@ -17,9 +15,9 @@
               <div class="row">
                 <div class="col-sm-12">
                   <div class="card">
-                    @if(Session::has('message'))
-                    <p class="alert {{ Session::get('alert-class', 'alert-info') }}">{{ ucfirst(Session::get('message')) }}</p>
-                    @endif
+                    <?php if(Session::has('message')): ?>
+                    <p class="alert <?php echo e(Session::get('alert-class', 'alert-info')); ?>"><?php echo e(ucfirst(Session::get('message'))); ?></p>
+                    <?php endif; ?>
                     <div class="card-header">
                       <h4 class="card-title">TV Ads</h4>                    
                     </div>
@@ -75,8 +73,8 @@
             <!--Calendar Ends-->
           </div>
         </div>
-@endsection
-@section('modal')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('modal'); ?>
 <div class="modal fade text-left show" id="filter-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" style="display: none; padding-right: 17px;" aria-modal="true">
   <div class="modal-dialog  modal-xl" role="document">
     <div class="modal-content">
@@ -128,9 +126,9 @@
     </div>
   </div>
 </div>
-@endsection
-@section('pagecss')
-<link rel="stylesheet" type="text/css" href="{{ asset('app-assets') }}/vendors/css/tables/datatable/datatables.min.css">
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('pagecss'); ?>
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('app-assets')); ?>/vendors/css/tables/datatable/datatables.min.css">
 <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
@@ -154,20 +152,20 @@ button.search-result{
   min-width:100px;
 }
 </style>
-@endsection
-@section('pagejs')
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/dataTables.buttons.min.js" type="text/javascript"></script>
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/buttons.flash.min.js" type="text/javascript"></script>
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/jszip.min.js" type="text/javascript"></script>
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/pdfmake.min.js" type="text/javascript"></script>
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/vfs_fonts.js" type="text/javascript"></script>
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/buttons.html5.min.js" type="text/javascript"></script>
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/buttons.print.min.js" type="text/javascript"></script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('pagejs'); ?>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/datatable/dataTables.buttons.min.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/datatable/buttons.flash.min.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/datatable/jszip.min.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/datatable/pdfmake.min.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/datatable/vfs_fonts.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/datatable/buttons.html5.min.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/datatable/buttons.print.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>    
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<script src="{{ asset('/') }}app-assets/js/filterer.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('/')); ?>app-assets/js/filterer.js" type="text/javascript"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 <script type="text/javascript">
 $(function() {
@@ -228,7 +226,7 @@ $(document).ready(function(){
     var term = $('#search-term').val();
     // get and show search result
     $.ajax({
-      url: "{{ url('/admin/adsperformance') }}/search-"+filter+"-json", 
+      url: "<?php echo e(url('/admin/adsperformance')); ?>/search-"+filter+"-json", 
       data: {term: term}, 
       success: function(result){
         if(result.length){
@@ -273,7 +271,7 @@ $(document).ready(function(){
     $("#loadingvideo").show();
     // get video path
     $.ajax({
-        url:"{{ url('/admin/video/generatevideo') }}",
+        url:"<?php echo e(url('/admin/video/generatevideo')); ?>",
         data:{
           id: $(this).data("id"),
           page: window.location.href,
@@ -310,7 +308,7 @@ $(document).ready(function(){
           },
       serverSide: true,
       ajax:{
-        url: '{!! url('admin/adexnett/indexjson') !!}',
+        url: '<?php echo url('admin/adexnett/indexjson'); ?>',
         headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
@@ -367,11 +365,11 @@ $(document).ready(function(){
         { data: 'target', name: 'target' },
         { data: 'spots', name: 'spots' },
         { data: 'grp', name: 'grp' },
-        { data: 'gross', name: 'gross', render: $.fn.dataTable.render.number('', '.', 0, '') },
-        { data: 'revenue', name: 'revenue', render: $.fn.dataTable.render.number('', '.', 0, '') },
-        { data: 'nett1', name: 'nett1', render: $.fn.dataTable.render.number('', '.', 0, '') },
-        { data: 'nett2', name: 'nett2', render: $.fn.dataTable.render.number('', '.', 0, '') },
-        { data: 'nett3', name: 'nett3', render: $.fn.dataTable.render.number('', '.', 0, '') },
+        { data: 'gross', name: 'gross', render: $.fn.dataTable.render.number(',', '.', 0, '') },
+        { data: 'revenue', name: 'revenue', render: $.fn.dataTable.render.number(',', '.', 0, '') },
+        { data: 'nett1', name: 'nett1', render: $.fn.dataTable.render.number(',', '.', 0, '') },
+        { data: 'nett2', name: 'nett2', render: $.fn.dataTable.render.number(',', '.', 0, '') },
+        { data: 'nett3', name: 'nett3', render: $.fn.dataTable.render.number(',', '.', 0, '') },
       ],
       dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
           "<'row'<'col-sm-12'B>>"+
@@ -385,7 +383,7 @@ $(document).ready(function(){
             className: 'buttons-csvall',
             action: function ( e, dt, node, config ) {
                 var oriaction = $("#filterer-form").attr('action');
-                $("#filterer-form").attr('action','{{ url('admin/adexnett/csvall') }}');
+                $("#filterer-form").attr('action','<?php echo e(url('admin/adexnett/csvall')); ?>');
                 $("#filterer-form").submit();
                 $("#filterer-form").attr('action',oriaction);
                 $("#filterer-form").attr('target','');
@@ -442,60 +440,76 @@ $(document).ready(function(){
     });
   });
 </script>
-@endsection
-@section('filterer')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('filterer'); ?>
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
 <a id="filtererreset" class="btn btn-secondary pull-left" style="color:#fff"><i class="ft-rotate-ccw"></i></a>
 <a id="rtl-icon" class="filterer-toggle bg-success"><i class="ft-filter font-medium-4 fa white align-middle"></i></a>
       <div data-ps-id="8db9d3c9-2e00-94a2-f661-18a2e74f8b35" class="filterer-content p-3 ps-container ps-theme-dark ps-active-y">
-        <form id="filterer-form" method="post" action="">@csrf
+        <form id="filterer-form" method="post" action=""><?php echo csrf_field(); ?>
         <h4 class="text-uppercase mb-0 text-bold-400">Filter Data</h4>
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Period</h6>
           <div id="daterange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
               <i class="fa fa-calendar"></i>&nbsp;
               <span></span> <i class="fa fa-caret-down"></i>
-              {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
-              {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
+              <?php echo e(Form::hidden('startdate',null,['id'=>'startdate'])); ?>
+
+              <?php echo e(Form::hidden('enddate',null,['id'=>'enddate'])); ?>
+
           </div>          
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Channel</h6>
         <button type="button" class="btn btn-primary col-10 filter-button" data-filter="channel"><span id="filter-channel-count"></span> Channel</button>
-        {{ Form::hidden('filter-channel') }}
+        <?php echo e(Form::hidden('filter-channel')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nprogramme"><span id="filter-nprogramme-count"></span> nProgramme</button>
-        {{ Form::hidden('filter-nprogramme') }}
+        <?php echo e(Form::hidden('filter-nprogramme')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iprogramme"><span id="filter-iprogramme-count"></span> iProgramme</button>
-        {{ Form::hidden('filter-iprogramme') }}
+        <?php echo e(Form::hidden('filter-iprogramme')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_1"><span id="filter-nlevel_1-count"></span> nLevel 1</button>
-        {{ Form::hidden('filter-nlevel_1') }}
+        <?php echo e(Form::hidden('filter-nlevel_1')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_1"><span id="filter-ilevel_1-count"></span> iLevel 1</button>
-        {{ Form::hidden('filter-ilevel_1') }}
+        <?php echo e(Form::hidden('filter-ilevel_1')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nlevel_2"><span id="filter-nlevel_2-count"></span> nLevel 2</button>
-        {{ Form::hidden('filter-nlevel_2') }}
+        <?php echo e(Form::hidden('filter-nlevel_2')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ilevel_2"><span id="filter-ilevel_2-count"></span> iLevel 2</button>
-        {{ Form::hidden('filter-ilevel_2') }}
+        <?php echo e(Form::hidden('filter-ilevel_2')); ?>
+
         <hr>
         <h6 class="text-center text-bold-500 mb-3 text-uppercase">Commercial</h6>
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nadvertiser"><span id="filter-nadvertiser-count"></span> nAdvertiser</button>
-        {{ Form::hidden('filter-nadvertiser') }}
+        <?php echo e(Form::hidden('filter-nadvertiser')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadvertiser"><span id="filter-iadvertiser-count"></span> iAdvertiser</button>
-        {{ Form::hidden('filter-iadvertiser') }}
+        <?php echo e(Form::hidden('filter-iadvertiser')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nproduct"><span id="filter-nproduct-count"></span> nProduct</button>
-        {{ Form::hidden('filter-nproduct') }}
+        <?php echo e(Form::hidden('filter-nproduct')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iproduct"><span id="filter-iproduct-count"></span> iProduct</button>
-        {{ Form::hidden('filter-iproduct') }}
+        <?php echo e(Form::hidden('filter-iproduct')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="nsector"><span id="filter-nsector-count"></span> nSector</button>
-        {{ Form::hidden('filter-nsector') }}
+        <?php echo e(Form::hidden('filter-nsector')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="isector"><span id="filter-isector-count"></span> iSector</button>
-        {{ Form::hidden('filter-isector') }}
+        <?php echo e(Form::hidden('filter-isector')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="ncategory"><span id="filter-ncategory-count"></span> nCategory</button>
-        {{ Form::hidden('filter-ncategory') }}
+        <?php echo e(Form::hidden('filter-ncategory')); ?>
+
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="icategory"><span id="filter-icategory-count"></span> iCategory</button>
-        {{ Form::hidden('filter-icategory') }}        
+        <?php echo e(Form::hidden('filter-icategory')); ?>        
         <button type="button" class="btn btn-primary col-5 filter-button" data-filter="iadvertiser_group"><span id="filter-iadvertiser_group-count"></span> Advertiser Group</button>
-        {{ Form::hidden('filter-iadvertiser_group') }}   
+        <?php echo e(Form::hidden('filter-iadvertiser_group')); ?>   
         <hr>
         </form>
         <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
@@ -506,4 +520,6 @@ $(document).ready(function(){
         </div>
       </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\vislog\resources\views/admin/adexnett/index.blade.php ENDPATH**/ ?>

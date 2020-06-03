@@ -70,23 +70,21 @@
 
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                            <div class="col-md-6 input-group" id="show_hide_password">
+                              <input id="password" class="form-control @error('password') is-invalid @enderror" type="password" name="password" required autocomplete="new-password" placeholder="Password">
+                              <div class="input-group-append">
+                                <span class="input-group-text" id="showpassword"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>
+                              </div>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm Password') }}</label>                              
+                            <div class="col-md-6 input-group" id="show_hide_confirmpassword">
+                              <input id="password-confirm" class="form-control @error('password') is-invalid @enderror" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="Password">
+                              <div class="input-group-append">
+                                <span class="input-group-text" id="showconfirmpassword"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>
+                              </div>
                             </div>
                         </div>
 
@@ -132,6 +130,34 @@
     <script src="{{ asset('') }}/app-assets/js/customizer.js" type="text/javascript"></script>
     <!-- END APEX JS-->
     <!-- BEGIN PAGE LEVEL JS-->
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $("#showpassword").on('click', function(event) {
+            event.preventDefault();
+            if($('#show_hide_password input').attr("type") == "text"){
+                $('#show_hide_password input').attr('type', 'password');
+                $('#show_hide_password i').addClass( "fa-eye-slash" );
+                $('#show_hide_password i').removeClass( "fa-eye" );
+            }else if($('#show_hide_password input').attr("type") == "password"){
+                $('#show_hide_password input').attr('type', 'text');
+                $('#show_hide_password i').removeClass( "fa-eye-slash" );
+                $('#show_hide_password i').addClass( "fa-eye" );
+            }
+        });
+        $("#showconfirmpassword").on('click', function(event) {
+            event.preventDefault();
+            if($('#show_hide_confirmpassword input').attr("type") == "text"){
+                $('#show_hide_confirmpassword input').attr('type', 'password');
+                $('#show_hide_confirmpassword i').addClass( "fa-eye-slash" );
+                $('#show_hide_confirmpassword i').removeClass( "fa-eye" );
+            }else if($('#show_hide_confirmpassword input').attr("type") == "password"){
+                $('#show_hide_confirmpassword input').attr('type', 'text');
+                $('#show_hide_confirmpassword i').removeClass( "fa-eye-slash" );
+                $('#show_hide_confirmpassword i').addClass( "fa-eye" );
+            }
+        });
+    });
+    </script>
     <!-- END PAGE LEVEL JS-->
   </body>
   <!-- END : Body-->
