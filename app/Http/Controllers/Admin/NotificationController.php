@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Notifications\Announcement;
 use App\User;
 use Illuminate\Http\Request;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Session;
 use \Carbon\Carbon;
 use Auth;
@@ -94,4 +95,20 @@ class NotificationController extends Controller
         return redirect('admin/notification');
     }
 
+    public function csvall()
+    {
+        $export = Notification::get();
+        $exp = [];
+        foreach($export as $key=>$val){
+            $exp[] = ['title'=>$val['data']['title'],'message'=>$val['data']['message']];
+        }
+        // dd($exp);
+        $filename = 'vislog-notification.csv';
+        $temp = 'temp/'.$filename;
+        (new FastExcel($exp))->export('temp/vislog-notification.csv');
+        $headers = [
+            'Content-Type: text/csv',
+            ];
+        return response()->download($temp, $filename, $headers)->deleteFileAfterSend(true);
+    }
 }

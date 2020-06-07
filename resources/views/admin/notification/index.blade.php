@@ -27,6 +27,9 @@
                       <a href="{{ url('admin/notification/create') }}" class="btn btn-secondary">
                         <i class="ft-plus"></i> Add New
                       </a>
+                      <a href="{{ url('admin/notification/csvall') }}" class="btn btn-info">
+                        <i class="ft-download"></i> CSV
+                      </a>
                     </div>
                     </div>
                     <div class="card-content ">
@@ -80,7 +83,7 @@ var table = $('.browse-table').DataTable({
     ],
     dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",        
     lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
     columnDefs: [ ],
     order: [[1, 'DESC']]

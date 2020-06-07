@@ -99,9 +99,13 @@ class MarketingController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            $adexnett->whereBetween('isodate',[Auth::user()->privileges['startdate'],Auth::user()->privileges['enddate']]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $adexnett->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             $adexnett->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
@@ -553,10 +557,10 @@ class MarketingController extends Controller
         // sum all
         $totalcategory = [];
         foreach($query as $key=>$val){
-            $sector = $val->_id->ncategory;
+            $category = $val->_id->ncategory;
             $totalcategory[$category][$val->_id->channel]['marketshare'] = $val->total;
             ${'totalall'.$category} = (${'totalall'.$sector} ?? 0) + $val->total;
-            $totalcategory[$scategory]['all'] = ${'totalall'.$category};
+            $totalcategory[$category]['all'] = ${'totalall'.$category};
         }
         foreach($totalcategory as $key=>$val){
             foreach($val as $k=>$v){
@@ -873,8 +877,14 @@ class MarketingController extends Controller
                 break;
             endswitch;
         }
-        // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
+        // add filter by user privilege        
+        if(!empty(Auth::user()->privileges['startdate']))  {            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $query->whereBetween('isodate',[$isostartdate,$isoenddate]);
+        }
         if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
         if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']??'%%'));
         if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']??'%%'));

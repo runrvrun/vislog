@@ -204,8 +204,14 @@ class VideoController extends Controller
         if($request->xadstype == "nonloosespot"){
             $query->where('nadstype','<>','LOOSE SPOT');
         }
-        // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
+        // add filter by user privilege 
+        if(!empty(Auth::user()->privileges['startdate']))  {            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $query->whereBetween('isodate',[$isostartdate,$isoenddate]);
+        }
         if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
         if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']??'%%'));
         if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']??'%%'));
@@ -328,8 +334,14 @@ class VideoController extends Controller
         if($request->{'filter-ncommercialtype'} == "commercialonly"){
             $query->where('nsector','<>','NON-COMMERCIAL ADVERTISEMENT');
         }
-        // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
+        // add filter by user privilege 
+        if(!empty(Auth::user()->privileges['startdate']))  {            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $query->whereBetween('isodate',[$isostartdate,$isoenddate]);
+        }
         if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
         if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']??'%%'));
         if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']??'%%'));
@@ -410,8 +422,14 @@ class VideoController extends Controller
         if(count($filterilevel_2)){
             $query->whereIn('ilevel_2',$filterilevel_2);
         } 
-        // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
+        // add filter by user privilege 
+        if(!empty(Auth::user()->privileges['startdate']))  {            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $query->whereBetween('isodate',[$isostartdate,$isoenddate]);
+        }
         if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(';',Auth::user()->privileges['channel']??'%%'));
         if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(';',Auth::user()->privileges['nlevel_1']??'%%'));
         if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(';',Auth::user()->privileges['nlevel_2']??'%%'));
@@ -461,8 +479,14 @@ class VideoController extends Controller
         if(count($filterilevel_2)){
             $query->whereIn('ilevel_2',$filterilevel_2);
         }
-        // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
+        // add filter by user privilege 
+        if(!empty(Auth::user()->privileges['startdate']))  {            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $query->whereBetween('isodate',[$isostartdate,$isoenddate]);
+        }
         if(!empty(Auth::user()->privileges['channel']))  $query->whereIn('channel',explode(';',Auth::user()->privileges['channel']??'%%'));
         if(!empty(Auth::user()->privileges['nlevel_1']))  $query->whereIn('nlevel_1',explode(';',Auth::user()->privileges['nlevel_1']??'%%'));
         if(!empty(Auth::user()->privileges['nlevel_2']))  $query->whereIn('nlevel_2',explode(';',Auth::user()->privileges['nlevel_2']??'%%'));

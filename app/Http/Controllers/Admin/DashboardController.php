@@ -53,9 +53,13 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            $commercial->whereBetween('isodate',[Auth::user()->privileges['startdate'],Auth::user()->privileges['enddate']]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $commercial->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             $commercial->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
@@ -808,8 +812,13 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $commercial->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1008,8 +1017,13 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $commercial->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1208,8 +1222,13 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $commercial->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1408,8 +1427,13 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $commercial->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1609,8 +1633,13 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $commercial->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -1810,8 +1839,13 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $commercial->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -2011,8 +2045,13 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $commercial->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  
@@ -2213,8 +2252,13 @@ class DashboardController extends Controller
         $filter = [];
         // apply privileges
         if(!empty(Auth::user()->privileges['startdate'])){
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => Auth::user()->privileges['startdate'] ] ] ]);
-            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => Auth::user()->privileges['enddate'] ] ] ] );
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $commercial->whereBetween('isodate',[$isostartdate,$isoenddate]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$gte' => $isostartdate ] ] ]);
+            array_push($filter,[ '$match' => [ 'isodate' => [ '$lte' => $isoenddate ] ] ] );
         } 
         if(!empty(Auth::user()->privileges['nsector'])) {
             array_push($filter,[ '$match' => ['nsector' => ['$in' => explode(';',Auth::user()->privileges['nsector'])]]]);  

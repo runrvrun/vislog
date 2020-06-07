@@ -141,6 +141,7 @@ Route::group( ['prefix' => 'admin','middleware' => 'auth' ], function()
     Route::get('/notification/indexjson','Admin\NotificationController@indexjson');
     Route::post('/notification/store', 'Admin\NotificationController@store');
     Route::get('/notification/markallread', 'Admin\NotificationController@markallread');
+    Route::get('/notification/csvall', 'Admin\NotificationController@csvall');
     Route::resource('/notification', 'Admin\NotificationController');
     Route::get('/user/indexjson','Admin\UserController@indexjson');
     Route::get('/user/csvall','Admin\UserController@csvall');

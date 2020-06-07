@@ -151,7 +151,13 @@ class AdsperformanceController extends Controller
             $query->where('nadstype','<>','LOOSE SPOT');
         }
         // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
+        if(!empty(Auth::user()->privileges['startdate']))  {            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $query->whereBetween('isodate',[$isostartdate,$isoenddate]);
+        }
         if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
         if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']));
         if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']));
@@ -315,8 +321,14 @@ class AdsperformanceController extends Controller
         if($request->xadstype == "nonloosespot"){
             $query->where('nadstype','<>','LOOSE SPOT');
         }
-        // add filter by user privilege
-        if(!empty(Auth::user()->privileges['startdate']))  $query->whereBetween('isodate',[Auth::user()->privileges['startdate']??$startdate,Auth::user()->privileges['enddate']??$enddate]);
+        // add filter by user privilege        
+        if(!empty(Auth::user()->privileges['startdate']))  {            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['startdate'].' 00:00:00')->toDateTimeString();
+            $isostartdate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $date = Carbon::createFromFormat('Y-m-d H:i:s',Auth::user()->privileges['enddate'].' 00:00:00')->toDateTimeString();
+            $isoenddate = new \MongoDB\BSON\UTCDateTime(new \DateTime($date));            
+            $query->whereBetween('isodate',[$isostartdate,$isoenddate]);
+        }
         if(!empty(Auth::user()->privileges['nsector'])) $query->whereIn('nsector',explode(';',Auth::user()->privileges['nsector']));
         if(!empty(Auth::user()->privileges['ncategory']))  $query->whereIn('ncategory',explode(';',Auth::user()->privileges['ncategory']));
         if(!empty(Auth::user()->privileges['nproduct']))  $query->whereIn('nproduct',explode(';',Auth::user()->privileges['nproduct']));

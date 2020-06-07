@@ -248,7 +248,8 @@ $(document).ready(function(){
         if(result.length){
           $.each(result, function(k,v) {
             var curfil = $("#filter-selected").html();
-            if(!$("#filter-"+filter).is(':empty') && curfil.indexOf(v[filter] + ';')+1){
+            curfil = curfil.split(";");
+            if(!$("#filter-"+filter).is(':empty') && (jQuery.inArray(v[filter], curfil) != -1) ){
               // previously selected, set style
               $('#filter-modal-search-result').append( '<button type="button" class="btn search-result btn-primary mr-1" value="'+v[filter]+'">'+v[filter]+'</button>' );
             }else{

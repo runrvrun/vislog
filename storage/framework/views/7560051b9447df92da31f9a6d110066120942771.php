@@ -1,10 +1,8 @@
-@extends('admin.layouts.app')
-
-@section('pagetitle')
+<?php $__env->startSection('pagetitle'); ?>
     <title>Highlight</title>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
         <!-- BEGIN : Main Content-->
         <div class="main-content">
         <div class="content-wrapper">
@@ -23,7 +21,7 @@
             <div class="card-body pt-2 pb-0">
               <div class="media">
                 <div class="media-body white text-left">
-                  <h3 class="font-large-1 mb-0">{{ $data['advertiser'] ?? 0 }}</h3>
+                  <h3 class="font-large-1 mb-0"><?php echo e($data['advertiser'] ?? 0); ?></h3>
                   <span>Advertiser</span>
                 </div>
                 <div class="media-right white text-right">
@@ -40,7 +38,7 @@
             <div class="card-body pt-2 pb-0">
               <div class="media">
                 <div class="media-body white text-left">
-                  <h3 class="font-large-1 mb-0">{{ $data['product'] ?? 0 }}</h3>
+                  <h3 class="font-large-1 mb-0"><?php echo e($data['product'] ?? 0); ?></h3>
                   <span>Products</span>
                 </div>
                 <div class="media-right white text-right">
@@ -59,7 +57,7 @@
             <div class="card-body pt-2 pb-0">
               <div class="media">
                 <div class="media-body white text-left">
-                  <h3 class="font-large-1 mb-0">{{ number_format(($data['number_of_spot'] ?? 0),0) }}</h3>
+                  <h3 class="font-large-1 mb-0"><?php echo e(number_format(($data['number_of_spot'] ?? 0),0)); ?></h3>
                   <span>Spots</span>
                 </div>
                 <div class="media-right white text-right">
@@ -76,7 +74,7 @@
             <div class="card-body pt-2 pb-0">
               <div class="media">
                 <div class="media-body white text-left">
-                  <h3 class="font-large-1 mb-0">{{ $data['adex'] ?? 0 }}</h3>
+                  <h3 class="font-large-1 mb-0"><?php echo e($data['adex'] ?? 0); ?></h3>
                   <span>Adex</span>
                 </div>
                 <div class="media-right white text-right">
@@ -92,24 +90,24 @@
   <div class="col-md-6">
     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="false">
     <ol class="carousel-indicators">
-    @if(isset($data['tvchighlight']))
-    @foreach($data['tvchighlight'] as $key=>$val)
-      <li data-target="#carouselExampleIndicators" data-slide-to="{{ $key }}" class="{{ ($key == 0)? 'active':'' }}"></li>
-      @endforeach
-      @endif
+    <?php if(isset($data['tvchighlight'])): ?>
+    <?php $__currentLoopData = $data['tvchighlight']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+      <li data-target="#carouselExampleIndicators" data-slide-to="<?php echo e($key); ?>" class="<?php echo e(($key == 0)? 'active':''); ?>"></li>
+      <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+      <?php endif; ?>
     </ol>
     <div class="carousel-inner">
-    @if(isset($data['tvchighlight']))
-      @foreach($data['tvchighlight'] as $key=>$val)
-      <div class="carousel-item {{ ($key == 0)? 'active':'' }}">
-        <video src="{{ url('/uploads/tvchighlight/'.($val->filename ?? '')) }}" controls class="playvideo"></video>
+    <?php if(isset($data['tvchighlight'])): ?>
+      <?php $__currentLoopData = $data['tvchighlight']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+      <div class="carousel-item <?php echo e(($key == 0)? 'active':''); ?>">
+        <video src="<?php echo e(url('/uploads/tvchighlight/'.($val->filename ?? ''))); ?>" controls class="playvideo"></video>
         <div class="carousel-caption d-none d-md-block">
-          <h5>{{ $val->title ?? '' }}</h5>
-          <p>{{ $val->description ?? ''}}</p>
+          <h5><?php echo e($val->title ?? ''); ?></h5>
+          <p><?php echo e($val->description ?? ''); ?></p>
         </div>
       </div>
-      @endforeach
-      @endif
+      <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+      <?php endif; ?>
     </div>
     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -134,19 +132,19 @@
           <div class="row">
             <div class="col-md-3">
               <i class="adsicon bgaqua ft-monitor font-medium-2 p-1"></i>
-              <div class="adsheading">{{ number_format(($data['adstype_loose_spot'] ?? 0),0) }}</div><small>Loose Spot</small>
+              <div class="adsheading"><?php echo e(number_format(($data['adstype_loose_spot'] ?? 0),0)); ?></div><small>Loose Spot</small>
             </div>
             <div class="col-md-3">
               <i class="adsicon bgtosca ft-check-circle font-medium-2 p-1"></i>
-              <div class="adsheading">{{ $data['adstype_virtual_ads'] ?? 0 }}</div><small>Virtual Ads</small>
+              <div class="adsheading"><?php echo e($data['adstype_virtual_ads'] ?? 0); ?></div><small>Virtual Ads</small>
             </div>
             <div class="col-md-4">
               <i class="adsicon bgpink ft-film font-medium-2 p-1"></i>
-              <div class="adsheading">{{ $data['adstype_squeeze_frame'] ?? 0 }}</div><small>Built-in Segmen</small>
+              <div class="adsheading"><?php echo e($data['adstype_squeeze_frame'] ?? 0); ?></div><small>Built-in Segmen</small>
             </div>
             <div class="col-md-2">
               <i class="adsicon bgpurple ft-message-square font-medium-2 p-1"></i>
-              <div class="adsheading">{{ $data['adstype_kuis'] ?? 0 }}</div><small>Kuis</small>
+              <div class="adsheading"><?php echo e($data['adstype_kuis'] ?? 0); ?></div><small>Kuis</small>
             </div>
           </div>
           <div class="spot-per-channel-chart ct-major-twelfth"></div>
@@ -196,13 +194,13 @@
                   <th>Channel</th><th style="text-align:right">Spot</th><th style="text-align:right">Adex (B)</th>
                   </tr>
                 </thead>
-                @if(!empty($data['top_channel']))
-                @foreach($data['top_channel'] as $key=>$val)
+                <?php if(!empty($data['top_channel'])): ?>
+                <?php $__currentLoopData = $data['top_channel']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
-                <td>{{ $val['channel'] }}</td><td style="text-align:right">{{ number_format($val['spot'],0,'','') }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
+                <td><?php echo e($val['channel']); ?></td><td style="text-align:right"><?php echo e(number_format($val['spot'],0,'','')); ?></td><td style="text-align:right"><?php echo e(number_format($val['adex'],2,'.','')); ?></td>
                 </tr>
-                @endforeach
-                @endif
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endif; ?>
                 </table>
             </div>
             <div class="tab-pane fade" id="program" role="tabpanel" aria-labelledby="program-tab">
@@ -212,13 +210,13 @@
                   <th>Program</th><th style="text-align:right">Spot</th><th style="text-align:right">Adex (B)</th>
                   </tr>
                 </thead>
-                @if(!empty($data['top_programme']))
-                @foreach($data['top_programme'] as $key=>$val)
+                <?php if(!empty($data['top_programme'])): ?>
+                <?php $__currentLoopData = $data['top_programme']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
-                <td>{{ $val['programme'] }}</td><td style="text-align:right">{{ number_format($val['spot'],0,'','') }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
+                <td><?php echo e($val['programme']); ?></td><td style="text-align:right"><?php echo e(number_format($val['spot'],0,'','')); ?></td><td style="text-align:right"><?php echo e(number_format($val['adex'],2,'.','')); ?></td>
                 </tr>
-                @endforeach
-                @endif
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endif; ?>
                 </table>
             </div>
             <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="product-tab">
@@ -228,13 +226,13 @@
                   <th>Product</th><th style="text-align:right">Spot</th><th style="text-align:right">Adex (B)</th>
                   </tr>
                 </thead>
-                @if(!empty($data['top_product']))
-                @foreach($data['top_product'] as $key=>$val)
+                <?php if(!empty($data['top_product'])): ?>
+                <?php $__currentLoopData = $data['top_product']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr>
-                <td>{{ $val['product'] }}</td><td style="text-align:right">{{ number_format($val['spot'],0,'','') }}</td><td style="text-align:right">{{ number_format($val['adex'],2,'.','') }}</td>
+                <td><?php echo e($val['product']); ?></td><td style="text-align:right"><?php echo e(number_format($val['spot'],0,'','')); ?></td><td style="text-align:right"><?php echo e(number_format($val['adex'],2,'.','')); ?></td>
                 </tr>
-                @endforeach
-                @endif
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <?php endif; ?>
                 </table>
             </div>
           </div>
@@ -258,25 +256,25 @@
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="dataupdate" role="tabpanel" aria-labelledby="dataupdate-tab">
-                @if(!empty($data['data_update']))
-              @foreach($data['data_update'] as $key=>$val)
-              <div class="row"><div class="col-md-8">{{ ucfirst($val->action) }}</div><div class="col-md-4"><small>{{ $val->created_at->diffForHumans() }}</small></div></div>
-              @endforeach
-              @endif
+                <?php if(!empty($data['data_update'])): ?>
+              <?php $__currentLoopData = $data['data_update']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <div class="row"><div class="col-md-8"><?php echo e(ucfirst($val->action)); ?></div><div class="col-md-4"><small><?php echo e($val->created_at->diffForHumans()); ?></small></div></div>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+              <?php endif; ?>
           </div>
           <div class="tab-pane fade" id="videoupdate" role="tabpanel" aria-labelledby="videoupdate-tab">
-              @if(!empty($data['video_update']))
-              @foreach($data['video_update'] as $key=>$val)
-              <div class="row"><div class="col-md-8">{{ ucfirst($val->action) }}</div><div class="col-md-4"><small>{{ $val->created_at->diffForHumans() }}</small></div></div>
-              @endforeach
-              @endif
+              <?php if(!empty($data['video_update'])): ?>
+              <?php $__currentLoopData = $data['video_update']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <div class="row"><div class="col-md-8"><?php echo e(ucfirst($val->action)); ?></div><div class="col-md-4"><small><?php echo e($val->created_at->diffForHumans()); ?></small></div></div>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+              <?php endif; ?>
           </div>
           <div class="tab-pane fade" id="recentactivity" role="tabpanel" aria-labelledby="recentactivity-tab">
-              @if(!empty($data['activity']))
-              @foreach($data['activity'] as $key=>$val)
-              <div class="row"><div class="col-md-8">{{ ucfirst($val->name) }} logged in</div><div class="col-md-4"><small>{{ $val->created_at->diffForHumans() }}</small></div></div>
-              @endforeach
-              @endif
+              <?php if(!empty($data['activity'])): ?>
+              <?php $__currentLoopData = $data['activity']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+              <div class="row"><div class="col-md-8"><?php echo e(ucfirst($val->name)); ?> logged in</div><div class="col-md-4"><small><?php echo e($val->created_at->diffForHumans()); ?></small></div></div>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+              <?php endif; ?>
           </div>
         </div>
       </div>
@@ -300,12 +298,12 @@
 </div>
           </div>
         </div>
-@endsection
-@section('pagecss')
-<link rel="stylesheet" type="text/css" href="{{ asset('app-assets') }}/vendors/css/tables/datatable/datatables.min.css">
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('pagecss'); ?>
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('app-assets')); ?>/vendors/css/tables/datatable/datatables.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-<link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/chartist.min.css">
-<link rel="stylesheet" type="text/css" href="{{ asset('/') }}app-assets/vendors/css/chartist-plugin-tooltip.css">
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('/')); ?>app-assets/vendors/css/chartist.min.css">
+<link rel="stylesheet" type="text/css" href="<?php echo e(asset('/')); ?>app-assets/vendors/css/chartist-plugin-tooltip.css">
 <style>
 .card-content{
   min-height: 100px;
@@ -399,14 +397,14 @@ body.layout-dark.layout-transparent .whitebox{
   top: 25%;
 }
 </style>
-@endsection
-@section('pagejs')
-<script src="{{ asset('app-assets') }}/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
-<script src="{{ asset('app-assets') }}/vendors/js/chartist.min.js"></script>
-<script src="{{ asset('app-assets') }}/vendors/js/chartist-plugin-tooltip.js"></script>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('pagejs'); ?>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/datatable/datatables.min.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/chartist.min.js"></script>
+<script src="<?php echo e(asset('app-assets')); ?>/vendors/js/chartist-plugin-tooltip.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<script src="{{ asset('/') }}app-assets/js/filterer.js" type="text/javascript"></script>
+<script src="<?php echo e(asset('/')); ?>app-assets/js/filterer.js" type="text/javascript"></script>
 <script>
 $(document).ready(function() {     
     var resp = false;
@@ -418,7 +416,7 @@ $(document).ready(function() {
         serverSide: true,
         bLengthChange: false,
         ajax:{
-          url: '{!! url('admin/dashboard/spot_per_productjson') !!}',
+          url: '<?php echo url('admin/dashboard/spot_per_productjson'); ?>',
           headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
@@ -453,7 +451,7 @@ $(document).ready(function() {
         serverSide: true,
         bLengthChange: false,
         ajax:{
-          url: '{!! url('admin/dashboard/spot_per_programmejson') !!}',
+          url: '<?php echo url('admin/dashboard/spot_per_programmejson'); ?>',
           headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
@@ -481,7 +479,7 @@ $(document).ready(function() {
         serverSide: true,
         bLengthChange: false,
         ajax:{
-          url: '{!! url('admin/dashboard/spot_per_adstypejson') !!}',
+          url: '<?php echo url('admin/dashboard/spot_per_adstypejson'); ?>',
           headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
@@ -501,19 +499,19 @@ $(document).ready(function() {
 <script>
   var data = {
     labels: [
-          '{{ $data['daypart'][0]['name'] ?? 0 }}',
-          '{{ $data['daypart'][1]['name'] ?? 0 }}',
-          '{{ $data['daypart'][2]['name'] ?? 0 }}',
-          '{{ $data['daypart'][3]['name'] ?? 0 }}',
-          '{{ $data['daypart'][4]['name'] ?? 0 }}',
+          '<?php echo e($data['daypart'][0]['name'] ?? 0); ?>',
+          '<?php echo e($data['daypart'][1]['name'] ?? 0); ?>',
+          '<?php echo e($data['daypart'][2]['name'] ?? 0); ?>',
+          '<?php echo e($data['daypart'][3]['name'] ?? 0); ?>',
+          '<?php echo e($data['daypart'][4]['name'] ?? 0); ?>',
         ],
     series: [
       [
-        {{ number_format(($data['daypart'][0]['value'] ?? 0),0,'','') }},
-        {{ number_format(($data['daypart'][1]['value'] ?? 0),0,'','') }},
-        {{ number_format(($data['daypart'][2]['value'] ?? 0),0,'','') }},
-        {{ number_format(($data['daypart'][3]['value'] ?? 0),0,'','') }},
-        {{ number_format(($data['daypart'][4]['value'] ?? 0),0,'','') }},
+        <?php echo e(number_format(($data['daypart'][0]['value'] ?? 0),0,'','')); ?>,
+        <?php echo e(number_format(($data['daypart'][1]['value'] ?? 0),0,'','')); ?>,
+        <?php echo e(number_format(($data['daypart'][2]['value'] ?? 0),0,'','')); ?>,
+        <?php echo e(number_format(($data['daypart'][3]['value'] ?? 0),0,'','')); ?>,
+        <?php echo e(number_format(($data['daypart'][4]['value'] ?? 0),0,'','')); ?>,
       ]
     ]
   };
@@ -526,19 +524,19 @@ $(document).ready(function() {
 <script>
   var data = {
     labels: [
-        @if(!empty($data['spot_per_date']))
-        @foreach($data['spot_per_date'] as $key=>$val)
-          '{{ $val['date'] }}',
-        @endforeach
-        @endif
+        <?php if(!empty($data['spot_per_date'])): ?>
+        <?php $__currentLoopData = $data['spot_per_date']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          '<?php echo e($val['date']); ?>',
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
         ],
     series: [
       [
-        @if(!empty($data['spot_per_date']))
-        @foreach($data['spot_per_date'] as $key=>$val)
-          {meta: '{{ $val['date'] }}', value: {{ $val['total'] }} },          
-        @endforeach
-        @endif
+        <?php if(!empty($data['spot_per_date'])): ?>
+        <?php $__currentLoopData = $data['spot_per_date']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          {meta: '<?php echo e($val['date']); ?>', value: <?php echo e($val['total']); ?> },          
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
       ]
     ]
   };
@@ -550,20 +548,20 @@ $(document).ready(function() {
 </script>
 <script type="text/javascript">
 $(function() {
-    @if(!empty($request->startdate))
-    var start = moment("{{$request->startdate}}");
+    <?php if(!empty($request->startdate)): ?>
+    var start = moment("<?php echo e($request->startdate); ?>");
     $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
-    @else
+    <?php else: ?>
     var start = moment().subtract(6, 'day');
     $('input[name=startdate]').val(start.format('YYYY-MM-DD'));
-    @endif    
-    @if(!empty($request->enddate))
-    var end = moment("{{$request->enddate}}");
+    <?php endif; ?>    
+    <?php if(!empty($request->enddate)): ?>
+    var end = moment("<?php echo e($request->enddate); ?>");
     $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
-    @else
+    <?php else: ?>
     var end = moment();
     $('input[name=enddate]').val(end.format('YYYY-MM-DD'));
-    @endif
+    <?php endif; ?>
 
     function cb(start, end) {
         $('#daterange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
@@ -618,7 +616,7 @@ $(document).ready(function(){
     var term = $('#search-term').val();
     // get and show search result
     $.ajax({
-      url: "{{ url('/admin/adsperformance') }}/search-"+filter+"-json", 
+      url: "<?php echo e(url('/admin/adsperformance')); ?>/search-"+filter+"-json", 
       data: {term: term}, 
       success: function(result){
         if(result.length){
@@ -675,30 +673,31 @@ $(document).ready(function(){
 <script>
   var data = {
     labels: [
-        @if(!empty($data['spot_per_channel']))
-        @foreach($data['spot_per_channel'] as $key=>$val)
-          '{{ $val['channel'] }}',
-        @endforeach
-        @endif
+        <?php if(!empty($data['spot_per_channel'])): ?>
+        <?php $__currentLoopData = $data['spot_per_channel']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          '<?php echo e($val['channel']); ?>',
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
         ],
     series: [
       [
-        @if(!empty($data['spot_per_channel']))
-        @foreach($data['spot_per_channel'] as $key=>$val)
-          {{ $val['total'].',' }}
-        @endforeach
-        @endif
+        <?php if(!empty($data['spot_per_channel'])): ?>
+        <?php $__currentLoopData = $data['spot_per_channel']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          <?php echo e($val['total'].','); ?>
+
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
       ],
         [
-        @if(!empty($data['spot_per_channel']))
-        @foreach($data['spot_per_channel'] as $key=>$val)
-        @if(isset($data['spot_per_channel_loose'][$key]))
-          {{ ($val['total'] - $data['spot_per_channel_loose'][$key]['total']).',' }}          
-        @else
+        <?php if(!empty($data['spot_per_channel'])): ?>
+        <?php $__currentLoopData = $data['spot_per_channel']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key=>$val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+        <?php if(isset($data['spot_per_channel_loose'][$key])): ?>
+          <?php echo e(($val['total'] - $data['spot_per_channel_loose'][$key]['total']).','); ?>          
+        <?php else: ?>
         0,
-        @endif
-        @endforeach
-        @endif
+        <?php endif; ?>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+        <?php endif; ?>
         ]
     ]
   };
@@ -725,7 +724,7 @@ $(document).ready(function(){
 $(document).ready(function(){
   $("#rtl-icon2").click(function(){
     var oriaction = $("#filterer-form").attr('action');
-    $("#filterer-form").attr('action','{{ url('admin/highlight/print') }}');
+    $("#filterer-form").attr('action','<?php echo e(url('admin/highlight/print')); ?>');
     $("#filterer-form").attr('target','_blank');
     $("#filterer-form").submit();
     $("#filterer-form").attr('action',oriaction);
@@ -733,10 +732,10 @@ $(document).ready(function(){
   });
 });
 </script>
-@endsection
-@section('filterer')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('filterer'); ?>
 <a id="rtl-icon2" class="bg-info"><i class="ft-printer font-medium-4 white fa align-middle"></i></a>
-<form method="GET" id="filterer-form" action="{{ url('admin/highlight') }}">
+<form method="GET" id="filterer-form" action="<?php echo e(url('admin/highlight')); ?>">
 <div class="filterer border-left-blue-grey border-left-lighten-4 d-none d-sm-none d-md-block">
 <a class="filterer-close"><i class="ft-x font-medium-3"></i></a>
 <button id="filterersubmit" class="btn btn-warning pull-right filterer-close" style="color:#fff"><i class="ft-filter"></i> Process</button>
@@ -749,8 +748,10 @@ $(document).ready(function(){
           <div id="daterange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
               <i class="fa fa-calendar"></i>&nbsp;
               <span></span> <i class="fa fa-caret-down"></i>
-              {{ Form::hidden('startdate',null,['id'=>'startdate']) }}
-              {{ Form::hidden('enddate',null,['id'=>'enddate']) }}
+              <?php echo e(Form::hidden('startdate',null,['id'=>'startdate'])); ?>
+
+              <?php echo e(Form::hidden('enddate',null,['id'=>'enddate'])); ?>
+
           </div>
         <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 3px;">
           <div class="ps-scrollbar-x" tabindex="0" style="left: 0px; width: 0px;"></div>
@@ -761,8 +762,8 @@ $(document).ready(function(){
       </div>
     </div>
 </form>
-@endsection
-@section('modal')
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('modal'); ?>
 <div class="modal fade text-left show" id="loading-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" style="display: none; padding-right: 17px;" aria-modal="true">
   <div class="modal-dialog  modal-s" role="document">
     <div class="modal-content">
@@ -801,4 +802,6 @@ $(document).ready(function(){
     </div>
   </div>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('admin.layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\vislog\resources\views/admin/highlight.blade.php ENDPATH**/ ?>
